@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.ResultsList">
+  <ContentView.Content>
+        <ListView x:Name="SearchResults" BackgroundColor="#7F000000" IsGroupingEnabled="True" HasUnevenRows="True" VerticalOptions="Start" ItemTapped="SearchResults_ItemTapped" SeparatorColor="{DynamicResource PageBackground}">
+            <ListView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <ViewCell Height="25">
+                        <Grid BackgroundColor="{DynamicResource PageBackground}">
+                            <Grid BackgroundColor="{DynamicResource PredictionHeader}">
+                                <Label Text="{Binding Category}" FontSize="Small" TextColor="{DynamicResource TitleText}" VerticalOptions="Center" Margin="5,0,0,0" />
+                            </Grid>
+
+                            <Grid.Margin>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="UWP" Value="0,0,0,-4"/>
+                                </OnPlatform>
+                            </Grid.Margin>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.GroupHeaderTemplate>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid BackgroundColor="{DynamicResource PageBackground}">
+                            <Label Text="{Binding Name}" FontSize="Medium" Margin="5"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.PredictionBreakdown">
+  <ContentView.Content>
+        <StackLayout>
+            <Label x:Name="Base" FontSize="Medium" Margin="10" HorizontalOptions="Center"/>
+            <ListView x:Name="ShowDetails" ItemsSource="{Binding details}" Margin="15">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="{Binding Name}" Margin="5"/>
+                                <Label Grid.Column="1" Text="{Binding FormattedValue}" TextColor="{Binding Value,Converter={StaticResource NumberColor}}" Margin="5"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label x:Name="Odds" FontSize="Large" Margin="10" HorizontalOptions="Center"/>
+            <Label x:Name="Optimal" Margin="5" HorizontalOptions="Center" IsVisible="False"/>
+
+            <Label Margin="15" Opacity="0.655" Text="The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate, and the calculation can sometimes result in unrealistic numbers." HorizontalOptions="Center" LineBreakMode="WordWrap"/>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

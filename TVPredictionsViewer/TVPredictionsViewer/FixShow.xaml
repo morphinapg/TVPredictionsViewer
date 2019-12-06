@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.FixShow">
+  <ContentView.Content>
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Label x:Name="ShowName" FontSize="Title" Margin="5"/>
+            <Label Grid.Row="1" Text="Please Select the correct result below:" Margin="10"/>
+            <Grid Grid.Row="2" Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <ActivityIndicator x:Name="Loading" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="True" Color="{DynamicResource ActivityColor}" Margin="15"/>                
+
+                <ListView x:Name="TVDBResults" IsVisible="False" HorizontalOptions="Center" WidthRequest="800" Grid.Row="1" HasUnevenRows="True" ItemTapped="TVDBResults_ItemTapped">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding ResultNumber}" VerticalOptions="Center" FontSize="Title"/>
+
+                                    <Grid Margin="0,10" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Image Source="{Binding ImageUri}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+
+                                        <StackLayout Grid.Row="1">
+                                            <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>
+                                            <Label Text="{Binding Description}" Opacity="0.8" LineBreakMode="WordWrap"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </Grid>                                
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                
+            </Grid>
+            <Label Grid.Row="3" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" VerticalOptions="End"/>
+
+            <Grid x:Name="Confirmation" IsVisible="False" Opacity="0" Grid.RowSpan="4" BackgroundColor="#F2000000" Margin="-15" RowSpacing="0" ColumnSpacing="0" Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid BackgroundColor="{DynamicResource PageBackground}" Padding="25" VerticalOptions="EndAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Label FontSize="Subtitle" Text="Are you sure you want to use this?" HorizontalOptions="Center"/>
+                </Grid>                
+
+                <Grid Grid.Row="1" BackgroundColor="{DynamicResource PageBackground}" Padding="10,0,10,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Text="{Binding ResultNumber}" VerticalOptions="Center" FontSize="Title"/>
+
+                    <Grid Grid.Column="1" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Image Source="{Binding ImageUri}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+
+                        <StackLayout Grid.Row="1">
+                            <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>
+                            <Label Text="{Binding Description}" Opacity="0.8" LineBreakMode="WordWrap"/>
+                        </StackLayout>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="2" BackgroundColor="{DynamicResource PageBackground}"  VerticalOptions="Start" Padding="25">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                        <Button x:Name="Yes" Text="Yes" Margin="10" Clicked="Yes_Clicked"/>
+                        <Button x:Name="No" Text="No" Margin="10" Clicked="No_Clicked"/>
+                    </StackLayout>
+                </Grid>
+                
+            </Grid>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

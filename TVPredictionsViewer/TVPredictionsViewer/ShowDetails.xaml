@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.ShowDetails">
+    
+  <ContentView.Content>
+        <StackLayout BackgroundColor="{DynamicResource DetailBackground}" Spacing="0">
+            <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="SpaceBetween" Margin="10">
+                <StackLayout Orientation="Horizontal">
+                    <Label FontSize="24" Text="{Binding Name}" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails}"/>
+                    <Label Text="{Binding NewShow}" FontSize="Small" VerticalTextAlignment="Center" Margin="5" TextColor="DarkGoldenrod"/>
+                </StackLayout>
+                <StackLayout>
+                    <Label Text="{Binding Prediction}" FontSize="20" FontAttributes="Italic" Opacity="0.5" Margin="10,0,0,0" HorizontalOptions="End"/>
+                    <Label Text="{Binding PredictionDifference}" FontSize="Micro" Opacity="0.75" Margin="10,0,0,0" HorizontalOptions="End" TextColor="{Binding PredictionDiff, Converter={StaticResource NumberColor}}" />
+                </StackLayout>
+
+            </FlexLayout>
+
+            <FlexLayout Direction="Row" Margin="10" AlignItems="End" JustifyContent="SpaceBetween" Wrap="Wrap">
+                <StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{Binding Rating}"/>
+                        <Label Text="{Binding RatingDifference}" TextColor="{Binding RatingsDiff, Converter={StaticResource NumberColor}}"/>
+                    </StackLayout>
+                    <Label Text="{Binding TargetRating}"/>
+                    <Label Text="{Binding NetworkAverage}" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}"/>
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding Status}" FontSize="Medium" TextColor="{Binding StatusIndex, Converter={StaticResource StatusColorAlt}}" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding AccuracyString}" FontSize="Medium" TextColor="{Binding AccuracyNumber, Converter={StaticResource StatusColorAlt}}" VerticalTextAlignment="Center"/>
+                </StackLayout>                
+            </FlexLayout>
+
+            <FlexLayout Direction="Row" Margin="10" AlignItems="Center"  JustifyContent="Center" Wrap="Wrap">
+                <StackLayout>
+                    <Button x:Name="PBreakdown" Text="Prediction Breakdown" Margin="5" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" Clicked="PBreakdown_Clicked"/>
+                </StackLayout>
+
+                <StackLayout>
+                    <Button x:Name="RBreakdown" Text="Ratings" Margin="5" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" Clicked="RBreakdown_Clicked"/>
+                </StackLayout>                
+            </FlexLayout>            
+
+            <Label Text="{Binding Overview}" Margin="10" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}"/>
+            <Button x:Name="ShowPage" Text="More Details" IsVisible="{Binding ShowDetails}" HorizontalOptions="Center" Margin="10" Clicked="ShowPage_Clicked"/>
+            
+            <StackLayout IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" HorizontalOptions="Center" Margin="10">
+                <Label Text="More information:" HorizontalOptions="Center" IsVisible="{Binding isLoaded}"/>
+                <StackLayout Orientation="Horizontal" IsVisible="{Binding isLoaded}">
+                    <Button x:Name="IMDB" Text="IMDb" Clicked="IMDB_Clicked"/>
+                    <Button x:Name="TVDB" Text="TVDB" Clicked="TVDB_Clicked"/>
+                </StackLayout>                
+            </StackLayout>
+            
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

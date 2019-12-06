@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.RatingsBreakdown">
+  <ContentView.Content>
+        <StackLayout Margin="15">
+            <Grid Margin="15,10,15,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Text="Episode"/>
+                <Label Text="Episode Rating" Grid.Column="1"/>
+                <Label Text="Running Average" Grid.Column="2"/>
+            </Grid>
+
+            <ListView x:Name="RatingsList" Margin="15">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="{Binding Episode}"/>
+                                <Label Text="{Binding Rating}" Grid.Column="1" TextColor="{Binding Color}"/>
+                                <Label Text="{Binding Average}" Grid.Column="2" TextColor="{Binding Color}"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Label x:Name="IsProjected" Text="Red = Projected Value" TextColor="IndianRed" FontSize="Small"/>
+
+            <Label x:Name="FinalRating" FontSize="Large"/>
+
+            <Label Text="Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions." LineBreakMode="WordWrap"/>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

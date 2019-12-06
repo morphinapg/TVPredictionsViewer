@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TVPredictionsViewer"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.ScoreBoard" ControlTemplate="{StaticResource MainNavigationPage}" BackgroundColor="{DynamicResource PageBackground}">
+    <ContentPage.Resources>
+        <ResourceDictionary Source="GlobalStyle.xaml"/>
+    </ContentPage.Resources>
+
+    <NavigationPage.TitleView>
+        <controls:TitleTemplate x:Name="Bar" Title="Prediction Results"/>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid x:Name="Grid1" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" x:Name="FirstColumn"/>
+                <ColumnDefinition Width="0" x:Name="SecondColumn"/>
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Spacing="0">
+                <StackLayout x:Name="Options" Margin="10" WidthRequest="530" HorizontalOptions="Center">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackLayout Orientation="Horizontal" VerticalOptions="End" x:Name="NetworkLayout" Padding="0,0,0,5">
+                            <CheckBox IsChecked="{Binding Filtered, Mode=TwoWay}" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                            <Label Text="Filter By Network: " VerticalOptions="Center" Margin="5"/>
+                        </StackLayout>
+
+                        <Picker Grid.Column="2" ItemsSource="{Binding NetworkList}" IsEnabled="{Binding Filtered}" VerticalOptions="End" Margin="5" SelectedIndex="{Binding SelectedNetwork}"/>
+                    </Grid>
+
+
+                    <StackLayout Orientation="Horizontal" x:Name="YearLayout">
+                        <CheckBox IsChecked="{Binding AllYears, Mode=TwoWay}" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                        <Label Text="Show results for all years combined" VerticalOptions="Center" Margin="5"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" x:Name="ModelLayout" HeightRequest="60">
+                        <CheckBox IsChecked="{Binding CurrentModel, Mode=TwoWay}" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                        <Label Text="Show results as they would have been using the current prediction model" LineBreakMode="WordWrap" VerticalOptions="CenterAndExpand" Margin="5"/>
+                    </StackLayout>
+                </StackLayout>
+
+                <Button x:Name="OptionsButton" HorizontalOptions="FillAndExpand" FontSize="Caption" Text="↑ Options ↑" Clicked="Options_Clicked" Padding="0">
+                    <Button.Margin>
+                        <OnPlatform x:TypeArguments="Thickness">
+                            <On Platform="Android" Value="-5"/>
+                            <On Platform="UWP" Value="0"/>
+                        </OnPlatform>
+                    </Button.Margin>
+                    <Button.HeightRequest>
+                        <OnPlatform x:TypeArguments="x:Double">
+                            <On Platform="Android" Value="28"/>
+                            <On Platform="UWP" Value="-1"/>
+                        </OnPlatform>
+                    </Button.HeightRequest>
+                </Button>
+
+                <ListView x:Name="ShowList" ItemsSource="{Binding Predictions}" IsGroupingEnabled="True" HasUnevenRows="True" Margin="0,0,0,5" ItemTapped="ShowList_ItemTapped" SeparatorColor="Transparent">
+                    <ListView.GroupHeaderTemplate>
+                        <DataTemplate>
+                            <ViewCell Height="25">
+                                <Grid BackgroundColor="{DynamicResource PredictionHeader}">
+                                    <Label Text="{Binding Category}" FontSize="Small" TextColor="{DynamicResource TitleText}" VerticalOptions="Center" Margin="5,0,0,0"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.GroupHeaderTemplate>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.RowSpan="2" Grid.ColumnSpan="3"  BackgroundColor="{DynamicResource DetailBackground}" IsVisible="{Binding ShowFinal}"/>
+
+                                    <Label Text="{Binding Name}" FontSize="Medium" Margin="5"/>
+
+                                    <Label Grid.Column="2" VerticalTextAlignment="Center" HorizontalTextAlignment="End">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <FormattedString.Spans>
+                                                    <Span Text="{Binding Status}" FontSize="Small" TextColor="{Binding StatusIndex, Converter={StaticResource StatusColorAlt}}" />
+                                                    <Span Text=" " FontSize="Small"/>
+                                                    <Span Text="{Binding AccuracyString}" FontSize="Small" TextColor="{Binding AccuracyNumber, Converter={StaticResource StatusColorAlt}}"/>
+                                                </FormattedString.Spans>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+                                    <!--<Label Grid.Column="2" Text="{Binding Status}" FontSize="Medium" TextColor="{Binding StatusIndex, Converter={StaticResource StatusColorAlt}}" VerticalTextAlignment="Center"/>
+                                <Label Grid.Column="3" Text="{Binding AccuracyString}" FontSize="Medium" TextColor="{Binding AccuracyNumber, Converter={StaticResource StatusColorAlt}}" VerticalTextAlignment="Center"/>-->
+
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="3" IsVisible="{Binding ShowFinal}" Margin="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Text="{Binding FinalText}" FontSize="Small" Opacity="0.5" VerticalTextAlignment="Center"/>
+                                        <Label Grid.Column="2" Text="{Binding FinalPrediction}" FontSize="Medium" FontAttributes="Italic" Opacity="0.5" Margin="10,0,0,0" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+
+                                        <Button Grid.Row="1" Grid.ColumnSpan="3" x:Name="ShowPage" Text="More Details" IsVisible="{Binding ShowDetails}" HorizontalOptions="Center" Margin="10" Clicked="ShowPage_Clicked"/>
+                                    </Grid>
+
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Label x:Name="Accuracy" FontSize="Large" HorizontalOptions="Center" Margin="10"/>
+                <Label Text="Note: Some years don't have prediction result history." HorizontalOptions="Center" FontSize="Micro" Opacity="0.5"/>
+            </StackLayout>
+
+            <Grid x:Name="SideColumn" Grid.Column="1" IsVisible="False" BackgroundColor="{DynamicResource DetailBackground}" RowSpacing="0" ColumnSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" x:Name="ImageRow"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+                <ActivityIndicator x:Name="ImageLoading" IsRunning="True" IsVisible="False" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+
+                <ScrollView Grid.Row="1">
+                    <controls:ShowDetails x:Name="SidePanel" IsVisible="False"/>
+                </ScrollView>
+
+                <Label x:Name="TVDBNotice" Grid.Row="2" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End"/>
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

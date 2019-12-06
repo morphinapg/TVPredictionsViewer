@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.Settings">
+  <ContentView.Content>
+        <StackLayout>
+            <TableView HasUnevenRows="True" Margin="15">
+                <TableRoot>
+                    <TableSection Title="Look and Feel" TextColor="{DynamicResource PageText}">
+                        <ViewCell x:Name="OddsCell" Tapped="OddsCell_Tapped">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Use Odds instead of Confidence %" Margin="10"/>
+                                <Switch IsToggled="{Binding UseOdds, Mode=TwoWay}" Margin="5" Grid.Column="1"/>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Sort Predictions By:" VerticalOptions="End" Margin="10"/>
+                                <Picker Grid.Column="1" VerticalOptions="EndAndExpand" Margin="5" SelectedIndex="{Binding Sort, Mode=TwoWay}">
+                                    <Picker.Items>
+                                        <x:String>Renewal Odds</x:String>
+                                        <x:String>Season Rating</x:String>
+                                        <x:String>Show Name</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell x:Name="HomeCell" Tapped="HomeCell_Tapped">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Home Button" Margin="10"/>
+                                <Switch IsToggled="{Binding UseHome, Mode=TwoWay}" Margin="5" Grid.Column="1"/>
+                            </Grid>
+                        </ViewCell>
+                        <!--<ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Theme:" VerticalOptions="End" Margin="10"/>
+                                <Picker Grid.Column="1" VerticalOptions="End" Margin="5" SelectedIndex="{Binding Theme, Mode=TwoWay}">
+                                    <Picker.Items>
+                                        <x:String>Light Theme</x:String>
+                                        <x:String>Dark Theme</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                            </Grid>
+                        </ViewCell>-->
+                        <TextCell/>
+                    </TableSection>
+                    <TableSection Title="Troubleshooting">
+                        <ViewCell>
+                            <Button x:Name="Refresh" Clicked="Refresh_Clicked" Text="Refresh Predictions" Margin="5"/>
+                        </ViewCell>
+                        <ViewCell>
+                            <Button x:Name="Fix" Text="Fix Incorrect Show Details" Clicked="Fix_Clicked" Margin="5"/>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ImageButton Source="facebook.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="ImageButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
+            </Grid>
+            
+        </StackLayout>        
+  </ContentView.Content>
+</ContentView>

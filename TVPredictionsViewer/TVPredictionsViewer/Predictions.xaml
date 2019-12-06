@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:TV_Ratings_Predictions"
+             xmlns:controls="clr-namespace:TVPredictionsViewer"
+             mc:Ignorable="d"
+             x:Class="TVPredictionsViewer.Predictions" ControlTemplate="{StaticResource MainNavigationPage}"
+             BackgroundColor="{DynamicResource PageBackground}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="GlobalStyle.xaml"/>
+    </ContentPage.Resources>
+    
+    <NavigationPage.TitleView>
+        <controls:TitleTemplate x:Name="Bar"/>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid x:Name="Grid1" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" x:Name="FirstColumn"/>
+                <ColumnDefinition Width="0" x:Name="SecondColumn"/>
+            </Grid.ColumnDefinitions>
+            
+            <ListView ItemsSource="{Binding PredictionList}" x:Name="ShowsList" IsGroupingEnabled="True" HasUnevenRows="True" ItemTapped="ShowsList_ItemTapped" HorizontalOptions="Fill" SeparatorColor="Transparent">
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell Height="25">
+                            <Grid BackgroundColor="{DynamicResource PredictionHeader}">
+                                <Label Text="{Binding Category}" FontSize="Small" TextColor="{DynamicResource TitleText}" VerticalOptions="Center" Margin="5,0,0,0"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid RowSpacing="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                
+                                <Label Text="{Binding Name}" FontSize="Medium" VerticalTextAlignment="Center" Margin="5" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}"/>
+                                <Label Grid.Column="1" Text="{Binding NewShow}" FontSize="Small" VerticalTextAlignment="Center" Margin="5" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" TextColor="DarkGoldenrod"/>
+                                
+                                
+                                <Label Text="{Binding Change}" Grid.Column="2" VerticalTextAlignment="Center" FontSize="Large" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" TextColor="{Binding PredictionDiff, Converter={StaticResource StatusColor}}"/>
+
+
+                                <Label Grid.Column="4" Text="{Binding Status}" FontSize="Small" TextColor="{Binding StatusIndex, Converter={StaticResource StatusColor}}" Margin="5" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" HorizontalTextAlignment="End"/>
+
+                                <controls:ShowDetails Grid.Row="1" Grid.ColumnSpan="4" IsVisible="{Binding ShowDetails}"/>
+                            </Grid>
+
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid x:Name="SideColumn" Grid.Column="1" IsVisible="False" BackgroundColor="{DynamicResource DetailBackground}" RowSpacing="0" ColumnSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" x:Name="ImageRow"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+                <ActivityIndicator x:Name="ImageLoading" IsRunning="True" IsVisible="False" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+
+                <ScrollView Grid.Row="1">
+                    <controls:ShowDetails x:Name="SidePanel" IsVisible="False"/>
+                </ScrollView>
+
+                <Label x:Name="TVDBNotice" Grid.Row="2" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End"/>
+            </Grid>
+        </Grid>        
+    </ContentPage.Content>
+</ContentPage>
