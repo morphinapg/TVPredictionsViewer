@@ -444,10 +444,10 @@ namespace TVPredictionsViewer
 
                 bool reload = false;
 
-                if (!NetworkDatabase.ShowIDs.ContainsKey(p.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.Name))
+                if (!NetworkDatabase.ShowIDs.ContainsKey(p.show.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.show.Name))
                     reload = true;
 
-                var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
+                var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
 
                 if (ID > 0)
                 {
