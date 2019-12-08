@@ -63,13 +63,13 @@ namespace TVPredictionsViewer
                 {
                     case "Ratings":
                         {
-                            var TempList = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.show.AverageRating).ToList();
+                            var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.show.AverageRating).ToList();
                             MiniNetwork.AddPredictions_Ratings(TempList, ref PredictionList);
                             break;
                         }
                     case "Name":
                         {
-                            var TempList = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.Predictions).SelectMany(x => x).OrderBy(x => x.Name).ToList();
+                            var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderBy(x => x.Name).ToList();
                             MiniNetwork.AddPredictions_Name(TempList, ref PredictionList);
                             break;
                         }
@@ -86,7 +86,7 @@ namespace TVPredictionsViewer
 
         static void Filter_Odds(ref ObservableCollection<ListOfPredictions> PredictionList)
         {
-            var tempPredictions = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.odds);
+            var tempPredictions = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.odds);
             MiniNetwork.AddPredictions_Odds(tempPredictions, ref PredictionList);
         }
 

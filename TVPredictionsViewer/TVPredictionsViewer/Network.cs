@@ -64,6 +64,7 @@ namespace TV_Ratings_Predictions
                 foreach (Show s in FilteredShows)
                     p.Add(new PredictionContainer(s, this, Adjustments[year], average, false, UseYear, UseFinal));
                 Predictions.Add(p);
+                Predictions.Add(p);
             }
             else
             {
@@ -105,6 +106,8 @@ namespace TV_Ratings_Predictions
 
         public static void AddPredictions_Odds(OrderedParallelQuery<PredictionContainer> tempPredictions, ref ObservableCollection<ListOfPredictions> Predictions, bool UseFinal = false)
         {
+            Predictions.Clear();
+
             ListOfPredictions
                 CertainRenewed = new ListOfPredictions { Category = "Certain Renewal" },
                 LikelyRenewed = new ListOfPredictions { Category = "Likely Renewal" },
@@ -147,6 +150,8 @@ namespace TV_Ratings_Predictions
 
         public static void AddPredictions_Ratings(List<PredictionContainer> TempList, ref ObservableCollection<ListOfPredictions> Predictions)
         {
+            Predictions.Clear();
+
             var count = TempList.Count() - 1;
 
             //Determine Percentile rating scores
@@ -195,6 +200,8 @@ namespace TV_Ratings_Predictions
 
         public static void AddPredictions_Name(List<PredictionContainer> TempList, ref ObservableCollection<ListOfPredictions> Predictions)
         {
+            Predictions.Clear();
+
             var count = TempList.Count() - 1;
 
             //Determine Percentile Letters
