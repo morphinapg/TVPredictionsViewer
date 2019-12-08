@@ -1,0 +1,5 @@
+﻿Fixed a bug which would crash the app if "Filter by network" was selected, but a network wasn't chosen, in Prediction Results
+Fixed a bug related to adding predictions to a list
+Fixed a bug that occurred when changing the option to display odds
+Fixed a bug that was triggered on device rotation
+Fixed a bug related to calculating what week the predictions represent

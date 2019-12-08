@@ -178,7 +178,8 @@ namespace TVPredictionsViewer
                     NetworkList.IsVisible = true;
                 }
 
-                File.SetLastWriteTime(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), NetworkDatabase.NetworkList.FirstOrDefault().PredictionTime);
+                if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                    File.SetLastWriteTime(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), NetworkDatabase.NetworkList.FirstOrDefault().PredictionTime);
 
                 if (!home.Completed)
                     home.CompletedSettings();

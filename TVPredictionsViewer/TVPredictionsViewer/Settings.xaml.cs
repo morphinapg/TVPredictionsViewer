@@ -30,16 +30,22 @@ namespace TVPredictionsViewer
                 Application.Current.Properties["UseOdds"] = value;
 
                 if (UseNetwork)
-                    network.Predictions.AsParallel().SelectMany(x => x).ForAll(x => x.OnPropertyChanged("Prediction"));
+                    network.Predictions.AsParallel().Where(x => x.Count > 0).SelectMany(x => x).ForAll(x => x.OnPropertyChanged("Prediction"));
 
                 if (UsePredictionList)
-                    PredictionList.AsParallel().SelectMany(x => x).ForAll(x => x.OnPropertyChanged("Prediction"));
+                    PredictionList.AsParallel().Where(x => x.Count > 0).SelectMany(x => x).ForAll(x => x.OnPropertyChanged("Prediction"));
 
                 if (UsePrediction)
                     prediction.OnPropertyChanged("Prediction");
 
                 if (parent is Predictions)
-                    (parent as Predictions).PreviousItem.OnPropertyChanged("Prediction");
+                {
+                    var item = (parent as Predictions).PreviousItem;
+
+                    if (item != null)
+                        item.OnPropertyChanged("Prediction");
+                }
+                    
             }
         }
 

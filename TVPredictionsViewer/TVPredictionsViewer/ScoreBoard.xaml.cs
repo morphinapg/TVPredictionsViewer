@@ -210,9 +210,12 @@ namespace TVPredictionsViewer
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                var oldyear = NetworkDatabase.CurrentYear;
-                NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
-                if (!AllYears && Predictions.Count > 0 && NetworkDatabase.CurrentYear != oldyear) LoadPredictions();
+                if (YearList.Position > -1)
+                {
+                    var oldyear = NetworkDatabase.CurrentYear;
+                    NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
+                    if (!AllYears && Predictions.Count > 0 && NetworkDatabase.CurrentYear != oldyear) LoadPredictions();
+                }                
             });
 
         }

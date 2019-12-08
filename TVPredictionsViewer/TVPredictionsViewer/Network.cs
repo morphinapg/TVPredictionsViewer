@@ -221,8 +221,6 @@ namespace TV_Ratings_Predictions
 
             foreach (PredictionContainer p in TempList)
             {
-                var rating = Math.Round(p.show.AverageRating, 2);
-
                 if (p.Name[0] <= P80)
                     First.Add(p);
                 else if (p.Name[0] <= P60)
@@ -1419,7 +1417,7 @@ namespace TV_Ratings_Predictions
             }
             set
             {
-                if (_currentyear != value)
+                if (_currentyear != value && value > -1)
                 {
                     _currentyear = value;
                     foreach (MiniNetwork n in NetworkList)

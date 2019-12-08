@@ -327,7 +327,6 @@ namespace TVPredictionsViewer
             CurrentStatus.Text = "Downloading Latest Predictions...";
 
             RefreshPredictions.IsVisible = false;
-            var main = Parent.Parent as MainPage;
             await NetworkDatabase.ReadUpdateAsync();
         }
     }
@@ -350,7 +349,9 @@ namespace TVPredictionsViewer
         public PredictionWeek()
         {
             var path = Path.Combine(NetworkDatabase.Folder, "Predictions.TVP");
-            var now = (File.Exists(path)) ? File.GetLastWriteTime(path) : DateTime.Now;
+            var now = (NetworkDatabase.NetworkList != null && NetworkDatabase.NetworkList.Count > 0) ? NetworkDatabase.NetworkList[0].PredictionTime :
+                (File.Exists(path)) ? File.GetLastWriteTime(path) : DateTime.Now;
+
             Saturday = now.AddDays(-1);
 
             while (Saturday.DayOfWeek != DayOfWeek.Saturday)
