@@ -64,7 +64,6 @@ namespace TV_Ratings_Predictions
                 foreach (Show s in FilteredShows)
                     p.Add(new PredictionContainer(s, this, Adjustments[year], average, false, UseYear, UseFinal));
                 Predictions.Add(p);
-                Predictions.Add(p);
             }
             else
             {
