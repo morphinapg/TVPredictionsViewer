@@ -176,15 +176,14 @@ namespace TVPredictionsViewer
 
                     NetworkList.ItemsSource = NetworkDatabase.NetworkList;
                     NetworkList.IsVisible = true;
-
-                    if (!home.Completed)
-                        home.CompletedSettings();
-                    else
-                        home.RefreshYearlist();
                 }
 
                 File.SetLastWriteTime(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), NetworkDatabase.NetworkList.FirstOrDefault().PredictionTime);
 
+                if (!home.Completed)
+                    home.CompletedSettings();
+                else
+                    home.RefreshYearlist();
             }
         }
 
