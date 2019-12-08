@@ -88,7 +88,34 @@ namespace TVPredictionsViewer
 
         async void LoadImage(PredictionContainer p)
         {
+            //var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
+            //if (ID > 0)
+            //{
+            //    ShowImage.Source = new UriImageSource
+            //    {
+            //        Uri = await NetworkDatabase.GetImageURI(ID),
+            //        CachingEnabled = true,
+            //        CacheValidity = new TimeSpan(90, 0, 0, 0)
+            //    };                    
+
+            //    p.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+            //    if (ShowImage.Source != null)
+            //    {
+            //        ShowImage.IsVisible = true;
+            //        p.IsLoaded = true;
+            //        ImageLoading.IsVisible = false;
+            //    }
+
+            //}
+
+            bool reload = false;
+
+            if (!NetworkDatabase.ShowIDs.ContainsKey(p.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.Name))
+                reload = true;
+
             var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
+
             if (ID > 0)
             {
                 ShowImage.Source = new UriImageSource
@@ -96,17 +123,31 @@ namespace TVPredictionsViewer
                     Uri = await NetworkDatabase.GetImageURI(ID),
                     CachingEnabled = true,
                     CacheValidity = new TimeSpan(90, 0, 0, 0)
-                };                    
-                    
+                };
                 p.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                 if (ShowImage.Source != null)
                 {
-                    ShowImage.IsVisible = true;
                     p.IsLoaded = true;
+                    ShowImage.IsVisible = true;
                     ImageLoading.IsVisible = false;
                 }
-                
+            }
+
+            if (reload)
+            {
+                ID = await NetworkDatabase.GetShowID(p.Name, p.network.name, true);
+
+                if (ID > 0)
+                {
+                    ShowImage.Source = new UriImageSource
+                    {
+                        Uri = await NetworkDatabase.GetImageURI(ID),
+                        CachingEnabled = true,
+                        CacheValidity = new TimeSpan(90, 0, 0, 0)
+                    };
+                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
+                }
             }
 
             var TVDBText = "TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates.";

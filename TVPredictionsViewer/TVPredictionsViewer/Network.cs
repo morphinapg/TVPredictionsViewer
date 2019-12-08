@@ -1560,7 +1560,7 @@ namespace TV_Ratings_Predictions
             }
         }
         
-        public static async Task<int> GetShowID(string name, string network)
+        public static async Task<int> GetShowID(string name, string network, bool ForceDownload = false)
         {
             if (ShowIDs.ContainsKey(name))
                 return ShowIDs[name];
@@ -1572,18 +1572,30 @@ namespace TV_Ratings_Predictions
                         await RefreshTVDB();
 
                     if (TVDBerror)
-                        await AuthenticateTVDB();                    
+                        await AuthenticateTVDB();
 
-                    var result = await GetSearchResults(name);
+                    var key = "SHOWID " + name;
 
-                    
+                    if (Application.Current.Properties.ContainsKey(key) && !ForceDownload)
+                    {
+                        await ReadBackup(0, name);
+
+                        if (ShowIDs.ContainsKey(name))
+                        {
+                            var id = ShowIDs[name];
+                            if (ShowDescriptions.ContainsKey(id) && ShowSlugs.ContainsKey(id) && ShowImages.ContainsKey(id))
+                                return id;
+                        }
+                    }
+
+                    var result = await GetSearchResults(name);                    
 
                     var data = result.Data.Where(x => !String.IsNullOrEmpty(x.SeriesName)).ToList();
                     var networkdata = data.Where(x => !String.IsNullOrEmpty(x.Network)).ToList();
 
                     List<TvDbSharper.Dto.SeriesSearchResult> showResults = new List<TvDbSharper.Dto.SeriesSearchResult>();
 
-                    var key = "SHOWID " + name;
+                    
 
                     if (Application.Current.Properties.ContainsKey(key))
                         showResults = data.Where(x => x.Id == (int)Application.Current.Properties[key]).ToList();
@@ -1650,7 +1662,7 @@ namespace TV_Ratings_Predictions
                 {
                     TVDBerror = true;
                     if (!ShowIDs.ContainsKey(name))
-                        await ReadBackup();
+                        await ReadBackup(0, name);
 
                     if (ShowIDs.ContainsKey(name))
                         return ShowIDs[name];
@@ -1670,7 +1682,7 @@ namespace TV_Ratings_Predictions
         public static async Task<Uri> GetImageURI(int ID)
         {
             if (!ShowImages.ContainsKey(ID))
-                await ReadBackup();
+                await ReadBackup(ID, "");
 
             try
             {
@@ -1685,7 +1697,7 @@ namespace TV_Ratings_Predictions
         public static async Task<Uri> GetIMDBuri(string name)
         {
             if (!ShowIDs.ContainsKey(name))
-                await ReadBackup();
+                await ReadBackup(0, name);
 
             if (!ShowIDs.ContainsKey(name))
             {
@@ -1781,6 +1793,22 @@ namespace TV_Ratings_Predictions
                     }
                 }
 
+                //if (Application.Current.Properties.ContainsKey("Backup"))
+                //{
+                //    var OldBackup = Application.Current.Properties["Backup"] as BackupData;
+
+                //    OldBackup.ShowIDs.Where(x => !NewBackup.ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                //    {
+                //        NewBackup.ShowIDs[x.Key] = x.Value;
+                //        NewBackup.ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
+                //        NewBackup.IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
+                //        NewBackup.ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
+                //        NewBackup.ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                //    });
+                //}
+
+                //Application.Current.Properties["Backup"] = NewBackup;
+
                 try
                 {
                     using (var fs = new FileStream(Path.Combine(Folder, "backup"), FileMode.Create))
@@ -1798,7 +1826,7 @@ namespace TV_Ratings_Predictions
             backup = false;
         }
 
-        public static async Task ReadBackup()
+        public static async Task ReadBackup(int ID, string name)
         {
             await Task.Run(() =>
             {
@@ -1812,7 +1840,7 @@ namespace TV_Ratings_Predictions
                             var OldBackup = serializer.ReadObject(fs) as BackupData;
 
                             //Append any missing OldBackup data
-                            OldBackup.ShowIDs.Where(x => !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                            OldBackup.ShowIDs.Where(x => (x.Key == name || x.Value == ID) && !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
                             {
                                 ShowIDs[x.Key] = x.Value;
                                 ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
@@ -1822,11 +1850,26 @@ namespace TV_Ratings_Predictions
                             });
                         }
                     }
-                    catch (Exception) 
+                    catch (Exception)
                     {
                         //backup is corrupted, do not read
                     }
                 }
+
+                //if (Application.Current.Properties.ContainsKey("Backup"))
+                //{
+                //    var OldBackup = Application.Current.Properties["Backup"] as BackupData;
+
+                //    //Append any missing OldBackup data
+                //    OldBackup.ShowIDs.Where(x => (x.Key == name || x.Value == ID) && !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                //    {
+                //        ShowIDs[x.Key] = x.Value;
+                //        ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
+                //        IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
+                //        ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
+                //        ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                //    });
+                //}
             });
         }
     }

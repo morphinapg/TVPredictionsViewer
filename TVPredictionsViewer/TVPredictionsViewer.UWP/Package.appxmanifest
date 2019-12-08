@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="096f4168-8c77-4c1d-a425-551d8604f7e9"
-    Publisher="CN=27534dc9-1e19-4ed2-bbb8-496f57a77b44"
+    Name="TVPredictions"
+    Publisher="CN=4C605CC3-8DAB-4DB3-ACF5-65D6EF623CBF"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="20dcdef9-afb9-4555-a8db-e19828be12e5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>TV Predictions</DisplayName>

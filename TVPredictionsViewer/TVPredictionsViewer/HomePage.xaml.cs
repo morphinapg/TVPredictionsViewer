@@ -51,7 +51,7 @@ namespace TVPredictionsViewer
 
         public void CompletedUpdate(string update)
         {
-            PredictionWeek.Text = CurrentWeek();
+            
 
             CurrentStatus.Text = update;
 
@@ -186,6 +186,8 @@ namespace TVPredictionsViewer
 
         public async void CompletedSettings()
         {
+            PredictionWeek.Text = CurrentWeek();
+
             YearList = FindTemplateElementByName<CarouselViewControl>(this, "YearList");
             Activity = FindTemplateElementByName<ActivityIndicator>(this, "Activity");
             SearchResults = FindTemplateElementByName<ResultsList>(this, "SearchResults");
@@ -214,6 +216,7 @@ namespace TVPredictionsViewer
 
         public void RefreshYearlist()
         {
+            PredictionWeek.Text = CurrentWeek();
             YearList.ItemsSource = NetworkDatabase.YearList;
         }
 

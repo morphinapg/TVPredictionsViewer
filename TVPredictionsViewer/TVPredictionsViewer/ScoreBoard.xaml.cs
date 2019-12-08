@@ -286,15 +286,56 @@ namespace TVPredictionsViewer
                         ShowImage.Source = null;
                         ImageLoading.IsVisible = true;
 
+                        //var ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name);
+
+                        //if (ID > 0)
+                        //{
+                        //    ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
+                        //    LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+                        //    ShowImage.IsVisible = true;
+                        //    ImageLoading.IsVisible = false;
+                        //}
+
+                        bool reload = false;
+
+                        if (!NetworkDatabase.ShowIDs.ContainsKey(LastItem.Name) && Application.Current.Properties.ContainsKey("SHOWID " + LastItem.Name))
+                            reload = true;
+
                         var ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name);
 
                         if (ID > 0)
                         {
-                            ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
+                            ShowImage.Source = new UriImageSource
+                            {
+                                Uri = await NetworkDatabase.GetImageURI(ID),
+                                CachingEnabled = true,
+                                CacheValidity = new TimeSpan(90, 0, 0, 0)
+                            };
                             LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
 
-                            ShowImage.IsVisible = true;
-                            ImageLoading.IsVisible = false;
+                            if (ShowImage.Source != null)
+                            {
+                                LastItem.IsLoaded = true;
+                                ShowImage.IsVisible = true;
+                                ImageLoading.IsVisible = false;
+                            }
+                        }
+
+                        if (reload)
+                        {
+                            ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name, true);
+
+                            if (ID > 0)
+                            {
+                                ShowImage.Source = new UriImageSource
+                                {
+                                    Uri = await NetworkDatabase.GetImageURI(ID),
+                                    CachingEnabled = true,
+                                    CacheValidity = new TimeSpan(90, 0, 0, 0)
+                                };
+                                LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+                            }
                         }
                     }
 
@@ -380,7 +421,33 @@ namespace TVPredictionsViewer
                 ShowImage.Source = null;
                 ImageLoading.IsVisible = true;
 
-                var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
+                //var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
+
+                //if (ID > 0)
+                //{
+                //    ShowImage.Source = new UriImageSource
+                //    {
+                //        Uri = await NetworkDatabase.GetImageURI(ID),
+                //        CachingEnabled = true,
+                //        CacheValidity = new TimeSpan(90, 0, 0, 0)
+                //    };
+
+                //    p.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+                //    if (ShowImage.Source != null)
+                //    {
+                //        p.IsLoaded = true;
+                //        ShowImage.IsVisible = true;
+                //        ImageLoading.IsVisible = false;
+                //    }
+                //}
+
+                bool reload = false;
+
+                if (!NetworkDatabase.ShowIDs.ContainsKey(p.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.Name))
+                    reload = true;
+
+                var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
 
                 if (ID > 0)
                 {
@@ -390,7 +457,6 @@ namespace TVPredictionsViewer
                         CachingEnabled = true,
                         CacheValidity = new TimeSpan(90, 0, 0, 0)
                     };
-
                     p.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                     if (ShowImage.Source != null)
@@ -398,6 +464,22 @@ namespace TVPredictionsViewer
                         p.IsLoaded = true;
                         ShowImage.IsVisible = true;
                         ImageLoading.IsVisible = false;
+                    }
+                }
+
+                if (reload)
+                {
+                    ID = await NetworkDatabase.GetShowID(p.Name, p.network.name, true);
+
+                    if (ID > 0)
+                    {
+                        ShowImage.Source = new UriImageSource
+                        {
+                            Uri = await NetworkDatabase.GetImageURI(ID),
+                            CachingEnabled = true,
+                            CacheValidity = new TimeSpan(90, 0, 0, 0)
+                        };
+                        p.Overview = NetworkDatabase.ShowDescriptions[ID];
                     }
                 }
 
