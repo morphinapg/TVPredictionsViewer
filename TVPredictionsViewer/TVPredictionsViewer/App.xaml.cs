@@ -22,6 +22,8 @@ namespace TVPredictionsViewer
             AppCenter.Start("android=5bff64d6-b3ee-45b1-9c79-b560516f6659;"+
                 "uwp=5cbe47d7-e007-4ef2-ba64-285b17cf5233;"
                 , typeof(Analytics), typeof(Crashes), typeof(Push));
+
+            Analytics.TrackEvent("App Load");
         }
 
         protected override void OnSleep()
