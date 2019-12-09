@@ -50,7 +50,7 @@ namespace TVPredictionsViewer
             LoadImage(p);
 
             if (RemoveStackAfterLoad)
-                this.Appearing += ShowDetailPage_Appearing;
+                Appearing += ShowDetailPage_Appearing;
         }
 
         private void ShowDetailPage_Appearing(object sender, EventArgs e)

@@ -27,7 +27,7 @@ namespace TVPredictionsViewer
 
         List<Year> FilteredYearList;
 
-        ObservableCollection<ListOfPredictions> Predictions = new ObservableCollection<ListOfPredictions>();
+        public ObservableCollection<ListOfPredictions> Predictions = new ObservableCollection<ListOfPredictions>();
 
         bool _filtered;
         public bool Filtered
@@ -94,6 +94,14 @@ namespace TVPredictionsViewer
             }
         }
 
+        public Grid MainGrid
+        {
+            get
+            {
+                return Grid1;
+            }
+        }
+
         public List<string> NetworkList { get { return NetworkDatabase.NetworkList.Select(x => x.Name).ToList(); } }
 
         public ScoreBoard(MiniNetwork n = null)
@@ -124,7 +132,7 @@ namespace TVPredictionsViewer
 
             YearList.PositionSelected += YearList_PositionSelected;
 
-            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
+            
             NetworkDatabase_CurrentYearUpdated(this, new EventArgs());
             NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
 
@@ -146,6 +154,12 @@ namespace TVPredictionsViewer
             ModelLayout.GestureRecognizers.Add(tapped);
 
             Appearing += ScoreBoard_Appearing;
+            Disappearing += ScoreBoard_Disappearing;
+        }
+
+        private void ScoreBoard_Disappearing(object sender, EventArgs e)
+        {
+            NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
         }
 
         private void SideColumn_SizeChanged(object sender, EventArgs e)
@@ -159,6 +173,8 @@ namespace TVPredictionsViewer
             //Because we will be loading predictions, we must remove other prediction pages from memory
             Navigation.NavigationStack.Where(x => x is Predictions).ToList().ForEach(x => Navigation.RemovePage(x));
             LoadPredictions();
+
+            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
         }
 
         private void Model_Tapped(object sender, EventArgs e)
@@ -506,10 +522,10 @@ namespace TVPredictionsViewer
             LastItem = p;
         }
 
-        private void ShowPage_Clicked(object sender, EventArgs e)
+        private async void ShowPage_Clicked(object sender, EventArgs e)
         {
             LastItem.IsShowPage = true;
-            Navigation.PushAsync(new ShowDetailPage(LastItem));
+            await Navigation.PushAsync(new ShowDetailPage(LastItem));
         }
 
         private async void Options_Clicked(object sender, EventArgs e)

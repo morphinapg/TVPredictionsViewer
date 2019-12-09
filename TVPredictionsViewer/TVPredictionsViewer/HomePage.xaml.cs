@@ -22,6 +22,9 @@ namespace TVPredictionsViewer
 
         public HomePage()
         {
+            Appearing += HomePage_Appearing;
+            Disappearing += HomePage_Disappearing;
+
             timer = new Timer(1000);
             timer.Elapsed += Timer_Elapsed;
             timer.AutoReset = false;
@@ -144,7 +147,7 @@ namespace TVPredictionsViewer
             return span;
         }
 
-        private Command NavigateToShow = new Command<NavigateParameter>((Param) =>
+        private Command NavigateToShow = new Command<NavigateParameter>(async (Param) =>
         {
             //This will Navigate to the most recent show with this name
             var Shows = new ConcurrentBag<PredictionContainer>();
@@ -155,13 +158,13 @@ namespace TVPredictionsViewer
             {
                 var SelectedShow = Shows.OrderByDescending(x => x.show.year).First();
 
-                Param.Parent.Navigation.PushAsync(new ShowDetailPage(SelectedShow));
+                await Param.Parent.Navigation.PushAsync(new ShowDetailPage(SelectedShow));
             }
             else
             {
                 var SelectedNetwork = NetworkDatabase.NetworkList.Where(x => x.name == Param.Text).First();
 
-                Param.Parent.Navigation.PushAsync(new Predictions(SelectedNetwork));
+                await Param.Parent.Navigation.PushAsync(new Predictions(SelectedNetwork));
             }
 
         });
@@ -198,7 +201,6 @@ namespace TVPredictionsViewer
             YearList.Position = NetworkDatabase.YearList.Count - 1;
             YearList.PositionSelected += YearList_PositionSelected;
 
-            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
 
             foreach (ToolbarItem t in new Toolbar(this).ToolBarItems)
                 ToolbarItems.Add(t);
@@ -212,6 +214,16 @@ namespace TVPredictionsViewer
             CurrentStatus.FormattedText = await FetchLabels();
 
             Completed = true;
+        }
+
+        private void HomePage_Disappearing(object sender, EventArgs e)
+        {
+            NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
+        }
+
+        private void HomePage_Appearing(object sender, EventArgs e)
+        {
+            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
         }
 
         public void RefreshYearlist()
@@ -256,16 +268,16 @@ namespace TVPredictionsViewer
             }
         }
 
-        public void NavigateToNetwork(MiniNetwork n)
+        public async void NavigateToNetwork(MiniNetwork n)
         {
             //HomeLayout.IsVisible = false;
             //PredictionFrame.IsVisible = true;
-            Navigation.PushAsync(new Predictions(n));
+            await Navigation.PushAsync(new Predictions(n));
         }
 
-        public void NavigateToAllNetworks()
+        public async void NavigateToAllNetworks()
         {
-            Navigation.PushAsync(new Predictions());
+            await Navigation.PushAsync(new Predictions());
         }
 
         public T FindTemplateElementByName<T>(Page page, string name) where T : Element

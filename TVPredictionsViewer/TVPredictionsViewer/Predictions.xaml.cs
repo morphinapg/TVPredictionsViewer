@@ -34,7 +34,8 @@ namespace TVPredictionsViewer
 
         public Predictions()
         {
-            this.Appearing += Predictions_Appearing;
+            Appearing += Predictions_Appearing;
+            Disappearing += Predictions_Disappearing;
             PredictionList = new ObservableCollection<ListOfPredictions>();
             isAllNetworks = true;
             foreach (ToolbarItem t in new Toolbar(this, PredictionList).ToolBarItems)
@@ -48,6 +49,11 @@ namespace TVPredictionsViewer
 
             Bar.Title = "All Networks";
             FinishLoading();
+        }
+
+        private void Predictions_Disappearing(object sender, EventArgs e)
+        {
+            NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
         }
 
         public static void UpdateFilter(ref ObservableCollection<ListOfPredictions> PredictionList)
@@ -92,7 +98,8 @@ namespace TVPredictionsViewer
 
         public Predictions(MiniNetwork n)
         {
-            this.Appearing += Predictions_Appearing;
+            Appearing += Predictions_Appearing;
+            Disappearing += Predictions_Disappearing;
             isAllNetworks = false;
             network = n;
             foreach (ToolbarItem t in new Toolbar(this, n).ToolBarItems)
@@ -123,7 +130,7 @@ namespace TVPredictionsViewer
             YearList.Position = NetworkDatabase.CurrentYear;
             YearList.PositionSelected += YearList_PositionSelected;
 
-            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
+            
 
             Activity.IsRunning = false;
             Activity.IsVisible = false;
@@ -139,6 +146,8 @@ namespace TVPredictionsViewer
 
         private void Predictions_Appearing(object sender, EventArgs e)
         {
+            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
+
             //Clear memory of old Predictions pages
             var stack = Navigation.NavigationStack;
             stack.Where(x => (x is Predictions && x != this) || x is ScoreBoard).ToList().ForEach(x => Navigation.RemovePage(x));

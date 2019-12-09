@@ -169,7 +169,11 @@ namespace TVPredictionsViewer
                             n.model.shows = n.shows;
                             n.pendingFilter = true;
 
-                            Parallel.ForEach(n.shows, s => s.factorNames = n.factors);
+                            Parallel.ForEach(n.shows, s =>
+                            {
+                                s.factorNames = n.factors;
+                                s.network = n;
+                            });
                             n.model.TestAccuracy(true);
                         }
                     });

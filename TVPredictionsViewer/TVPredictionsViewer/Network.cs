@@ -27,6 +27,9 @@ namespace TV_Ratings_Predictions
         public double[] RatingsAverages;
         public DateTime PredictionTime;
 
+        //public double[][] deviations;
+        //public double[] typicalDeviation;
+
         [NonSerialized]
         public bool pendingFilter = false;
 
@@ -63,6 +66,10 @@ namespace TV_Ratings_Predictions
                 
                 foreach (Show s in FilteredShows)
                     p.Add(new PredictionContainer(s, this, Adjustments[year], average, false, UseYear, UseFinal));
+
+                if (Predictions.Count > 0)
+                    throw new Exception("Predictions were not empty!");
+
                 Predictions.Add(p);
             }
             else
@@ -666,6 +673,9 @@ namespace TV_Ratings_Predictions
         [NonSerialized]
         public double _calculatedThreshold;
 
+        [NonSerialized]
+        public MiniNetwork network;
+
         string _name;
         public string Name
         {
@@ -870,6 +880,32 @@ namespace TV_Ratings_Predictions
         public double GetOdds(Show s, double adjustment, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
         {
             var threshold = modified ? GetModifiedThreshold(s, adjustment, index, index2, index3) : GetThreshold(s, adjustment);
+
+            //var target = GetTargetRating(s.year, threshold);
+            //var variance = Math.Log(s.AverageRating) - Math.Log(target);
+            //double deviation;
+
+            ////calculate standard deviation
+            //if (s.ratings.Count > 1)
+            //{
+            //    var count = s.ratings.Count - 1;
+            //    double ProjectionVariance = 0;
+            //    for (int i = 0; i < count; i++)
+            //        ProjectionVariance += Math.Pow(Math.Log(s.ratingsAverages[i] * s.network.AdjustAverage(i + 1, s.Episodes)) - Math.Log(s.AverageRating), 2);
+
+            //    deviation = s.network.deviations[s.ratings.Count - 1][s.Episodes - 1] * Math.Sqrt(ProjectionVariance / count) / s.network.typicalDeviation[s.ratings.Count - 1];
+            //}
+            //else
+            //{
+            //    deviation = s.network.deviations[0][s.Episodes - 1];
+            //}
+
+            //var zscore = variance / deviation;
+
+            //var normal = new NormalDistribution();
+
+            //var baseOdds = normal.DistributionFunction(zscore);
+
             var exponent = Math.Log(0.5) / Math.Log(threshold);
             var baseOdds = Math.Pow(s.ShowIndex, exponent);
 

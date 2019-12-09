@@ -20,12 +20,12 @@ namespace TVPredictionsViewer
             InitializeComponent();
         }
 
-        private void ShowPage_Clicked(object sender, EventArgs e)
+        private async void ShowPage_Clicked(object sender, EventArgs e)
         {
             var p = BindingContext as PredictionContainer;
             p.IsShowPage = true;
             var parent = Parent.Parent.Parent.Parent.Parent as Predictions;
-            parent.Navigation.PushAsync(new ShowDetailPage(p));
+            await parent.Navigation.PushAsync(new ShowDetailPage(p));
         }
 
         private async void IMDB_Clicked(object sender, EventArgs e)
@@ -45,14 +45,14 @@ namespace TVPredictionsViewer
             await Launcher.OpenAsync(uri);
         }
 
-        private void PBreakdown_Clicked(object sender, EventArgs e)
+        private async void PBreakdown_Clicked(object sender, EventArgs e)
         {
             var p = BindingContext as PredictionContainer;
             var name = p.Name;
 
             if (p.IsShowPage)
                 //Navigation.PushAsync(new PredictionBreakdown(p.show, p.network) { BackgroundColor = Content.BackgroundColor });
-                Navigation.PushAsync(new ViewPage(new PredictionBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
+                await Navigation.PushAsync(new ViewPage(new PredictionBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
             else
             {
                 var parent = Parent.Parent.Parent as Grid;
@@ -63,7 +63,7 @@ namespace TVPredictionsViewer
                 };
                 parent.Children.Add(BreakdownView);
                 Grid.SetColumn(BreakdownView, 1);
-                BreakdownView.FadeTo(1);
+                await BreakdownView.FadeTo(1);
             }
         }
 
@@ -79,14 +79,14 @@ namespace TVPredictionsViewer
                 
         }
 
-        private void RBreakdown_Clicked(object sender, EventArgs e)
+        private async void RBreakdown_Clicked(object sender, EventArgs e)
         {
             var p = BindingContext as PredictionContainer;
             var name = p.Name;
 
             if (p.IsShowPage)
                 //Navigation.PushAsync(new PredictionBreakdown(p.show, p.network) { BackgroundColor = Content.BackgroundColor });
-                Navigation.PushAsync(new ViewPage(new RatingsBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
+                await Navigation.PushAsync(new ViewPage(new RatingsBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
             else
             {
                 var parent = Parent.Parent.Parent as Grid;
@@ -97,7 +97,7 @@ namespace TVPredictionsViewer
                 };
                 parent.Children.Add(BreakdownView);
                 Grid.SetColumn(BreakdownView, 1);
-                BreakdownView.FadeTo(1);
+                await BreakdownView.FadeTo(1);
             }
         }
     }

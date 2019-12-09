@@ -46,14 +46,14 @@ namespace TVPredictionsViewer
             }
         }
 
-        private void Results_Clicked(object sender, EventArgs e)
+        private async void Results_Clicked(object sender, EventArgs e)
         {
-            Parent.Navigation.PushAsync(new ScoreBoard(network));
+            await Parent.Navigation.PushAsync(new ScoreBoard(network));
         }
 
-        private void About_Clicked(object sender, EventArgs e)
+        private async void About_Clicked(object sender, EventArgs e)
         {
-            Parent.Navigation.PushAsync(new ViewPage(new About(), "About"));
+            await Parent.Navigation.PushAsync(new ViewPage(new About(), "About"));
         }
 
         private async void Prediction_Clicked(object sender, EventArgs e)
@@ -64,18 +64,18 @@ namespace TVPredictionsViewer
                 await Parent.DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");
         }
 
-        private void Settings_Clicked(object sender, EventArgs e)
+        private async void Settings_Clicked(object sender, EventArgs e)
         {
             if (UsePredictionList)
-                Parent.Navigation.PushAsync(new ViewPage(new Settings(Parent, PredictionList), "Settings"));
+                await Parent.Navigation.PushAsync(new ViewPage(new Settings(Parent, PredictionList), "Settings"));
             else if (UseNetwork && UsePrediction)
-                Parent.Navigation.PushAsync(new ViewPage(new Settings(network, prediction), "Settings"));
+                await Parent.Navigation.PushAsync(new ViewPage(new Settings(network, prediction), "Settings"));
             else if (UseNetwork)
-                Parent.Navigation.PushAsync(new ViewPage(new Settings(Parent, network), "Settings"));
+                await Parent.Navigation.PushAsync(new ViewPage(new Settings(Parent, network), "Settings"));
             else if (UsePrediction)
-                Parent.Navigation.PushAsync(new ViewPage(new Settings(prediction), "Settings"));
+                await Parent.Navigation.PushAsync(new ViewPage(new Settings(prediction), "Settings"));
             else
-                Parent.Navigation.PushAsync(new ViewPage(new Settings(), "Settings"));
+                await Parent.Navigation.PushAsync(new ViewPage(new Settings(), "Settings"));
         }
 
         MiniNetwork network;

@@ -235,7 +235,7 @@ namespace TVPredictionsViewer
                 SearchResults.ItemsSource = Results;
         }
 
-        private void SearchResults_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void SearchResults_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (Fix)
             {
@@ -246,7 +246,7 @@ namespace TVPredictionsViewer
                 var p = SearchResults.SelectedItem as PredictionContainer;
                 p.IsShowPage = true;
                 p.DisplayYear = null;
-                NavigationParent.Navigation.PushAsync(new ShowDetailPage(p));
+                await NavigationParent.Navigation.PushAsync(new ShowDetailPage(p));
             }
         }
 
