@@ -26,6 +26,7 @@ namespace TVPredictionsViewer
         bool Window_Sizing = false;
         bool isAllNetworks = false;
         Timer timer;
+        static object PredictionLock = new object();
         //ObservableCollection<ListOfPredictions> Results = new ObservableCollection<ListOfPredictions>();
 
         public TitleTemplate TitleBar => Bar;
@@ -58,36 +59,39 @@ namespace TVPredictionsViewer
 
         public static void UpdateFilter(ref ObservableCollection<ListOfPredictions> PredictionList)
         {
-            PredictionList.Clear();
-            foreach (MiniNetwork n in NetworkDatabase.NetworkList)
-                if (n.pendingFilter)
-                    n.Filter(true);
-
-            if (Application.Current.Properties.ContainsKey("PredictionSort"))
+            lock (PredictionLock)
             {
-                switch (Application.Current.Properties["PredictionSort"] as string)
+                PredictionList.Clear();
+                foreach (MiniNetwork n in NetworkDatabase.NetworkList)
+                    if (n.pendingFilter)
+                        n.Filter(true);
+
+                if (Application.Current.Properties.ContainsKey("PredictionSort"))
                 {
-                    case "Ratings":
-                        {
-                            var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.show.AverageRating).ToList();
-                            MiniNetwork.AddPredictions_Ratings(TempList, ref PredictionList);
-                            break;
-                        }
-                    case "Name":
-                        {
-                            var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderBy(x => x.Name).ToList();
-                            MiniNetwork.AddPredictions_Name(TempList, ref PredictionList);
-                            break;
-                        }
-                    default:
-                        {
-                            Filter_Odds(ref PredictionList);
-                            break;
-                        }
+                    switch (Application.Current.Properties["PredictionSort"] as string)
+                    {
+                        case "Ratings":
+                            {
+                                var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderByDescending(x => x.show.AverageRating).ToList();
+                                MiniNetwork.AddPredictions_Ratings(TempList, ref PredictionList);
+                                break;
+                            }
+                        case "Name":
+                            {
+                                var TempList = NetworkDatabase.NetworkList.AsParallel().Where(x => x.Predictions.Count > 0).SelectMany(x => x.Predictions).SelectMany(x => x).OrderBy(x => x.Name).ToList();
+                                MiniNetwork.AddPredictions_Name(TempList, ref PredictionList);
+                                break;
+                            }
+                        default:
+                            {
+                                Filter_Odds(ref PredictionList);
+                                break;
+                            }
+                    }
                 }
-            }
-            else
-                Filter_Odds(ref PredictionList);
+                else
+                    Filter_Odds(ref PredictionList);
+            }            
         }
 
         static void Filter_Odds(ref ObservableCollection<ListOfPredictions> PredictionList)
