@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Accord.Statistics" Version="3.8.0" />
     <PackageReference Include="CarouselView.FormsPlugin" Version="5.2.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="2.6.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="2.6.2" />

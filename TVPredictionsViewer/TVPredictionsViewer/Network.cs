@@ -13,6 +13,7 @@ using TvDbSharper;
 using Plugin.Connectivity;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using Accord.Statistics.Distributions.Univariate;
 
 namespace TV_Ratings_Predictions
 {
@@ -27,8 +28,9 @@ namespace TV_Ratings_Predictions
         public double[] RatingsAverages;
         public DateTime PredictionTime;
 
-        //public double[][] deviations;
-        //public double[] typicalDeviation;
+        public double[][] deviations;
+        public double[] typicalDeviation;
+        public double TargetError;
 
         [NonSerialized]
         public bool pendingFilter = false;
@@ -881,33 +883,35 @@ namespace TV_Ratings_Predictions
         {
             var threshold = modified ? GetModifiedThreshold(s, adjustment, index, index2, index3) : GetThreshold(s, adjustment);
 
-            //var target = GetTargetRating(s.year, threshold);
-            //var variance = Math.Log(s.AverageRating) - Math.Log(target);
-            //double deviation;
+            var target = GetTargetRating(s.year, threshold);
+            var variance = Math.Log(s.AverageRating) - Math.Log(target);
+            double deviation;
 
-            ////calculate standard deviation
-            //if (s.ratings.Count > 1)
-            //{
-            //    var count = s.ratings.Count - 1;
-            //    double ProjectionVariance = 0;
-            //    for (int i = 0; i < count; i++)
-            //        ProjectionVariance += Math.Pow(Math.Log(s.ratingsAverages[i] * s.network.AdjustAverage(i + 1, s.Episodes)) - Math.Log(s.AverageRating), 2);
+            //calculate standard deviation
+            if (s.ratings.Count > 1)
+            {
+                var count = s.ratings.Count - 1;
+                double ProjectionVariance = 0;
+                for (int i = 0; i < count; i++)
+                    ProjectionVariance += Math.Pow(Math.Log(s.ratingsAverages[i] * s.network.AdjustAverage(i + 1, s.Episodes)) - Math.Log(s.AverageRating * s.network.AdjustAverage(count + 1, s.Episodes)), 2);
 
-            //    deviation = s.network.deviations[s.ratings.Count - 1][s.Episodes - 1] * Math.Sqrt(ProjectionVariance / count) / s.network.typicalDeviation[s.ratings.Count - 1];
-            //}
-            //else
-            //{
-            //    deviation = s.network.deviations[0][s.Episodes - 1];
-            //}
+                deviation = s.network.deviations[s.ratings.Count - 1][s.Episodes - 1] * Math.Sqrt(ProjectionVariance / count) / s.network.typicalDeviation[s.ratings.Count - 1];
+            }
+            else
+            {
+                deviation = s.network.deviations[0][s.Episodes - 1];
+            }
 
-            //var zscore = variance / deviation;
+            deviation += s.network.TargetError;
 
-            //var normal = new NormalDistribution();
+            var zscore = variance / deviation;
 
-            //var baseOdds = normal.DistributionFunction(zscore);
+            var normal = new NormalDistribution();
 
-            var exponent = Math.Log(0.5) / Math.Log(threshold);
-            var baseOdds = Math.Pow(s.ShowIndex, exponent);
+            var baseOdds = normal.DistributionFunction(zscore);
+
+            //var exponent = Math.Log(0.5) / Math.Log(threshold);
+            //var baseOdds = Math.Pow(s.ShowIndex, exponent);
 
             if (raw)
                 return baseOdds;

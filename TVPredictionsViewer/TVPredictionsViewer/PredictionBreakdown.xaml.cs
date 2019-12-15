@@ -338,7 +338,10 @@ namespace TVPredictionsViewer
                     Episodes = i,
                     Halfhour = s.Halfhour,
                     factorNames = s.factorNames,
-                    ShowIndex = s.ShowIndex
+                    ShowIndex = s.ShowIndex,
+                    ratings = s.ratings,
+                    ratingsAverages = s.ratingsAverages,
+                    network = s.network
                 };
 
                 OddsByEpisode[i] = network.model.GetOdds(tShow, Adjustments[tShow.year]);
@@ -421,7 +424,7 @@ namespace TVPredictionsViewer
                     var show = list.First();
                     var c = list.Count();
                     counts[x] = c;
-                    totalOdds[x] = network.model.GetOdds(new Show { Name = s.Name, year = s.year, factorValues = s.factorValues, Episodes = s.Episodes, Halfhour = s.Halfhour, factorNames = s.factorNames, ShowIndex = s.ShowIndex, AverageRating = s.AverageRating }, Adjustments[s.year]);
+                    totalOdds[x] = network.model.GetOdds(new Show { Name = s.Name, year = s.year, factorValues = s.factorValues, Episodes = s.Episodes, Halfhour = s.Halfhour, factorNames = s.factorNames, ShowIndex = s.ShowIndex, AverageRating = s.AverageRating, ratings = s.ratings, ratingsAverages = s.ratingsAverages, network = s.network }, Adjustments[s.year]);
                 });
 
                 var bo = totalOdds.Sum() / counts.Sum();
