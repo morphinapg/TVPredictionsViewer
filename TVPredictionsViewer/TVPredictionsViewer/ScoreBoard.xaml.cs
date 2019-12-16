@@ -132,7 +132,7 @@ namespace TVPredictionsViewer
 
             YearList.PositionSelected += YearList_PositionSelected;
 
-            
+
             NetworkDatabase_CurrentYearUpdated(this, new EventArgs());
             NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
 

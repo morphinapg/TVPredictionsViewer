@@ -40,8 +40,8 @@ namespace TVPredictionsViewer.UWP
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                List<Assembly> assembliesToInclude = new List<Assembly> { typeof(CarouselViewRenderer).GetTypeInfo().Assembly };
                 Xamarin.Forms.Forms.Init(e);
+                CarouselViewRenderer.Init();
 
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

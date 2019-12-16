@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using TV_Ratings_Predictions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using CarouselView.FormsPlugin.Abstractions;
 using System.ComponentModel;
 using System.Timers;
+using CarouselView.FormsPlugin.Abstractions;
 
 namespace TVPredictionsViewer
 {
@@ -134,8 +134,6 @@ namespace TVPredictionsViewer
             YearList.Position = NetworkDatabase.CurrentYear;
             YearList.PositionSelected += YearList_PositionSelected;
 
-            
-
             Activity.IsRunning = false;
             Activity.IsVisible = false;
 
@@ -161,7 +159,7 @@ namespace TVPredictionsViewer
         {
             if (YearList.Position > -1 && !Window_Sizing)
                 NetworkDatabase.CurrentYear = YearList.Position;
-                
+
         }
 
         private void NetworkDatabase_CurrentYearUpdated(object sender, EventArgs e)

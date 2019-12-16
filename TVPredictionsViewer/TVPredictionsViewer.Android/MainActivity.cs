@@ -7,9 +7,9 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using TV_Ratings_Predictions;
-using CarouselView.FormsPlugin.Android;
 using Android.Graphics;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using CarouselView.FormsPlugin.Android;
 
 namespace TVPredictionsViewer.Droid
 {
@@ -21,7 +21,7 @@ namespace TVPredictionsViewer.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            base.OnCreate(savedInstanceState);            
+            base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             CarouselViewRenderer.Init();

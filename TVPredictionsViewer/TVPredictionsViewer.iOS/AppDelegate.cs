@@ -24,6 +24,7 @@ namespace TVPredictionsViewer.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Xamarin.Forms.Forms.SetFlags("IndicatorView_Experimental");
             global::Xamarin.Forms.Forms.Init();
             CarouselViewRenderer.Init();
             NetworkDatabase.Folder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal);
