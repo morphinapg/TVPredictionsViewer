@@ -76,6 +76,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MathNet.Numerics">
       <HintPath>..\TVPredictionsViewer\MathNet.Numerics.dll</HintPath>
