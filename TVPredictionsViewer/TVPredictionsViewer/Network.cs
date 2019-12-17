@@ -13,7 +13,7 @@ using TvDbSharper;
 using Plugin.Connectivity;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using Accord.Statistics.Distributions.Univariate;
+using MathNet.Numerics.Distributions;
 
 namespace TV_Ratings_Predictions
 {
@@ -906,9 +906,9 @@ namespace TV_Ratings_Predictions
 
             var zscore = variance / deviation;
 
-            var normal = new NormalDistribution();
+            var normal = new Normal();
 
-            var baseOdds = normal.DistributionFunction(zscore);
+            var baseOdds = normal.CumulativeDistribution(zscore);
 
             //var exponent = Math.Log(0.5) / Math.Log(threshold);
             //var baseOdds = Math.Pow(s.ShowIndex, exponent);
@@ -957,8 +957,10 @@ namespace TV_Ratings_Predictions
             }
             else
             {
-                for (int i = 0; i < InputCount; i++)
-                    inputs[i] = GetScaledAverage(s, i);
+                return Math.Pow(GetAverageThreshold(true), adjustment);
+
+                //for (int i = 0; i < InputCount; i++)
+                //    inputs[i] = GetScaledAverage(s, i);
             }
 
 
@@ -1691,8 +1693,21 @@ namespace TV_Ratings_Predictions
                     ShowDescriptions[ID] = showResults.First().Overview;
                     ShowSlugs[ID] = showResults.First().Slug;
 
-                    var imgs = await client.Series.GetImagesAsync(ID, new TvDbSharper.Dto.ImagesQuery() { KeyType = TvDbSharper.Dto.KeyType.Series });
-                    ShowImages[ID] = imgs.Data.First().FileName;
+                    TvDbSharper.Dto.TvDbResponse<TvDbSharper.Dto.Image[]> imgs;
+                    
+                    try
+                    {
+                        imgs = await client.Series.GetImagesAsync(ID, new TvDbSharper.Dto.ImagesQuery() { KeyType = TvDbSharper.Dto.KeyType.Series });
+                    }
+                    catch (Exception)
+                    {
+                        imgs = new TvDbSharper.Dto.TvDbResponse<TvDbSharper.Dto.Image[]>();
+                    }
+
+                    if (imgs.Data is null)
+                        ShowImages[ID] = null;
+                    else
+                        ShowImages[ID] = imgs.Data.First().FileName;
 
                     IMDBList[ID] = "";
 

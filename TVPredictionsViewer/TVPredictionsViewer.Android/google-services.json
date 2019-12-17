@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236844191683:android:44a171d5a12b25d7dfb776",
+        "android_client_info": {
+          "package_name": "tvpredictions.TVPredictions"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "236844191683-cikhpkdqarluoer1fmesd86d10eskhfg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTTmmJ66zK1KpdxAGaGq-T2FxWbTMFgW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "236844191683-cikhpkdqarluoer1fmesd86d10eskhfg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

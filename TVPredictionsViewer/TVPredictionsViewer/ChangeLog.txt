@@ -1,4 +1,12 @@
-﻿1.1.0
+﻿1.1.1
+Small modification to push notifications
+Fix for "odds of renewal" setting not immediately taking effect in prediction results page
+Fixed a bug with prediction breakdowns if none of the factors contributed significantly to the odds
+Adjustment to how base odds in prediction breakdown is calculated
+Improved precision of prediction breakdown calculation
+Fixed an issue loading other details when a show is missing banner art on TVDB
+
+1.1.0
 Improved statistical precision of odds (this also had the effect of improving confidence in predictions for most shows)
 Improved performance switching years in prediction lists
 Fixed a potential bug that occured when switching years quickly

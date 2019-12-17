@@ -21,7 +21,7 @@ namespace TVPredictionsViewer
         ResultsList SearchResults = new ResultsList();
         public TitleTemplate TitleBar => Bar;
         Timer timer;
-        PredictionContainer LastItem;
+        public PredictionContainer LastItem;
         bool isDesktop = false;
         double height;
 
@@ -106,7 +106,7 @@ namespace TVPredictionsViewer
 
         public ScoreBoard(MiniNetwork n = null)
         {
-            foreach (ToolbarItem t in new Toolbar(this).ToolBarItems)
+            foreach (ToolbarItem t in new Toolbar(this, ref Predictions).ToolBarItems)
                 ToolbarItems.Add(t);
 
             timer = new Timer(100);

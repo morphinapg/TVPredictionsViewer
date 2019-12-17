@@ -45,6 +45,13 @@ namespace TVPredictionsViewer
                     if (item != null)
                         item.OnPropertyChanged("Prediction");
                 }
+                else if (parent is ScoreBoard)
+                {
+                    var item = (parent as ScoreBoard).LastItem;
+
+                    if (item != null)
+                        item.OnPropertyChanged("Prediction");
+                }
                     
             }
         }

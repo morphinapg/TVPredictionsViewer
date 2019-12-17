@@ -58,16 +58,19 @@ namespace TVPredictionsViewer
 
             foreach (SeriesSearchResult s in result.Data)
             {
+                TvDbResponse<TvDbSharper.Dto.Image[]> Images;
+
                 try
                 {
-                    var Images = await GetImages(s.Id);
-                    var Series = new TVDBContainer(s, Images, ShowList.Count + 1);
-                    ShowList.Add(Series);
+                    Images = await GetImages(s.Id);
                 }
                 catch (Exception)
                 {
-                    //No search result for this ID
+                    Images = new TvDbResponse<TvDbSharper.Dto.Image[]>();
                 }
+
+                var Series = new TVDBContainer(s, Images, ShowList.Count + 1);
+                ShowList.Add(Series);
             }
 
 
@@ -142,6 +145,8 @@ namespace TVPredictionsViewer
         {
             get
             {
+                if (imgs.Data is null) return null;
+
                 return new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName);
             }
         }
@@ -150,6 +155,8 @@ namespace TVPredictionsViewer
         {
             get
             {
+                if (imgs.Data is null) return null;
+
                 return imgs.Data.First().FileName;
             }
         }

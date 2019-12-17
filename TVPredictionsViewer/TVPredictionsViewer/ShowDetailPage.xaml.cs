@@ -136,7 +136,7 @@ namespace TVPredictionsViewer
 
             if (reload)
             {
-                ID = await NetworkDatabase.GetShowID(p.Name, p.network.name, true);
+                ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name, true);
 
                 if (ID > 0)
                 {

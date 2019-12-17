@@ -32,7 +32,7 @@ namespace TVPredictionsViewer
         {
             var p = BindingContext as PredictionContainer;
 
-            var uri = await NetworkDatabase.GetIMDBuri(p.Name);
+            var uri = await NetworkDatabase.GetIMDBuri(p.show.Name);
 
             await Launcher.OpenAsync(uri);
         }
@@ -40,7 +40,7 @@ namespace TVPredictionsViewer
         private async void TVDB_Clicked(object sender, EventArgs e)
         {
             var p = BindingContext as PredictionContainer;
-            var uri = NetworkDatabase.GetTMDBuri(p.Name);
+            var uri = NetworkDatabase.GetTMDBuri(p.show.Name);
 
             await Launcher.OpenAsync(uri);
         }

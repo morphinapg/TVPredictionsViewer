@@ -39,7 +39,7 @@ namespace TVPredictionsViewer
             Disappearing += Predictions_Disappearing;
             PredictionList = new ObservableCollection<ListOfPredictions>();
             isAllNetworks = true;
-            foreach (ToolbarItem t in new Toolbar(this, PredictionList).ToolBarItems)
+            foreach (ToolbarItem t in new Toolbar(this, ref PredictionList).ToolBarItems)
                 ToolbarItems.Add(t);
 
             UpdateFilter(ref PredictionList);            

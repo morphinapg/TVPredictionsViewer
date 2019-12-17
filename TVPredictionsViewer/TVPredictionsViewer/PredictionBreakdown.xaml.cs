@@ -399,7 +399,7 @@ namespace TVPredictionsViewer
             foreach (DetailsContainer d in details)
                 change += d.Value;
 
-            double multiplier = (CurrentOdds - BaseOdds) / change;
+            double multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
             bool BaseReverse = false;
 
             if (change != 0 && change != (CurrentOdds - BaseOdds))
@@ -408,7 +408,7 @@ namespace TVPredictionsViewer
                 {
                     double ex = Math.Log(CurrentOdds) / Math.Log(BaseOdds);
                     BaseOdds = Math.Pow(CurrentOdds, ex);
-                    multiplier = (CurrentOdds - BaseOdds) / change;
+                    multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
                     BaseReverse = true;
                 }
             }
@@ -499,11 +499,13 @@ namespace TVPredictionsViewer
 
             if (change != 0 && change != (CurrentOdds - BaseOdds))
             {
-                multiplier = (CurrentOdds - BaseOdds) / change;
+                multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
 
                 foreach (DetailsContainer d in details)
                     d.Value *= multiplier;
             }
+
+            if (details.Select(x => Math.Abs(x.Value)).Sum() == 0) BaseOdds = CurrentOdds;
 
             return new DetailsCombo(details, BaseOdds, CurrentOdds, peak);
         }

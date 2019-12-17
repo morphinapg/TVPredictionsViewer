@@ -93,8 +93,6 @@ namespace TVPredictionsViewer
         public Toolbar(ContentPage page)
         {
             Parent = page;
-
-            isScoreboardPage = page is ScoreBoard;
         }
 
         public Toolbar(ContentPage page, ContentView view)
@@ -104,11 +102,13 @@ namespace TVPredictionsViewer
             isSettingsPage = view is Settings;
         }
 
-        public Toolbar(ContentPage page, ObservableCollection<ListOfPredictions> predictions)
+        public Toolbar(ContentPage page, ref ObservableCollection<ListOfPredictions> predictions)
         {
             PredictionList = predictions;
             UsePredictionList = true;
             Parent = page;
+
+            isScoreboardPage = page is ScoreBoard;
         }
 
         public Toolbar(ContentPage page, MiniNetwork n)

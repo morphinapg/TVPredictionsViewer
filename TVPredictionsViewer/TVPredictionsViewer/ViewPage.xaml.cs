@@ -133,7 +133,8 @@ namespace TVPredictionsViewer
         {
             get
             {
-                return Math.Round(_value, 4);
+                return _value;
+                //return Math.Round(_value, 4);
             }
             set
             {
