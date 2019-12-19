@@ -104,37 +104,38 @@ namespace TVPredictionsViewer
             }
             else
             {
+                string text;
+
                 using (var fs = new FileStream(FilePath, FileMode.Open))
                 {
                     using (var reader = new StreamReader(fs))
                     {
-                        var text = await reader.ReadToEndAsync();
-                        
-
-                        if (text != NetworkDatabase.currentText)
-                        {
-                            NetworkDatabase.currentText = text;
-                            await home.Navigation.PopToRootAsync();
-                            home.Downloading();
-                            NetworkDatabase.ReadSettings(this);
-                        }                            
-                        else
-                        {
-                            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
-                            {
-                                
-                                var ee = new AsyncCompletedEventArgs(null, false, this);
-                                CompletedSettings(this, ee);
-                            }
-                            else
-                            {
-                                await home.Navigation.PopToRootAsync();
-                                home.Downloading();
-                                NetworkDatabase.ReadSettings(this);
-                            }
-                            NetworkDatabase.IsLoaded = true;
-                        }
+                        text = await reader.ReadToEndAsync();
                     }
+                }
+
+                if (text != NetworkDatabase.currentText)
+                {
+                    NetworkDatabase.currentText = text;
+                    await home.Navigation.PopToRootAsync();
+                    home.Downloading();
+                    NetworkDatabase.ReadSettings(this);
+                }
+                else
+                {
+                    if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                    {
+
+                        var ee = new AsyncCompletedEventArgs(null, false, this);
+                        CompletedSettings(this, ee);
+                    }
+                    else
+                    {
+                        await home.Navigation.PopToRootAsync();
+                        home.Downloading();
+                        NetworkDatabase.ReadSettings(this);
+                    }
+                    NetworkDatabase.IsLoaded = true;
                 }
             }
         }

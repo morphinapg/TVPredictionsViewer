@@ -1002,6 +1002,7 @@ namespace TV_Ratings_Predictions
         {
 
             double average = GetAverageThreshold(parallel);
+
             double weightAverage = Math.Max(average, 1 - average);
 
             double scores = 0;
@@ -1009,75 +1010,76 @@ namespace TV_Ratings_Predictions
             double weights = 0;
             int year = NetworkDatabase.MaxYear;
 
+
             var Adjustments = GetAdjustments(parallel);
 
-            List<double> debugweights = new List<double>();
+            var tempList = shows.Where(x => x.Renewed || x.Canceled).ToList();
 
             if (parallel)
             {
-                double[] t = new double[shows.Count], w = new double[shows.Count], score = new double[shows.Count];
-                var tempList = shows.ToList();
+                double[]
+                    t = new double[tempList.Count],
+                    w = new double[tempList.Count],
+                    score = new double[tempList.Count];
+
                 Parallel.For(0, tempList.Count, i =>
                 {
                     Show s = tempList[i];
+                    double threshold = GetThreshold(s, Adjustments[s.year]);
+                    int prediction = (s.ShowIndex > threshold) ? 1 : 0;
+                    double distance = Math.Abs(s.ShowIndex - threshold);
 
-                    if (s.Renewed || s.Canceled)
+                    if (s.Renewed)
                     {
-                        double threshold = GetThreshold(s, Adjustments[s.year]);
-                        int prediction = (s.ShowIndex > threshold) ? 1 : 0;
-                        double distance = Math.Abs(s.ShowIndex - threshold);
+                        int accuracy = (prediction == 1) ? 1 : 0;
+                        double weight;
 
-                        if (s.Renewed)
+                        if (accuracy == 1)
+                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+                        else
+                            weight = (distance + weightAverage) / weightAverage;
+
+                        weight /= year - s.year + 1;
+
+                        if (s.Canceled)
                         {
-                            int accuracy = (prediction == 1) ? 1 : 0;
-                            double weight;
+                            double odds = GetOdds(s, Adjustments[s.year], true);
+                            var tempScore = (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                            if (accuracy == 1)
-                                weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
-                            else
-                                weight = (distance + weightAverage) / weightAverage;
+                            score[i] = tempScore;
 
-                            weight /= year - s.year + 1;
-
-                            if (s.Canceled)
+                            if (odds < 0.6 && odds > 0.4)
                             {
-                                double odds = GetOdds(s, Adjustments[s.year], true);
+                                accuracy = 1;
 
-                                score[i] = (1 - Math.Abs(odds - 0.55)) * 4 / 3;
+                                weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
 
-                                if (odds < 0.6 && odds > 0.4)
-                                {
-                                    accuracy = 1;
+                                weight *= tempScore;
 
-                                    weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
-
-                                    weight *= score[i];
-
-                                    if (prediction == 0)
-                                        weight /= 2;
-                                }
-                                else
+                                if (prediction == 0)
                                     weight /= 2;
                             }
-
-                            t[i] = accuracy * weight;
-                            w[i] = weight;
-                        }
-                        else if (s.Canceled)
-                        {
-                            int accuracy = (prediction == 0) ? 1 : 0;
-                            double weight;
-
-                            if (accuracy == 1)
-                                weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
                             else
-                                weight = (distance + weightAverage) / weightAverage;
-
-                            weight /= year - s.year + 1;
-
-                            t[i] = accuracy * weight;
-                            w[i] = weight;
+                                weight /= 2;
                         }
+
+                        t[i] = accuracy * weight;
+                        w[i] = weight;
+                    }
+                    else if (s.Canceled)
+                    {
+                        int accuracy = (prediction == 0) ? 1 : 0;
+                        double weight;
+
+                        if (accuracy == 1)
+                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+                        else
+                            weight = (distance + weightAverage) / weightAverage;
+
+                        weight /= year - s.year + 1;
+
+                        t[i] = accuracy * weight;
+                        w[i] = weight;
                     }
                 });
 
@@ -1087,63 +1089,60 @@ namespace TV_Ratings_Predictions
             }
             else
             {
-                foreach (Show s in shows.ToList())
+                foreach (Show s in tempList)
                 {
-                    if (s.Renewed || s.Canceled)
+                    double threshold = GetThreshold(s, Adjustments[s.year]);
+                    int prediction = (s.ShowIndex > threshold) ? 1 : 0;
+                    double distance = Math.Abs(s.ShowIndex - threshold);
+
+                    if (s.Renewed)
                     {
-                        double threshold = GetThreshold(s, Adjustments[s.year]);
-                        int prediction = (s.ShowIndex > threshold) ? 1 : 0;
-                        double distance = Math.Abs(s.ShowIndex - threshold);
+                        int accuracy = (prediction == 1) ? 1 : 0;
+                        double weight;
 
-                        if (s.Renewed)
+                        if (accuracy == 1)
+                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+                        else
+                            weight = (distance + weightAverage) / weightAverage;
+
+                        weight /= year - s.year + 1;
+
+                        if (s.Canceled)
                         {
-                            int accuracy = (prediction == 1) ? 1 : 0;
-                            double weight;
+                            double odds = GetOdds(s, Adjustments[s.year], true);
+                            scores += (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                            if (accuracy == 1)
-                                weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
-                            else
-                                weight = (distance + weightAverage) / weightAverage;
-
-                            weight /= year - s.year + 1;
-
-                            if (s.Canceled)
+                            if (odds < 0.6 && odds > 0.4)
                             {
-                                double odds = GetOdds(s, Adjustments[s.year], true);
-                                scores += (1 - Math.Abs(odds - 0.55)) * 4 / 3;
+                                accuracy = 1;
+                                weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+                                weight *= (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                                if (odds < 0.6 && odds > 0.4)
-                                {
-                                    accuracy = 1;
-                                    weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
-                                    weight *= (1 - Math.Abs(odds - 0.55)) * 4 / 3;
-
-                                    if (prediction == 0)
-                                        weight /= 2;
-                                }
-                                else
+                                if (prediction == 0)
                                     weight /= 2;
-
                             }
-
-                            totals += accuracy * weight;
-                            weights += weight;
-                        }
-                        else if (s.Canceled)
-                        {
-                            int accuracy = (prediction == 0) ? 1 : 0;
-                            double weight;
-
-                            if (accuracy == 1)
-                                weight = 1 - Math.Abs(weightAverage - s.ShowIndex) / weightAverage;
                             else
-                                weight = (distance + weightAverage) / weightAverage;
+                                weight /= 2;
 
-                            weight /= year - s.year + 1;
-
-                            totals += accuracy * weight;
-                            weights += weight;
                         }
+
+                        totals += accuracy * weight;
+                        weights += weight;
+                    }
+                    else if (s.Canceled)
+                    {
+                        int accuracy = (prediction == 0) ? 1 : 0;
+                        double weight;
+
+                        if (accuracy == 1)
+                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+                        else
+                            weight = (distance + weightAverage) / weightAverage;
+
+                        weight /= year - s.year + 1;
+
+                        totals += accuracy * weight;
+                        weights += weight;
                     }
                 }
             }
@@ -1491,13 +1490,13 @@ namespace TV_Ratings_Predictions
         public static bool UseOdds = false;
 
         public static event EventHandler CurrentYearUpdated;
-        public static void ReadSettings(MainPage page)
+        public static async void ReadSettings(MainPage page)
         {
             var predictions = "https://github.com/morphinapg/TVPredictions/raw/master/Predictions.TVP";                
 
             Directory.CreateDirectory(Folder);
 
-            if (CrossConnectivity.Current.IsConnected)
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("github.com"))
             {
                 try
                 {
@@ -1546,7 +1545,7 @@ namespace TV_Ratings_Predictions
                     }
                 }
 
-            if (CrossConnectivity.Current.IsConnected)
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("github.com"))
             {
                 try
                 {
@@ -1767,7 +1766,7 @@ namespace TV_Ratings_Predictions
 
             var ID = ShowIDs[name];
 
-            if (IMDBList[ID] == "" && CrossConnectivity.Current.IsConnected)
+            if (IMDBList[ID] == "" && CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("thetvdb.com"))
             {
                 try
                 {

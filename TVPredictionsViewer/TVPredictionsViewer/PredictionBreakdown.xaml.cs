@@ -461,7 +461,7 @@ namespace TVPredictionsViewer
 
             bool found = false;
 
-            while (!found)
+            while (!found && multiplier != 0)
             {
                 change = 0;
                 oldEx = exponent;

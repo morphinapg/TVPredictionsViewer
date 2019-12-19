@@ -1,4 +1,8 @@
-﻿1.1.1
+﻿1.1.2
+Fixed an issue when data was restricted for the app
+Improvement to prediction breakdown calculation
+
+1.1.1
 Small modification to push notifications
 Fix for "odds of renewal" setting not immediately taking effect in prediction results page
 Fixed a bug with prediction breakdowns if none of the factors contributed significantly to the odds
