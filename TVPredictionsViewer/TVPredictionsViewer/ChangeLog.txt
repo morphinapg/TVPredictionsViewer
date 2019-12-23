@@ -1,4 +1,7 @@
-﻿1.1.2
+﻿1.1.3
+Improved Prediction Breakdown calculation
+
+1.1.2
 Fixed an issue when data was restricted for the app
 Improvement to prediction breakdown calculation
 Fixed an issue related to blocked file access

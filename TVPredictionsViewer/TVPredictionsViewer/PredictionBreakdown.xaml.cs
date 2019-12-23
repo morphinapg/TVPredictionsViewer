@@ -400,6 +400,7 @@ namespace TVPredictionsViewer
                 change += d.Value;
 
             double multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
+            if (Math.Round(Math.Abs(CurrentOdds - BaseOdds), 4) == 0) multiplier = 0;
             bool BaseReverse = false;
 
             if (change != 0 && change != (CurrentOdds - BaseOdds))
@@ -444,6 +445,8 @@ namespace TVPredictionsViewer
                 }
             }
 
+            multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
+            if (Math.Round(Math.Abs(CurrentOdds - BaseOdds), 4) == 0) multiplier = 0;
             double oldEx = 1, exponent = 1, increment = (multiplier < 1) ? 0.01 : -0.01;
 
             double oldChange = change;
@@ -461,7 +464,7 @@ namespace TVPredictionsViewer
 
             bool found = false;
 
-            while (!found && multiplier != 0)
+            while (!found && multiplier != 0 && multiplier != 1)
             {
                 change = 0;
                 oldEx = exponent;
@@ -500,6 +503,7 @@ namespace TVPredictionsViewer
             if (change != 0 && change != (CurrentOdds - BaseOdds))
             {
                 multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
+                if (Math.Round(Math.Abs(CurrentOdds - BaseOdds), 4) == 0) multiplier = 0;
 
                 foreach (DetailsContainer d in details)
                     d.Value *= multiplier;
