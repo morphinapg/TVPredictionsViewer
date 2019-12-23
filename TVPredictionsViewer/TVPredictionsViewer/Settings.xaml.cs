@@ -217,7 +217,7 @@ namespace TVPredictionsViewer
 
         private async void Refresh_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("github.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
             {
                 if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
                     File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
@@ -239,7 +239,7 @@ namespace TVPredictionsViewer
 
         private async void Fix_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("thetvdb.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://thetvdb.com/"))
                 await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new FixShow(), "Fix Show Details"));
             else
                 await(Parent.Parent as Page).DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");

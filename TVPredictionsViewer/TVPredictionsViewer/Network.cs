@@ -1496,7 +1496,7 @@ namespace TV_Ratings_Predictions
 
             Directory.CreateDirectory(Folder);
 
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("github.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
             {
                 try
                 {
@@ -1545,7 +1545,7 @@ namespace TV_Ratings_Predictions
                     }
                 }
 
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("github.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
             {
                 try
                 {
@@ -1766,7 +1766,7 @@ namespace TV_Ratings_Predictions
 
             var ID = ShowIDs[name];
 
-            if (IMDBList[ID] == "" && CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("thetvdb.com"))
+            if (IMDBList[ID] == "" && CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://thetvdb.com/"))
             {
                 try
                 {

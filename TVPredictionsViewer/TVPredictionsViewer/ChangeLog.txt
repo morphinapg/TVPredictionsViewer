@@ -1,6 +1,8 @@
 ﻿1.1.2
 Fixed an issue when data was restricted for the app
 Improvement to prediction breakdown calculation
+Fixed an issue related to blocked file access
+Removed "Combine All Networks" button before predictions are downloaded to avoid crash
 
 1.1.1
 Small modification to push notifications

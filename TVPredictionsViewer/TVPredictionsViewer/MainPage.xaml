@@ -28,7 +28,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <Button x:Name="AllNetworks" Text="Combine All Networks" Clicked="AllNetworks_Clicked" Margin="5"/>
+                <Button x:Name="AllNetworks" IsVisible="False" Text="Combine All Networks" Clicked="AllNetworks_Clicked" Margin="5"/>
                 <!--<Label Text="Note: Combining all networks together can be slower." HorizontalOptions="Center" Margin="5"/>-->
             </StackLayout>            
         </ContentPage>        

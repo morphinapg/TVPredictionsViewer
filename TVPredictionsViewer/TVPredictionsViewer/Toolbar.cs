@@ -58,7 +58,7 @@ namespace TVPredictionsViewer
 
         private async void Prediction_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("thetvdb.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://thetvdb.com/"))
                 await Parent.Navigation.PushAsync(new ViewPage(new FixShow(prediction), "Fix Show Details"));
             else
                 await Parent.DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");

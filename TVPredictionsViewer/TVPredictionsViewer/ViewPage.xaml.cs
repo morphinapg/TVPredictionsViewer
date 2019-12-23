@@ -64,7 +64,7 @@ namespace TVPredictionsViewer
 
         private async void SearchResults_ClickResult(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsReachable("thetvdb.com"))
+            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://thetvdb.com/"))
             {
                 var p = SearchResults.SelectedItem;
                 MainGrid.Children.Clear();
