@@ -297,7 +297,7 @@ namespace TVPredictionsViewer
             {
                 if (isDesktop)
                 {
-                    FirstColumn.Width = new GridLength(1, GridUnitType.Auto);
+                    FirstColumn.Width = new GridLength(1, GridUnitType.Star);
                     SecondColumn.Width = new GridLength(1, GridUnitType.Star);
                     if (LastItem != null)
                     {

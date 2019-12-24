@@ -150,12 +150,17 @@ namespace TVPredictionsViewer
             }
             else
             {
-                using (var fs = new FileStream(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), FileMode.Open))
+                bool error = false;
+
+                await Task.Run(() =>
                 {
-                    await Task.Run(() =>
+                    try
                     {
-                        var serializer = new DataContractSerializer(typeof(List<MiniNetwork>));
-                        NetworkDatabase.NetworkList = new ObservableCollection<MiniNetwork>((List<MiniNetwork>)serializer.ReadObject(fs));
+                        using (var fs = new FileStream(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), FileMode.Open))
+                        {
+                            var serializer = new DataContractSerializer(typeof(List<MiniNetwork>));
+                            NetworkDatabase.NetworkList = new ObservableCollection<MiniNetwork>((List<MiniNetwork>)serializer.ReadObject(fs));
+                        }
 
                         NetworkDatabase.YearList = new List<Year>(NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.shows).Select(x => x.year).Distinct().OrderBy(x => x).Select(x => new Year(x)));
                         var count = NetworkDatabase.YearList.Count;
@@ -177,21 +182,34 @@ namespace TVPredictionsViewer
                             });
                             n.model.TestAccuracy(true);
                         }
-                    });
+                    }
+                    catch (Exception)
+                    {
+                        error = true;
+                    }
 
+                });
+
+                if (error)
+                {
+                    _ = DisplayAlert("TV Predictions", "Could not read predictions file. Please try again.", "Close");
+                    home.IncompleteUpdate();
+                }
+                else
+                {
                     NetworkList.ItemsSource = NetworkDatabase.NetworkList;
                     NetworkList.IsVisible = true;
+
+                    if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                        File.SetLastWriteTime(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), NetworkDatabase.NetworkList.FirstOrDefault().PredictionTime);
+
+                    AllNetworks.IsVisible = true;
+
+                    if (!home.Completed)
+                        home.CompletedSettings();
+                    else
+                        home.RefreshYearlist();
                 }
-
-                if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
-                    File.SetLastWriteTime(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"), NetworkDatabase.NetworkList.FirstOrDefault().PredictionTime);
-
-                AllNetworks.IsVisible = true;
-
-                if (!home.Completed)
-                    home.CompletedSettings();
-                else
-                    home.RefreshYearlist();
             }
         }
 

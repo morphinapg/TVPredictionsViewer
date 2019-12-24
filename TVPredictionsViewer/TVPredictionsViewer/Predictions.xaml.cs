@@ -208,14 +208,14 @@ namespace TVPredictionsViewer
             }
 
             var tmpDesktop = isDesktop;
-            isDesktop = dblWidth > (1080);
+            isDesktop = dblWidth > (960);
             SideColumn.IsVisible = isDesktop;
 
             if (isDesktop != tmpDesktop)
             {
                 if (isDesktop)
                 {
-                    FirstColumn.Width = new GridLength(1, GridUnitType.Auto);
+                    FirstColumn.Width = new GridLength(1, GridUnitType.Star);
                     SecondColumn.Width = new GridLength(1, GridUnitType.Star);
                     if (PreviousItem != null)
                     {
