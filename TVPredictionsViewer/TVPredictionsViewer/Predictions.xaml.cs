@@ -236,7 +236,8 @@ namespace TVPredictionsViewer
                                 Uri = await NetworkDatabase.GetImageURI(ID),
                                 CachingEnabled = true,
                                 CacheValidity = new TimeSpan(90, 0, 0, 0)
-                            };
+                            }; 
+
                             PreviousItem.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                             if (ShowImage.Source != null)
@@ -419,7 +420,10 @@ namespace TVPredictionsViewer
                 return true;
             }                
             else
+            {
                 return base.OnBackButtonPressed();
+            }
+                
         }
 
         async void FadeOut()

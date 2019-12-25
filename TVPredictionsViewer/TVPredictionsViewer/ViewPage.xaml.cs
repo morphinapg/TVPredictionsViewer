@@ -104,6 +104,7 @@ namespace TVPredictionsViewer
             }                
             else
                 return base.OnBackButtonPressed();
+                
         }
     }
 

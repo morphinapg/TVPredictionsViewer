@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="6" android:versionName="1.1.2" package="tvpredictions.TVPredictions" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="9" android:versionName="1.1.3" package="tvpredictions.TVPredictions" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="23" android:targetSdkVersion="28" />
 	<application android:label="TV Predictions" android:icon="@mipmap/icon">
 		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />

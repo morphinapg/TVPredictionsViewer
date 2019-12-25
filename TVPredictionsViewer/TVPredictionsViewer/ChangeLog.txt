@@ -2,6 +2,7 @@
 Improved Prediction Breakdown calculation
 Improved display on 7" devices
 Display Reload Predictions button and message if downloaded predictions are incomplete
+Fixed a crash when backing out of a page before an image is fuly loaded
 
 1.1.2
 Fixed an issue when data was restricted for the app

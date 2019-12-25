@@ -146,6 +146,7 @@ namespace TVPredictionsViewer
                         CachingEnabled = true,
                         CacheValidity = new TimeSpan(90, 0, 0, 0)
                     };
+
                     p.Overview = NetworkDatabase.ShowDescriptions[ID];
                 }
             }
@@ -192,6 +193,7 @@ namespace TVPredictionsViewer
             }
             else
                 return base.OnBackButtonPressed();
+                
         }
     }
 }

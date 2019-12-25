@@ -141,13 +141,18 @@ namespace TVPredictionsViewer
 
         TvDbResponse<TvDbSharper.Dto.Image[]> imgs;
 
-        public Uri ImageUri
+        public UriImageSource ImageUri
         {
             get
             {
                 if (imgs.Data is null) return null;
 
-                return new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName);
+                return new UriImageSource
+                {
+                    Uri = new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName),
+                    CachingEnabled = true,
+                    CacheValidity = new TimeSpan(90, 0, 0, 0)
+                };
             }
         }
 

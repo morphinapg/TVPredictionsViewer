@@ -331,6 +331,7 @@ namespace TVPredictionsViewer
                                 CachingEnabled = true,
                                 CacheValidity = new TimeSpan(90, 0, 0, 0)
                             };
+
                             LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                             if (ShowImage.Source != null)
@@ -470,12 +471,14 @@ namespace TVPredictionsViewer
 
                 if (ID > 0)
                 {
-                    ShowImage.Source = new UriImageSource
+                    var image = new UriImageSource
                     {
                         Uri = await NetworkDatabase.GetImageURI(ID),
                         CachingEnabled = true,
                         CacheValidity = new TimeSpan(90, 0, 0, 0)
                     };
+
+                    ShowImage.Source = image;
                     p.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                     if (ShowImage.Source != null)
@@ -492,12 +495,14 @@ namespace TVPredictionsViewer
 
                     if (ID > 0)
                     {
-                        ShowImage.Source = new UriImageSource
+                        var image = new UriImageSource
                         {
                             Uri = await NetworkDatabase.GetImageURI(ID),
                             CachingEnabled = true,
                             CacheValidity = new TimeSpan(90, 0, 0, 0)
                         };
+
+                        ShowImage.Source = image;
                         p.Overview = NetworkDatabase.ShowDescriptions[ID];
                     }
                 }
