@@ -99,44 +99,52 @@ namespace TVPredictionsViewer
 
             if (e.Error != null && !File.Exists(FilePath))
             {
-                await DisplayAlert("TV Predictions", e.Error.Message, "Close");
+                _ = DisplayAlert("TV Predictions", e.Error.Message, "Close");
                 home.IncompleteUpdate();
             }
             else
             {
                 string text;
 
-                using (var fs = new FileStream(FilePath, FileMode.Open))
+                try
                 {
-                    using (var reader = new StreamReader(fs))
+                    using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        text = await reader.ReadToEndAsync();
+                        using (var reader = new StreamReader(fs))
+                        {
+                            text = await reader.ReadToEndAsync();
+                        }
                     }
-                }
 
-                if (text != NetworkDatabase.currentText)
-                {
-                    NetworkDatabase.currentText = text;
-                    await home.Navigation.PopToRootAsync();
-                    home.Downloading();
-                    NetworkDatabase.ReadSettings(this);
-                }
-                else
-                {
-                    if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                    if (text != NetworkDatabase.currentText)
                     {
-
-                        var ee = new AsyncCompletedEventArgs(null, false, this);
-                        CompletedSettings(this, ee);
-                    }
-                    else
-                    {
+                        NetworkDatabase.currentText = text;
                         await home.Navigation.PopToRootAsync();
                         home.Downloading();
                         NetworkDatabase.ReadSettings(this);
                     }
-                    NetworkDatabase.IsLoaded = true;
+                    else
+                    {
+                        if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                        {
+
+                            var ee = new AsyncCompletedEventArgs(null, false, this);
+                            CompletedSettings(this, ee);
+                        }
+                        else
+                        {
+                            await home.Navigation.PopToRootAsync();
+                            home.Downloading();
+                            NetworkDatabase.ReadSettings(this);
+                        }
+                        NetworkDatabase.IsLoaded = true;
+                    }
                 }
+                catch (Exception)
+                {
+                    _ = DisplayAlert("TV Predictions", "Error reading predictions. Try again.", "Close");
+                    home.IncompleteUpdate();
+                }   
             }
         }
 

@@ -1,6 +1,8 @@
 ﻿1.2.0
-Modified Neural network pre-processing
+Modified Neural network preprocessing
 Updated prediction breakdown to match the new calculation
+Fixed a crash when there is an issue reading the predictions
+Fixed an issue related to file access permission
 
 1.1.3
 Improved Prediction Breakdown calculation

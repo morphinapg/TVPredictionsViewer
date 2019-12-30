@@ -1806,20 +1806,22 @@ namespace TV_Ratings_Predictions
                 {
                     try
                     {
+                        var serializer = new DataContractSerializer(typeof(BackupData));
+                        BackupData OldBackup;
+
                         using (var fs = new FileStream(Path.Combine(Folder, "backup"), FileMode.Open))
                         {
-                            var serializer = new DataContractSerializer(typeof(BackupData));
-                            var OldBackup = serializer.ReadObject(fs) as BackupData;
-
-                            OldBackup.ShowIDs.Where(x => !NewBackup.ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
-                            {
-                                NewBackup.ShowIDs[x.Key] = x.Value;
-                                NewBackup.ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
-                                NewBackup.IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
-                                NewBackup.ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
-                                NewBackup.ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
-                            });
+                            OldBackup = serializer.ReadObject(fs) as BackupData;
                         }
+
+                        OldBackup.ShowIDs.Where(x => !NewBackup.ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                        {
+                            NewBackup.ShowIDs[x.Key] = x.Value;
+                            NewBackup.ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
+                            NewBackup.IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
+                            NewBackup.ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
+                            NewBackup.ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                        });
                     }
                     catch (Exception)
                     {
@@ -1868,21 +1870,23 @@ namespace TV_Ratings_Predictions
                 {
                     try
                     {
+                        var serializer = new DataContractSerializer(typeof(BackupData));
+                        BackupData OldBackup;
+
                         using (var fs = new FileStream(Path.Combine(Folder, "backup"), FileMode.Open))
                         {
-                            var serializer = new DataContractSerializer(typeof(BackupData));
-                            var OldBackup = serializer.ReadObject(fs) as BackupData;
-
-                            //Append any missing OldBackup data
-                            OldBackup.ShowIDs.Where(x => (x.Key == name || x.Value == ID) && !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
-                            {
-                                ShowIDs[x.Key] = x.Value;
-                                ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
-                                IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
-                                ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
-                                ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
-                            });
+                            OldBackup = serializer.ReadObject(fs) as BackupData;
                         }
+
+                        //Append any missing OldBackup data
+                        OldBackup.ShowIDs.Where(x => (x.Key == name || x.Value == ID) && !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowSlugs.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                        {
+                            ShowIDs[x.Key] = x.Value;
+                            ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
+                            IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
+                            ShowSlugs[x.Value] = OldBackup.ShowSlugs[x.Value];
+                            ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                        });
                     }
                     catch (Exception)
                     {
