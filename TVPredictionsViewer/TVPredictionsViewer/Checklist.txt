@@ -1,1 +1,2 @@
-﻿
+﻿Changelog page
+https://docs.microsoft.com/en-us/xamarin/xamarin-forms/data-cloud/data/files?tabs=windows

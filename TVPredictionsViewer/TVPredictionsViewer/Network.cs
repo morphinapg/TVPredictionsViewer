@@ -344,7 +344,9 @@ namespace TV_Ratings_Predictions
             {
                 if (NetworkDatabase.UseOdds)
                 {
-                    return Math.Round(finalodds * 100, 0) + "% Odds of Renewal";
+                    var o = UseFinal ? finalodds : odds;
+
+                    return Math.Round(o * 100, 0) + "% Odds of Renewal";
                 }
                 else
                 {

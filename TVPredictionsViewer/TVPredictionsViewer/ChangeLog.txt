@@ -1,4 +1,7 @@
-﻿1.2.0
+﻿1.2.1
+Fixed an error displaying current prediction in Prediction Results page when "Use Odds" is enabled
+
+1.2.0
 Modified Neural network preprocessing
 Updated prediction breakdown to match the new calculation
 Fixed a crash when there is an issue reading the predictions
