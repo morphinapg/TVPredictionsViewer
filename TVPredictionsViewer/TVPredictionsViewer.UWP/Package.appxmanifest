@@ -9,7 +9,7 @@
   <Identity
     Name="12633AndyGilleand.TVPredictions"
     Publisher="CN=4C605CC3-8DAB-4DB3-ACF5-65D6EF623CBF"
-    Version="1.2.0.0" />
+    Version="1.2.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="20dcdef9-afb9-4555-a8db-e19828be12e5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
