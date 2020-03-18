@@ -1,4 +1,9 @@
-﻿1.2.1
+﻿1.3.0
+Support for new factor in predictions: TV Season #
+Support for new push notification service
+App is now free!
+
+1.2.1
 Fixed an error displaying current prediction in Prediction Results page when "Use Odds" is enabled
 
 1.2.0
