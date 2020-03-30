@@ -1,4 +1,8 @@
-﻿1.3.0
+﻿1.4.0
+Added page for viewing full changelog
+Added option to donate via Paypal
+
+1.3.0
 Support for new factor in predictions: TV Season #
 App is now free!
 
