@@ -67,12 +67,13 @@ namespace TVPredictionsViewer
 
             bool SyndicationFinished = false, OwnedFinished = false, PremiereFinished = false, SummerFinished = false;
             string detailName;
-            double CurrentOdds = network.model.GetOdds(s, Adjustments[s.year]), NewOdds, detailValue;
+
+            double CurrentOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year]), NewOdds, detailValue;
 
             var tempList = network.shows.OrderBy(x => x.Episodes).ToList();
             int LowestEpisode = tempList.First().Episodes, HighestEpisode = tempList.Last().Episodes;
 
-            var BaseOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, -1);
+            var BaseOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, -1);
 
 
             for (int i = 0; i < network.factors.Count; i++)
@@ -115,7 +116,7 @@ namespace TVPredictionsViewer
                         else
                             index = s.factorNames.IndexOf("Post-Syndication");
 
-                        NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, index, index2);
+                        NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, index, index2);
 
                         detailValue = CurrentOdds - NewOdds;
 
@@ -182,7 +183,7 @@ namespace TVPredictionsViewer
 
                         PremiereFinished = true;
 
-                        NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, index1, index2, index3);
+                        NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, index1, index2, index3);
 
                         detailValue = CurrentOdds - NewOdds;
 
@@ -197,7 +198,7 @@ namespace TVPredictionsViewer
                         else
                             detailName = "Did not air in the Summer";
 
-                        NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, i);
+                        NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, i);
 
                         detailValue = CurrentOdds - NewOdds;
 
@@ -222,7 +223,7 @@ namespace TVPredictionsViewer
                             else
                                 detailName = "Show is owned by WB";
 
-                            NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, index, index2);
+                            NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, index, index2);
                         }
                         else
                         {
@@ -231,7 +232,7 @@ namespace TVPredictionsViewer
                             else
                                 detailName = "Show is owned by the network";
 
-                            NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, i);
+                            NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, i);
                         }
 
                         detailValue = CurrentOdds - NewOdds;
@@ -299,7 +300,10 @@ namespace TVPredictionsViewer
                             }
                     }
 
-                    NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, i);
+                    if (detailName == "New Series")
+                        NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, i, s.factorNames.Count + 2);
+                    else
+                        NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, i);
 
                     detailValue = CurrentOdds - NewOdds;
 
@@ -315,7 +319,12 @@ namespace TVPredictionsViewer
             else
                 detailName = "Hour long show";
 
-            NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, s.factorNames.Count + 1);
+            //var tempodds = network.model.GetOdds(new Show(s.Name, s.network, s.factorValues, s.Episodes, !s.Halfhour, s.factorNames) { ShowIndex = s.ShowIndex }, Adjustments[s.year]);
+            //int CurrentCount = network.shows.Where(x => x.Halfhour == s.Halfhour).Count(),
+            //NewCount = network.shows.Where(x => x.Halfhour == !s.Halfhour).Count();
+
+            //NewOdds = (tempodds * NewCount + CurrentOdds * CurrentCount) / (NewCount + CurrentCount);
+            NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, s.factorNames.Count + 1);
 
 
             detailValue = CurrentOdds - NewOdds;
@@ -332,19 +341,20 @@ namespace TVPredictionsViewer
                 var tShow = new Show
                 {
                     Name = s.Name,
-                    year = s.year,
-                    AverageRating = s.AverageRating,
+                    network = s.network,
+                    Season = s.Season,
                     factorValues = s.factorValues,
                     Episodes = i,
                     Halfhour = s.Halfhour,
                     factorNames = s.factorNames,
+                    AverageRating = s.AverageRating,
+                    year = s.year,
                     ShowIndex = s.ShowIndex,
                     ratings = s.ratings,
-                    ratingsAverages = s.ratingsAverages,
-                    network = s.network
+                    ratingsAverages = s.ratingsAverages
                 };
 
-                OddsByEpisode[i] = network.model.GetOdds(tShow, Adjustments[tShow.year]);
+                OddsByEpisode[i] = network.model.GetOdds(tShow, network.FactorAverages, Adjustments[tShow.year]);
                 var c = network.shows.Where(x => x.Episodes == i + 1).Count();
                 total += OddsByEpisode[i] * c;
                 count += c;
@@ -356,7 +366,7 @@ namespace TVPredictionsViewer
                 }
             }
 
-            NewOdds = network.model.GetOdds(s, Adjustments[s.year], false, true, s.factorNames.Count);
+            NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, s.factorNames.Count);
 
 
             int low = s.Episodes, high = s.Episodes;
@@ -395,6 +405,37 @@ namespace TVPredictionsViewer
 
             details.Add(new DetailsContainer(detailName, detailValue));
 
+            if (s.Season > 1)
+            {
+                var hundredpart = s.Season / 100;
+                var remainder = s.Season - hundredpart * 100;
+                var tenpart = remainder / 10;
+                if (tenpart == 1)
+                    detailName = s.Season + "th Season";
+                else
+                {
+                    switch (s.Season % 10)
+                    {
+                        case 1:
+                            detailName = s.Season + "st Season";
+                            break;
+                        case 2:
+                            detailName = s.Season + "nd Season";
+                            break;
+                        case 3:
+                            detailName = s.Season + "rd Season";
+                            break;
+                        default:
+                            detailName = s.Season + "th Season";
+                            break;
+                    }
+                }
+
+                NewOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, s.factorNames.Count + 2);
+                detailValue = CurrentOdds - NewOdds;
+                details.Add(new DetailsContainer(detailName, detailValue));
+            }
+
             double change = 0;
             foreach (DetailsContainer d in details)
                 change += d.Value;
@@ -425,7 +466,8 @@ namespace TVPredictionsViewer
                     var show = list.First();
                     var c = list.Count();
                     counts[x] = c;
-                    totalOdds[x] = network.model.GetOdds(new Show { Name = s.Name, year = s.year, factorValues = s.factorValues, Episodes = s.Episodes, Halfhour = s.Halfhour, factorNames = s.factorNames, ShowIndex = s.ShowIndex, AverageRating = s.AverageRating, ratings = s.ratings, ratingsAverages = s.ratingsAverages, network = s.network }, Adjustments[s.year]);
+                    totalOdds[x] = network.model.GetOdds(new Show { Name = s.Name, network = s.network, Season = s.Season, factorValues = s.factorValues, Episodes= s.Episodes, Halfhour = s.Halfhour, factorNames = s.factorNames, ShowIndex = s.ShowIndex, year = s.year, AverageRating = s.AverageRating, ratings = s.ratings, ratingsAverages = s.ratingsAverages }, network.FactorAverages, Adjustments[s.year]);
+                    
                 });
 
                 var bo = totalOdds.Sum() / counts.Sum();
@@ -444,6 +486,7 @@ namespace TVPredictionsViewer
                     }
                 }
             }
+
 
             multiplier = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
             if (Math.Round(Math.Abs(CurrentOdds - BaseOdds), 4) == 0) multiplier = 0;
@@ -464,8 +507,9 @@ namespace TVPredictionsViewer
 
             bool found = false;
 
-            while (!found && multiplier != 0 && multiplier != 1)
+            while (!found && multiplier != 0)
             {
+                //oldEx = newEx;
                 change = 0;
                 oldEx = exponent;
                 exponent += increment;

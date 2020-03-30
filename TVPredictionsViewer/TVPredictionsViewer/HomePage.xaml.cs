@@ -335,6 +335,12 @@ namespace TVPredictionsViewer
 
         private async void RefreshPredictions_Clicked(object sender, EventArgs e)
         {
+            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
+                File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
+
+            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                File.Delete(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"));
+
             Activity.IsRunning = true;
             CurrentStatus.Text = "Downloading Latest Predictions...";
 

@@ -191,7 +191,7 @@ namespace TVPredictionsViewer
                             n.model.TestAccuracy(true);
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         error = true;
                     }

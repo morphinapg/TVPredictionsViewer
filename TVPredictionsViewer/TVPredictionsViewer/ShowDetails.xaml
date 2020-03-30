@@ -11,6 +11,7 @@
             <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="SpaceBetween" Margin="10">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="24" Text="{Binding Name}" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails}"/>
+                    <Label FontSize="24" Text="{Binding Season}" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails,Converter={StaticResource InverseBool}}"/>
                     <Label Text="{Binding NewShow}" FontSize="Small" VerticalTextAlignment="Center" Margin="5" TextColor="DarkGoldenrod"/>
                 </StackLayout>
                 <StackLayout>
