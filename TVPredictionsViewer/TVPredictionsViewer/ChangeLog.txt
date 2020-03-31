@@ -1,5 +1,5 @@
 ﻿1.4.1
-[Android] Fixed an issue with the clickable links on the main post
+[Android] Fixed an issue with the clickable links on the main post, and various display issues.
 
 1.4.0
 Added page for viewing full changelog

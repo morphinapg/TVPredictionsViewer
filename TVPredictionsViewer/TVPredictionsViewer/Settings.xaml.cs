@@ -264,7 +264,7 @@ namespace TVPredictionsViewer
 
         private async void Log_Clicked(object sender, EventArgs e)
         {
-            await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new ChangeLog(), "Change Log"));
+            await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new ChangeLog(), "Changelog"));
         }
     }
 }

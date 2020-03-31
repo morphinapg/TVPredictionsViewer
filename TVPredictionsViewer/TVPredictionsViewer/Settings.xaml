@@ -71,7 +71,7 @@
                             <Button x:Name="Fix" Text="Fix Incorrect Show Details" Clicked="Fix_Clicked" Margin="5"/>
                         </ViewCell>
                         <ViewCell>
-                            <Button x:Name="Log" Text="Change Log" Clicked="Log_Clicked" Margin="5"/>
+                            <Button x:Name="Log" Text="Changelog" Clicked="Log_Clicked" Margin="5"/>
                         </ViewCell>
                     </TableSection>
                 </TableRoot>
