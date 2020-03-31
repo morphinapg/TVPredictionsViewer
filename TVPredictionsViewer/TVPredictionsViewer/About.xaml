@@ -44,21 +44,38 @@ I have two apps. I have this app you’re using right now, which displays the pr
 If you’ve made it this far, thank you for reading this, and I hope you enjoy using my app! Be sure to give the app a review so I know what people think about it. You can also comment on my most recent predictions by vising the Facebook Page below.
                 </Label>
             </ScrollView>
-            <Grid MinimumHeightRequest="50">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="15*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="3*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <ImageButton Source="facebook.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="ImageButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
-            </Grid>
+                    <ImageButton Source="facebook.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="ImageButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
+                </Grid>
+                <Grid MinimumHeightRequest="50">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ImageButton x:Name="PayPalButton" Source="paypal.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="PayPalButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
+                </Grid>
+            </StackLayout>
         </StackLayout>
     </ContentView.Content>
 </ContentView>

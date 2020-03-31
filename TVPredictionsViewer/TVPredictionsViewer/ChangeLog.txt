@@ -1,4 +1,7 @@
-﻿1.4.0
+﻿1.4.1
+[Android] Fixed an issue with the clickable links on the main post
+
+1.4.0
 Added page for viewing full changelog
 Added option to donate via Paypal
 

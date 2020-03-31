@@ -70,25 +70,44 @@
                         <ViewCell>
                             <Button x:Name="Fix" Text="Fix Incorrect Show Details" Clicked="Fix_Clicked" Margin="5"/>
                         </ViewCell>
+                        <ViewCell>
+                            <Button x:Name="Log" Text="Change Log" Clicked="Log_Clicked" Margin="5"/>
+                        </ViewCell>
                     </TableSection>
                 </TableRoot>
             </TableView>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="15*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="3*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <ImageButton Source="facebook.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="ImageButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
-            </Grid>
-            
+                    <ImageButton Source="facebook.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="ImageButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
+                </Grid>
+                <Grid MinimumHeightRequest="50">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ImageButton x:Name="PayPalButton" Source="paypal.png" Grid.Column="1" Grid.Row="1" CornerRadius="15" Clicked="PayPalButton_Clicked" BackgroundColor="{DynamicResource DetailBackground}" />
+                </Grid>
+            </StackLayout>      
         </StackLayout>        
   </ContentView.Content>
 </ContentView>

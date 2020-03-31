@@ -256,5 +256,15 @@ namespace TVPredictionsViewer
             UseHome = !UseHome;
             OnPropertyChanged("UseHome");
         }
+
+        private async void PayPalButton_Clicked(object sender, EventArgs e)
+        {
+            await Launcher.OpenAsync("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MSNDRDRMWGLUU&source=url");
+        }
+
+        private async void Log_Clicked(object sender, EventArgs e)
+        {
+            await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new ChangeLog(), "Change Log"));
+        }
     }
 }

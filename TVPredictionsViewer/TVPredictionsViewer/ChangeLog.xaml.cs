@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -10,11 +12,18 @@ using Xamarin.Forms.Xaml;
 namespace TVPredictionsViewer
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class About : ContentView
+    public partial class ChangeLog : ContentView
     {
-        public About()
+        public ChangeLog()
         {
             InitializeComponent();
+            var assembly = IntrospectionExtensions.GetTypeInfo(typeof(ChangeLog)).Assembly;
+            Stream stream = assembly.GetManifestResourceStream("TVPredictionsViewer.ChangeLog.txt");
+
+            using (var reader = new System.IO.StreamReader(stream))
+            {
+                Log.Text = reader.ReadToEnd();
+            }
         }
 
         private async void ImageButton_Clicked(object sender, EventArgs e)
