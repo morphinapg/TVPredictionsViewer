@@ -1,4 +1,7 @@
-﻿1.4.1
+﻿1.5.0
+Support for improved future ratings projections in the ratings breakdown page
+
+1.4.1
 [Android] Fixed an issue with the clickable links on the main post, and various display issues.
 
 1.4.0

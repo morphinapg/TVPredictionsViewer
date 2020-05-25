@@ -24,7 +24,7 @@ namespace TVPredictionsViewer
 
         private async void PayPalButton_Clicked(object sender, EventArgs e)
         {
-            await Launcher.OpenAsync("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MSNDRDRMWGLUU&source=url");
+            await Launcher.OpenAsync("https://www.paypal.me/andygilleand");
         }
     }
 }

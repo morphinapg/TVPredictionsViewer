@@ -42,32 +42,33 @@ namespace TVPredictionsViewer
 
             //await Task.Run(() =>
             //{
-                double average = 0;
-                long weight = 0;               
+            double average = 0;
+            long weight = 0;
 
-                for (int i = 0; i < count; i++) //First, add existing ratings
+            for (int i = 0; i < count; i++) //First, add existing ratings
+            {
+                average = s.ratingsAverages[i];
+                weight += (long)Math.Pow(i + 1, 2);
+                Ratings.Add(new RatingsDetails(i + 1, s.ratings[i], average, false));
+            }
+
+            double FinalAverage = average,
+            CurrentDrop = FinalAverage / s.ratings[0];
+
+            if (count < s.Episodes)
+                for (int i = count; i < s.Episodes; i++) //Then project future ratings
                 {
-                    average = s.ratingsAverages[i];
-                    weight += (long)Math.Pow(i + 1, 2);
-                    Ratings.Add(new RatingsDetails(i + 1, s.ratings[i], average, false));
+                    var NewWeight = (long)Math.Pow(i + 1, 2);
+                    var NewAverage = FinalAverage * network.AdjustAverage(count, i + 1, CurrentDrop);
+                    var NewRating = (NewAverage * (weight + NewWeight) - average * weight) / NewWeight;
+
+                    Ratings.Add(new RatingsDetails(i + 1, NewRating, NewAverage, true));
+
+                    average = NewAverage;
+                    weight += NewWeight;
                 }
-
-                var FinalAverage = average;
-
-                if (count < s.Episodes)
-                    for (int i = count; i < s.Episodes; i++) //Then project future ratings
-                    {
-                        var NewWeight = (long)Math.Pow(i + 1, 2);
-                        var NewAverage = FinalAverage * network.AdjustAverage(count, i + 1);
-                        var NewRating = (NewAverage * (weight + NewWeight) - average * weight) / NewWeight;
-
-                        Ratings.Add(new RatingsDetails(i + 1, NewRating, NewAverage, true));
-
-                        average = NewAverage;
-                        weight += NewWeight;
-                    }
             //});
-            
+
         }
     }
 
