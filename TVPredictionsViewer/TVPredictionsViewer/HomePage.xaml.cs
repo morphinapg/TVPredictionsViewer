@@ -98,7 +98,7 @@ namespace TVPredictionsViewer
                 int CurrentIndex = 0;
                 foreach (int i in MatchIndexes)
                 {
-                    if (i > CurrentIndex)
+                    if (i >= CurrentIndex)
                     {
                         var RegularText = CurrentText.Substring(CurrentIndex, i - CurrentIndex);
                         BlogPost.Spans.Add(RegularSpan(RegularText));
@@ -107,7 +107,6 @@ namespace TVPredictionsViewer
                         BlogPost.Spans.Add(LinkSpan(LinkText));
 
                         CurrentIndex = i + LinkText.Length;
-
                     }
                 }
 

@@ -1,4 +1,7 @@
-﻿1.5.0
+﻿1.5.1
+Fixed: Homepage Show/Network link would not activate if it was the very first word in the post.
+
+1.5.0
 Support for improved future ratings projections in the ratings breakdown page
 
 1.4.1
