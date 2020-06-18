@@ -449,13 +449,14 @@ namespace TVPredictionsViewer
                 double exponent = 1, increment = (Math.Abs(shift) > 1) ? 0.0001 : -0.0001;
 
                 long TrialCount = (long)(Math.Log(0.00005) / Math.Log(details.Select(x => Math.Abs(x.Value)).Max()) / 0.0001) + 1;
+
                 TrialCount = Math.Min(TrialCount, 1000000);
 
                 var Trials = new double[TrialCount];
 
                 //bool found = false;
 
-                Parallel.For(0, TrialCount, i =>
+                Parallel.For(0, Math.Min(20000, TrialCount), i =>
                 {
                     double c = 0;
                     double ex = i * 0.0001 + 0.0001;
@@ -471,7 +472,36 @@ namespace TVPredictionsViewer
                     Trials[i] = Math.Abs(c - (CurrentOdds - BaseOdds));
                 });
 
-                exponent = Array.IndexOf(Trials, Trials.Min()) * 0.0001 + 0.0001;
+                if (TrialCount > 20000)
+                {
+                    var First2k = Trials.Take(20000).ToArray();
+
+                    exponent = Array.IndexOf(First2k, First2k.Min()) * 0.0001 + 0.0001;
+
+                    if (exponent == 2)
+                    {
+                        Parallel.For(20000, TrialCount - 20000, i =>
+                        {
+                            double c = 0;
+                            double ex = i * 0.0001 + 0.0001;
+
+                            foreach (DetailsContainer d in details)
+                            {
+                                if (d.Value > 0)
+                                    c += Math.Pow(d.Value, ex);
+                                else
+                                    c -= Math.Pow(-d.Value, ex);
+                            }
+
+                            Trials[i] = Math.Abs(c - (CurrentOdds - BaseOdds));
+                        });
+
+                        exponent = Array.IndexOf(Trials, Trials.Min()) * 0.0001 + 0.0001;
+                    }
+                }
+                else
+                    exponent = Array.IndexOf(Trials, Trials.Min()) * 0.0001 + 0.0001;
+
 
                 change = 0;
                 foreach (DetailsContainer d in details)
