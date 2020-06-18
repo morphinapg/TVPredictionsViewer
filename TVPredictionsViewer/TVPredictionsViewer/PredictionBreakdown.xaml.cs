@@ -483,7 +483,7 @@ namespace TVPredictionsViewer
             {
                 double shift = change != 0 ? (CurrentOdds - BaseOdds) / change : 1;
                 if (Math.Round(Math.Abs(CurrentOdds - BaseOdds), 4) == 0) shift = 0;
-                double oldEx = 1, exponent = 1, increment = (shift < 1) ? 0.0001 : -0.0001;
+                double oldEx = 1, exponent = 1, increment = (Math.Abs(shift) < 1) ? 0.0001 : -0.0001;
 
                 double oldChange = change;
 
