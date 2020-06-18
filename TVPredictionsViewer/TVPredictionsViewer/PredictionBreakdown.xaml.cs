@@ -449,6 +449,7 @@ namespace TVPredictionsViewer
                 double exponent = 1, increment = (Math.Abs(shift) > 1) ? 0.0001 : -0.0001;
 
                 long TrialCount = (long)(Math.Log(0.00005) / Math.Log(details.Select(x => Math.Abs(x.Value)).Max()) / 0.0001) + 1;
+                TrialCount = Math.Min(TrialCount, 1000000);
 
                 var Trials = new double[TrialCount];
 
