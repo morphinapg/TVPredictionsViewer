@@ -477,7 +477,7 @@ namespace TVPredictionsViewer
                     if (exponent == 0.0001 || Math.Round(change, 4) == 0) found = true;
                 }
 
-                if (exponent > 0.0001)
+                if (exponent > 0.0001 && Math.Round(change, 4) > 0)
                     foreach (DetailsContainer d in details)
                     {
                         if (d.Value > 0)
@@ -518,8 +518,10 @@ namespace TVPredictionsViewer
                     else
                         oldChange = change;
 
-                    if (exponent == 0.0001) found = true;
+                    if (exponent == 0.0001 || Math.Round(change, 4) == 0) found = true;
                 }
+
+                if (Math.Round(change, 4) == 0) exponent = 1;
 
                 foreach (DetailsContainer d in details)
                 {
