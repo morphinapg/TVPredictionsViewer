@@ -1,4 +1,10 @@
-﻿1.6.0
+﻿1.6.2
+Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.
+
+1.6.1
+Fixed an issue early in the season when networks have no shows added yet.
+
+1.6.0
 Support for slightly more accurate prediction breakdown calculations
 Fixed: Homepage Show/Network link would not activate if it was the very first word in the post.
 

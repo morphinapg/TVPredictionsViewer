@@ -165,12 +165,12 @@ namespace TV_Ratings_Predictions
 
             //Determine Percentile rating scores
             double
-                P100 = Math.Round(TempList[0].show.AverageRating, 2),
-                P80 = Math.Round(TempList[count / 5].show.AverageRating, 2),
-                P60 = Math.Round(TempList[count * 2 / 5].show.AverageRating, 2),
-                P40 = Math.Round(TempList[count * 3 / 5].show.AverageRating, 2),
-                P20 = Math.Round(TempList[count * 4 / 5].show.AverageRating, 2),
-                P0 = Math.Round(TempList[count].show.AverageRating, 2);
+                P100 = (count > -1) ? Math.Round(TempList[0].show.AverageRating, 2) : 0,
+                P80 = (count > -1) ? Math.Round(TempList[count / 5].show.AverageRating, 2) : 0,
+                P60 = (count > -1) ? Math.Round(TempList[count * 2 / 5].show.AverageRating, 2) : 0,
+                P40 = (count > -1) ? Math.Round(TempList[count * 3 / 5].show.AverageRating, 2) : 0,
+                P20 = (count > -1) ? Math.Round(TempList[count * 4 / 5].show.AverageRating, 2) : 0,
+                P0 = (count > -1) ? Math.Round(TempList[count].show.AverageRating, 2) : 0;
 
             ListOfPredictions
                 HighRatings = new ListOfPredictions { Category = (P80 == P100) ? P80.ToString("N2") : P80.ToString("N2") + " - " + P100.ToString("N2") },
@@ -215,12 +215,12 @@ namespace TV_Ratings_Predictions
 
             //Determine Percentile Letters
             char
-                P100 = TempList[0].Name.ToUpper()[0],
-                P80 = TempList[count / 5].Name.ToUpper()[0],
-                P60 = TempList[count * 2 / 5].Name.ToUpper()[0],
-                P40 = TempList[count * 3 / 5].Name.ToUpper()[0],
-                P20 = TempList[count * 4 / 5].Name.ToUpper()[0],
-                P0 = TempList[count].Name.ToUpper()[0];
+                P100 = (count > -1) ? TempList[0].Name.ToUpper()[0] : 'A',
+                P80 = (count > -1) ? TempList[count / 5].Name.ToUpper()[0] : 'F',
+                P60 = (count > -1) ? TempList[count * 2 / 5].Name.ToUpper()[0] : 'K',
+                P40 = (count > -1) ? TempList[count * 3 / 5].Name.ToUpper()[0] : 'P',
+                P20 = (count > -1) ? TempList[count * 4 / 5].Name.ToUpper()[0] : 'U',
+                P0 = (count > -1) ? TempList[count].Name.ToUpper()[0] : 'Z';
 
             ListOfPredictions
                 First = new ListOfPredictions { Category = (P100 == P80) ? P80.ToString() : P100 + " - " + P80 },
@@ -500,7 +500,7 @@ namespace TV_Ratings_Predictions
         {
             get
             {
-                return network.Name + " Average Renewal Threshold: " + _networkaverage.ToString("N2");
+                return network.Name + " Typical Renewal Threshold: " + _networkaverage.ToString("N2");
             }
         }
 
@@ -920,6 +920,8 @@ namespace TV_Ratings_Predictions
         {
             double total = 0;
 
+            year = CheckYear(year);
+
             var tempList = shows.Where(x => x.year == year && x.ratings.Count > 0).ToList();
             var count = tempList.Count;
             var totals = new double[count];            
@@ -929,6 +931,26 @@ namespace TV_Ratings_Predictions
             total = totals.Sum();
 
             return total / count;
+        }
+
+        private int CheckYear(int year)
+        {
+            var YearList = shows.Where(x => x.ratings.Count > 0).Select(x => x.year).Distinct().ToList();
+            YearList.Sort();
+
+            if (!YearList.Contains(year))
+            {
+                if (YearList.Contains(year - 1))
+                    year--;
+                else if (YearList.Contains(year + 1))
+                    year++;
+                else if (YearList.Where(x => x < year).Count() > 0)
+                    year = YearList.Where(x => x < year).Last();
+                else
+                    year = YearList.Where(x => x > year).First();
+            }
+
+            return year;
         }
 
         public double GetOdds(Show s, double[] averages, double adjustment, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
@@ -1182,6 +1204,9 @@ namespace TV_Ratings_Predictions
         public double GetNetworkRatingsThreshold(int year)
         {
             var s = shows.First();
+
+            year = CheckYear(year);
+
             var Adjustment = GetAdjustments(true)[year];
             _ratingstheshold = GetTargetRating(year, GetModifiedThreshold(s, s.network.FactorAverages, Adjustment, -1));
             return _ratingstheshold;
@@ -1193,18 +1218,20 @@ namespace TV_Ratings_Predictions
             var tempShows = shows.Where(x => x.year == year && x.ratings.Count > 0).OrderByDescending(x => x.ShowIndex).ToList();
             if (tempShows.Count == 0)
             {
-                var yearList = shows.Where(x => x.ratings.Count > 0).Select(x => x.year).ToList();
-                yearList.Sort();
-                if (yearList.Contains(year - 1))
-                    year--;
-                else if (yearList.Contains(year + 1))
-                    year++;
-                else if (yearList.Where(x => x < year).Count() > 0)
-                    year = yearList.Where(x => x < year).Last();
-                else
-                    year = yearList.Where(x => x > year).First();
+                //var yearList = shows.Where(x => x.ratings.Count > 0).Select(x => x.year).ToList();
+                //yearList.Sort();
+                //if (yearList.Contains(year - 1))
+                //    year--;
+                //else if (yearList.Contains(year + 1))
+                //    year++;
+                //else if (yearList.Where(x => x < year).Count() > 0)
+                //    year = yearList.Where(x => x < year).Last();
+                //else
+                //    year = yearList.Where(x => x > year).First();
 
-                year = yearList.Last();
+                //year = yearList.Last();
+
+                year = CheckYear(year);
                 tempShows = shows.Where(x => x.year == year && x.ratings.Count > 0).OrderByDescending(x => x.ShowIndex).ToList();
             }
 
@@ -2017,11 +2044,11 @@ namespace TV_Ratings_Predictions
         {
             int number;
 
-            if (value is double)
+            if (value is double doubleVal)
             {
-                if (value == null || (double)value == 0)
+                if (value == null || doubleVal == 0)
                     number = 0;
-                else if ((double)value > 0)
+                else if (doubleVal > 0)
                     number = 1;
                 else
                     number = -1;
@@ -2083,11 +2110,11 @@ namespace TV_Ratings_Predictions
         {
             int number;
 
-            if (value is double)
+            if (value is double doubleVal)
             {
-                if (value == null || (double)value == 0)
+                if (value == null || doubleVal == 0)
                     number = 0;
-                else if ((double)value > 0)
+                else if (doubleVal > 0)
                     number = 1;
                 else
                     number = -1;
