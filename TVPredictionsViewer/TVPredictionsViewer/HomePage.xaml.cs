@@ -346,6 +346,24 @@ namespace TVPredictionsViewer
             RefreshPredictions.IsVisible = false;
             await NetworkDatabase.ReadUpdateAsync();
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            MessagingCenter.Subscribe<object, string>(this, App.NotificationReceivedKey, OnMessageReceived);
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<object>(this, App.NotificationReceivedKey);
+        }
+
+        void OnMessageReceived(object sender, string msg)
+        {
+            Device.BeginInvokeOnMainThread(() => RefreshPredictions_Clicked(this, new EventArgs()));
+        }
     }
 
     class NavigateParameter
@@ -377,4 +395,6 @@ namespace TVPredictionsViewer
             Sunday = Saturday.AddDays(-6);
         }
     }
+
+
 }

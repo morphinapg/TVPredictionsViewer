@@ -1,19 +1,23 @@
 ﻿using CarouselView.FormsPlugin.UWP;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Xamarin.Forms;
 
 namespace TVPredictionsViewer.UWP
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : Windows.UI.Xaml.Application
     {
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -30,14 +34,14 @@ namespace TVPredictionsViewer.UWP
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (!(Window.Current.Content is Frame rootFrame))
+            if (!(Window.Current.Content is Windows.UI.Xaml.Controls.Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                rootFrame = new Windows.UI.Xaml.Controls.Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e, new[] { typeof(CarouselViewRenderer).GetTypeInfo().Assembly });
@@ -63,7 +67,7 @@ namespace TVPredictionsViewer.UWP
             // Ensure the current window is active
             Window.Current.Activate();
 
-            
+            await InitRemoteNotificationsAsync();
         }
 
         /// <summary>
@@ -88,6 +92,19 @@ namespace TVPredictionsViewer.UWP
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        async Task InitRemoteNotificationsAsync()
+        {
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            channel.PushNotificationReceived += OnPushNotificationReceived;
+            Debug.WriteLine($"Received token: {channel.Uri}");
+        }
+
+        private void OnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
+        {
+            var msg = args.ToastNotification.Content.InnerText;
+            MessagingCenter.Send<object, string>(this, TVPredictionsViewer.App.NotificationReceivedKey, msg);
         }
     }
 }

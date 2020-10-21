@@ -240,6 +240,6 @@ namespace TVPredictionsViewer
         {
             home.NavigateToAllNetworks();
             IsPresented = false;
-        }
+        }        
     }
 }
