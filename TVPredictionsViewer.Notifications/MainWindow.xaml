@@ -1,0 +1,39 @@
+﻿<Window x:Class="TVPredictionsViewer.Notifications.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TVPredictionsViewer.Notifications"
+        mc:Ignorable="d"
+        Title="Send Notifications for TV Predictions" Height="269.921" Width="1094.902" WindowStartupLocation="CenterScreen">
+    <Viewbox Stretch="Uniform">
+        <Grid VerticalAlignment="Center" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="250"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Notification Text:" Margin="5"/>
+            <TextBox x:Name="Message" Grid.Row="1" Margin="5" />
+
+            <Button x:Name="Send" Grid.Column="1" Grid.Row="1" Content="Send Notification" Padding="5" Margin="5" VerticalAlignment="Bottom" Click="Send_Click"/>
+
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox x:Name="SpecifyID" Margin="5" Content="Installation ID"/>
+                <TextBox x:Name="ID" Grid.Column="1" Margin="5" IsEnabled="{Binding ElementName=SpecifyID, Path=IsChecked, TargetNullValue=false}"/>
+            </Grid>
+
+        </Grid>
+    </Viewbox>
+</Window>

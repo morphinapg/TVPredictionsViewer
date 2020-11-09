@@ -1494,6 +1494,8 @@ namespace TV_Ratings_Predictions
         public static bool backup = false, TVDBerror = false;
         public static MainPage mainpage;
         public static bool IsLoaded = false;
+        public static bool CurrentlyLoading = false;
+        public static bool InBackground = false;
 
         public static Dictionary<int, string>
             ShowDescriptions = new Dictionary<int, string>(),
@@ -1585,47 +1587,52 @@ namespace TV_Ratings_Predictions
 
         public static async Task ReadUpdateAsync()
         {
-            var update = "https://github.com/morphinapg/TVPredictions/raw/master/Update.txt";
-
-            var FilePath = Path.Combine(Folder, "Update.txt");
-
-            Directory.CreateDirectory(Folder);
-
-            if (File.Exists(FilePath))
-                using (var fs = new FileStream(FilePath, FileMode.Open))
-                {
-                    using (var reader = new StreamReader(fs))
-                    {
-                        currentText = await reader.ReadToEndAsync();
-                    }
-                }
-
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
+            if (!NetworkDatabase.CurrentlyLoading)
             {
-                try
+                NetworkDatabase.CurrentlyLoading = true;
+
+                var update = "https://github.com/morphinapg/TVPredictions/raw/master/Update.txt";
+
+                var FilePath = Path.Combine(Folder, "Update.txt");
+
+                Directory.CreateDirectory(Folder);
+
+                if (File.Exists(FilePath))
+                    using (var fs = new FileStream(FilePath, FileMode.Open))
+                    {
+                        using (var reader = new StreamReader(fs))
+                        {
+                            currentText = await reader.ReadToEndAsync();
+                        }
+                    }
+
+                if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
                 {
-                    var webClient = new WebClient();
-                    webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(mainpage.CompletedUpdateAsync);
-                    webClient.DownloadFileAsync(new Uri(update), FilePath);
-                    webClient.Dispose();
+                    try
+                    {
+                        var webClient = new WebClient();
+                        webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(mainpage.CompletedUpdateAsync);
+                        webClient.DownloadFileAsync(new Uri(update), FilePath);
+                        webClient.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex = new Exception("Error while downloading predictions");
+                        var e = new AsyncCompletedEventArgs(ex, false, mainpage);
+
+                        mainpage.CompletedUpdateAsync(mainpage, e);
+                    }
+
+                    await AuthenticateTVDB();
                 }
-                catch (Exception ex)
+                else
                 {
-                    ex = new Exception("Error while downloading predictions");
+                    var ex = new Exception("Not Connected to the Internet! Try again when connected.");
+
                     var e = new AsyncCompletedEventArgs(ex, false, mainpage);
 
                     mainpage.CompletedUpdateAsync(mainpage, e);
                 }
-
-                await AuthenticateTVDB();
-            }  
-            else
-            {
-                var ex = new Exception("Not Connected to the Internet! Try again when connected.");
-
-                var e = new AsyncCompletedEventArgs(ex, false, mainpage);
-
-                mainpage.CompletedUpdateAsync(mainpage, e);
             }
         }
 

@@ -20,6 +20,7 @@ namespace TVPredictionsViewer
 
         protected override void OnStart()
         {
+            NetworkDatabase.InBackground = false;
             // Handle when your app starts
             AppCenter.Start("android=5bff64d6-b3ee-45b1-9c79-b560516f6659;"+
                 "uwp=5cbe47d7-e007-4ef2-ba64-285b17cf5233;"
@@ -31,13 +32,17 @@ namespace TVPredictionsViewer
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+            NetworkDatabase.InBackground = true;
         }
 
         protected override void OnResume()
         {
+            NetworkDatabase.InBackground = false;
+
             // Handle when your app resumes
             if (!(NetworkDatabase.mainpage is null))
                 NetworkDatabase.mainpage.CheckForUpdate(true);
+
         }
     }
 }

@@ -9,6 +9,7 @@ using TV_Ratings_Predictions;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Net;
 
 namespace TVPredictionsViewer
 {
@@ -95,6 +96,7 @@ namespace TVPredictionsViewer
 
         public async void CompletedUpdateAsync(object sender, AsyncCompletedEventArgs e)
         {
+
             var FilePath = Path.Combine(NetworkDatabase.Folder, "Update.txt");
 
             if (e.Error != null && !File.Exists(FilePath))
@@ -105,47 +107,52 @@ namespace TVPredictionsViewer
             else
             {
                 string text;
+                
+                
+                    
 
-                try
-                {
-                    using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    try
                     {
-                        using (var reader = new StreamReader(fs))
+                        using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            text = await reader.ReadToEndAsync();
+                            using (var reader = new StreamReader(fs))
+                            {
+                                text = await reader.ReadToEndAsync();
+                            }
                         }
-                    }
 
-                    if (text != NetworkDatabase.currentText)
-                    {
-                        NetworkDatabase.currentText = text;
-                        await home.Navigation.PopToRootAsync();
-                        home.Downloading();
-                        NetworkDatabase.ReadSettings(this);
-                    }
-                    else
-                    {
-                        if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                        if (text != NetworkDatabase.currentText)
                         {
-
-                            var ee = new AsyncCompletedEventArgs(null, false, this);
-                            CompletedSettings(this, ee);
-                        }
-                        else
-                        {
+                            NetworkDatabase.currentText = text;
                             await home.Navigation.PopToRootAsync();
                             home.Downloading();
                             NetworkDatabase.ReadSettings(this);
                         }
-                        NetworkDatabase.IsLoaded = true;
+                        else
+                        {
+                            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                            {
+
+                                var ee = new AsyncCompletedEventArgs(null, false, this);
+                                CompletedSettings(this, ee);
+                            }
+                            else
+                            {
+                                await home.Navigation.PopToRootAsync();
+                                home.Downloading();
+                                NetworkDatabase.ReadSettings(this);
+                            }
+                            NetworkDatabase.IsLoaded = true;
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                    _ = DisplayAlert("TV Predictions", "Error reading predictions. Try again.", "Close");
-                    home.IncompleteUpdate();
-                }   
+                    catch (Exception)
+                    {
+                        _ = DisplayAlert("TV Predictions", "Error reading predictions. Try again.", "Close");
+                        home.IncompleteUpdate();
+                    }             
             }
+
+            NetworkDatabase.CurrentlyLoading = false;
         }
 
         public async void CompletedSettings(object sender, AsyncCompletedEventArgs e)
@@ -240,6 +247,29 @@ namespace TVPredictionsViewer
         {
             home.NavigateToAllNetworks();
             IsPresented = false;
-        }        
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            MessagingCenter.Subscribe<object, string>(this, App.NotificationReceivedKey, OnMessageReceived);
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<object>(this, App.NotificationReceivedKey);
+        }
+
+        void OnMessageReceived(object sender, string msg)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (msg != "IntentTap")
+                    DisplayAlert("TV Predictions", "New Predictions Received: \r\n\r\n" + msg, "OK");
+                home.RefreshPredictions_Clicked(this, new EventArgs());
+            });
+        }
     }
 }

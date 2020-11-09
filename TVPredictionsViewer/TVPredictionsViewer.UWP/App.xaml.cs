@@ -1,4 +1,5 @@
 ﻿using CarouselView.FormsPlugin.UWP;
+using Microsoft.WindowsAzure.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Networking.PushNotifications;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -36,6 +38,8 @@ namespace TVPredictionsViewer.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            InitNotificationsAsync();
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (!(Window.Current.Content is Windows.UI.Xaml.Controls.Frame rootFrame))
@@ -105,6 +109,27 @@ namespace TVPredictionsViewer.UWP
         {
             var msg = args.ToastNotification.Content.InnerText;
             MessagingCenter.Send<object, string>(this, TVPredictionsViewer.App.NotificationReceivedKey, msg);
+        }
+
+        private async void InitNotificationsAsync()
+        {
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+
+            var hub = new NotificationHub(Constants.NotificationHubName, Constants.ListenConnectionString);
+            //var result = await hub.RegisterNativeAsync(channel.Uri, Constants.SubscriptionTags);
+
+            //string pnsHandle = result.PNSHandle;
+            var templateReg = hub.RegisterTemplateAsync(channel.Uri, Constants.WNSTemplateBody, "defaultTemplate", Constants.SubscriptionTags);
+
+            Console.WriteLine($"Successful registration of ID {templateReg.Id}");
+
+            // Displays the registration ID so you know it was successful
+            //if (result.RegistrationId != null)
+            //{
+            //    var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
+            //    dialog.Commands.Add(new UICommand("OK"));
+            //    await dialog.ShowAsync();
+            //}
         }
     }
 }

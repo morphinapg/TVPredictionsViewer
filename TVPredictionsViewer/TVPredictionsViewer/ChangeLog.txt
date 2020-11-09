@@ -1,6 +1,7 @@
 ﻿1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.
 Prepared app for a change in the notification service, beginning 2021.
+[Android] Fixed issue with clickable links (same issue as before reappeared)
 
 1.6.1
 Fixed an issue early in the season when networks have no shows added yet.

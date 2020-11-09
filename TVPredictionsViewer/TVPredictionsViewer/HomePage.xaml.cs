@@ -332,7 +332,7 @@ namespace TVPredictionsViewer
                 return base.OnBackButtonPressed();
         }
 
-        private async void RefreshPredictions_Clicked(object sender, EventArgs e)
+        public async void RefreshPredictions_Clicked(object sender, EventArgs e)
         {
             if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
                 File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
@@ -345,24 +345,6 @@ namespace TVPredictionsViewer
 
             RefreshPredictions.IsVisible = false;
             await NetworkDatabase.ReadUpdateAsync();
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            MessagingCenter.Subscribe<object, string>(this, App.NotificationReceivedKey, OnMessageReceived);
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            MessagingCenter.Unsubscribe<object>(this, App.NotificationReceivedKey);
-        }
-
-        void OnMessageReceived(object sender, string msg)
-        {
-            Device.BeginInvokeOnMainThread(() => RefreshPredictions_Clicked(this, new EventArgs()));
         }
     }
 
