@@ -171,8 +171,10 @@ namespace TVPredictionsViewer.Droid
             var pendingIntent = PendingIntent.GetActivity(this, requestCode, intent, PendingIntentFlags.OneShot);
 
             var notificationBuilder = new NotificationCompat.Builder(this, Constants.NotificationChannelName)
-                .SetContentTitle("New TV Predictions")
+                .SetContentTitle("New TV Predictions!")
                 .SetSmallIcon(Resource.Mipmap.launcher_foreground)
+                .SetLargeIcon(BitmapFactory.DecodeResource(Resources, Resource.Drawable.icon))
+                .SetColor(Resource.Color.colorAccent)
                 .SetContentText(body)
                 .SetAutoCancel(true)
                 .SetShowWhen(false)

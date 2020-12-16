@@ -9,7 +9,7 @@ namespace TVPredictionsViewer
         public const string ListenConnectionString = "Endpoint=sb://tvpredictionsviewer.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=ogZQCPKaLi3nwfoWjeBsmhwN7JIZ/30r+Fklqg7RxcM=";
         public const string FullAccessConnectionString = "Endpoint=sb://tvpredictionsviewer.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=adhYJPv+vtK+J67zdTnEoVLzdWOQnfrm4icAdmLQ2Mo=";
         public const string NotificationHubName = "TVPredictionsViewer";
-        public static string NotificationChannelName { get; set; } = "XamarinNotifyChannel";
+        public static string NotificationChannelName { get; set; } = "TVPredictions";
 
         public static string DebugTag { get; set; } = "XamarinNotify";
         public static string[] SubscriptionTags { get; set; } = { "default" };
