@@ -3,7 +3,6 @@ using Xamarin.Forms;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using Microsoft.AppCenter.Push;
 
 namespace TVPredictionsViewer
 {
@@ -24,7 +23,7 @@ namespace TVPredictionsViewer
             // Handle when your app starts
             AppCenter.Start("android=5bff64d6-b3ee-45b1-9c79-b560516f6659;"+
                 "uwp=5cbe47d7-e007-4ef2-ba64-285b17cf5233;"
-                , typeof(Analytics), typeof(Crashes), typeof(Push));
+                , typeof(Analytics), typeof(Crashes));
 
             Analytics.TrackEvent("App Load");
         }

@@ -3,24 +3,18 @@
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
 using TV_Ratings_Predictions;
 using Android.Graphics;
-using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
-using CarouselView.FormsPlugin.Android;
 using Android.Gms.Common;
 using Android.Util;
-using Firebase.Iid;
 using Firebase.Messaging;
 using Xamarin.Forms;
 using WindowsAzure.Messaging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using Android.Content;
-using Android.Support.V4.App;
+using CarouselView.FormsPlugin.Droid;
+using AndroidX.Core.App;
 
 namespace TVPredictionsViewer.Droid
 {

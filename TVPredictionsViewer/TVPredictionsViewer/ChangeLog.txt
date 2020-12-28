@@ -1,4 +1,7 @@
-﻿1.6.5
+﻿1.6.6
+Removed code for old notification service
+
+1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.
 Prepared app for a change in the notification service, beginning 2021.
 
