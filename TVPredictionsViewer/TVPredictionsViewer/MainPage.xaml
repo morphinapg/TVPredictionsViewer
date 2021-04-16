@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+<FlyoutPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:TV_Ratings_Predictions"       
-             xmlns:TVP="clr-namespace:TVPredictionsViewer"
-             mc:Ignorable="d"
+             xmlns:TVP="clr-namespace:TVPredictionsViewer" x:DataType="TVP:MainPage"
+            mc:Ignorable="d"
              x:Class="TVPredictionsViewer.MainPage" Visual="Material"
              BackgroundColor="{DynamicResource PageBackground}">
 
-    <MasterDetailPage.Master>        
+    <FlyoutPage.Flyout>        
         <ContentPage Title="Choose Network" BackgroundColor="{DynamicResource PageBackground}">
             
             <ContentPage.Resources>
@@ -18,7 +18,7 @@
 
             <StackLayout>
                 <Label Text="Choose Network" IsVisible="False" FontSize="Title" x:Name="MenuHeader" HorizontalOptions="FillAndExpand" Padding="12" BackgroundColor="{DynamicResource TitleColor}" TextColor="{DynamicResource TitleText}"/>
-                <ListView  x:Name="NetworkList" ItemsSource="{Binding Networks}" IsVisible="False" ItemTapped="NetworkList_ItemTapped" Margin="10">
+                <ListView  x:Name="NetworkList" IsVisible="False" ItemTapped="NetworkList_ItemTapped" Margin="10">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:MiniNetwork">
                             <ViewCell>
@@ -32,14 +32,13 @@
                 <!--<Label Text="Note: Combining all networks together can be slower." HorizontalOptions="Center" Margin="5"/>-->
             </StackLayout>            
         </ContentPage>        
-    </MasterDetailPage.Master>
+    </FlyoutPage.Flyout>
 
-    <MasterDetailPage.Detail>
+    <FlyoutPage.Detail>
         <NavigationPage BarBackgroundColor="{DynamicResource TitleColor}" BarTextColor="{DynamicResource TitleText}">
             <x:Arguments>
                 <TVP:HomePage/>
             </x:Arguments>
         </NavigationPage>
-    </MasterDetailPage.Detail>
-
-</MasterDetailPage>
+    </FlyoutPage.Detail>
+</FlyoutPage>

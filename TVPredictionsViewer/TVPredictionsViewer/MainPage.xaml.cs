@@ -16,7 +16,7 @@ namespace TVPredictionsViewer
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class MainPage : MasterDetailPage
+    public partial class MainPage : FlyoutPage
     {
         //ObservableCollection<MiniNetwork> Networks = new ObservableCollection<MiniNetwork>();
         //ObservableCollection<Year> Years = new ObservableCollection<Year>();
@@ -30,7 +30,7 @@ namespace TVPredictionsViewer
 
            
 
-            MasterBehavior = MasterBehavior.Popover;
+            FlyoutLayoutBehavior = FlyoutLayoutBehavior.Popover;
             IsPresented = false;
 
             SaveBackup.Elapsed += SaveBackup_Elapsed;
