@@ -246,7 +246,7 @@ namespace TVPredictionsViewer
                 var p = SearchResults.SelectedItem as PredictionContainer;
                 p.IsShowPage = true;
                 p.DisplayYear = null;
-                await NavigationParent.Navigation.PushAsync(new ShowDetailPage(p));
+                await NavigationParent.Navigation.PushModalAsync(new ShowDetailPage(p));
             }
         }
 

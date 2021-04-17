@@ -1,6 +1,7 @@
 ﻿1.7.0
 Removed code for old notification service
 Switched from TVDB to TMDB for show info
+Some design changes
 
 1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.

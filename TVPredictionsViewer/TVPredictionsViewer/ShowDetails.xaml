@@ -7,7 +7,7 @@
              x:Class="TVPredictionsViewer.ShowDetails">
     
   <ContentView.Content>
-        <StackLayout BackgroundColor="{DynamicResource DetailBackground}" Spacing="0">
+        <StackLayout Spacing="0" BackgroundColor="{DynamicResource DetailBackgroundTransparent}">
             <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="SpaceBetween" Margin="10">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="24" Text="{Binding Name}" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails}"/>

@@ -1645,9 +1645,6 @@ namespace TV_Ratings_Predictions
 
         public static async Task AuthenticateTMDB()
         {
-            if (Application.Current.Properties.ContainsKey("TMDB"))
-                Application.Current.Properties.Remove("TMDB");
-
             if (!Application.Current.Properties.ContainsKey("TMDB"))
             {
                 foreach (string ShowName in ShowIDs.Keys)

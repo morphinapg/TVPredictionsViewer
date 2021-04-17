@@ -297,7 +297,7 @@ namespace TVPredictionsViewer
         private void SideColumn_SizeChanged(object sender, EventArgs e)
         {
             if (SideColumn.Width > 5)
-                ImageRow.Height = SideColumn.Width * 140 / 758;
+                ImageRow.Height = SideColumn.Width * 9 / 16;
         }
 
         private async void ShowsList_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -381,18 +381,18 @@ namespace TVPredictionsViewer
                     }
                 }
 
-                var TVDBText = "TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates.";
+                var TMDBText = "This product uses the TMDb API but is not endorsed or certified by TMDb.";
                 var Formatted = new FormattedString();
-                Formatted.Spans.Add(new Span { Text = TVDBText });
+                Formatted.Spans.Add(new Span { Text = TMDBText });
 
                 if (NetworkDatabase.TMDBerror)
                     Formatted.Spans.Add(new Span()
                     {
-                        Text = " Error connecting to TVDB! Some show details and/or images may temporarily be unavailable.",
+                        Text = " Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
                         TextColor = Color.DarkRed
                     });
 
-                TVDBNotice.FormattedText = Formatted;
+                TMDBNotice.FormattedText = Formatted;
             }
                        
 

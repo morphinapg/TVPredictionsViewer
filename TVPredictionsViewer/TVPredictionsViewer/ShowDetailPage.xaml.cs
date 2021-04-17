@@ -151,18 +151,28 @@ namespace TVPredictionsViewer
                 }
             }
 
-            var TVDBText = "TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates.";
+            var TMDBText = "This product uses the TMDb API but is not endorsed or certified by TMDb.";
             var Formatted = new FormattedString();
-            Formatted.Spans.Add(new Span { Text = TVDBText });
+            Formatted.Spans.Add(new Span { Text = TMDBText });
 
             if (NetworkDatabase.TMDBerror)
                 Formatted.Spans.Add(new Span()
                 {
-                    Text = " Error connecting to TVDB! Some show details and/or images may temporarily be unavailable.",
+                    Text = " Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
                     TextColor = Color.DarkRed
                 });
 
             TMDBNotice.FormattedText = Formatted;
+
+            var DelayedScroll = new Timer(1000);
+            DelayedScroll.Elapsed += DelayedScroll_Elapsed;
+            DelayedScroll.AutoReset = false;
+            DelayedScroll.Start();
+        }
+
+        private async void DelayedScroll_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Device.InvokeOnMainThreadAsync(async () => await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true));
         }
 
         protected override void OnDisappearing()
@@ -191,9 +201,26 @@ namespace TVPredictionsViewer
                 SearchResults.MakeInvisible();
                 return true;
             }
+            else if (SidePanel.BreakdownView != null && SidePanel.BreakdownView.Opacity > 0)
+            {
+                FadeOut();
+                return true;
+            }
             else
                 return base.OnBackButtonPressed();
                 
+        }
+
+        async void FadeOut()
+        {
+            await SidePanel.BreakdownView.FadeTo(0);
+            SideColumn.Children.Remove(SidePanel.BreakdownView);
+            SidePanel.BreakdownView = null;
+        }
+
+        private void Back_Clicked(object sender, EventArgs e)
+        {
+            _ = OnBackButtonPressed();
         }
     }
 }

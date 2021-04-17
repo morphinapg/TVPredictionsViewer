@@ -530,7 +530,7 @@ namespace TVPredictionsViewer
         private async void ShowPage_Clicked(object sender, EventArgs e)
         {
             LastItem.IsShowPage = true;
-            await Navigation.PushAsync(new ShowDetailPage(LastItem));
+            await Navigation.PushModalAsync(new ShowDetailPage(LastItem));
         }
 
         private async void Options_Clicked(object sender, EventArgs e)

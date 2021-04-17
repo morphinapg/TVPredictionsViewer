@@ -25,7 +25,7 @@ namespace TVPredictionsViewer
             var p = BindingContext as PredictionContainer;
             p.IsShowPage = true;
             var parent = Parent.Parent.Parent.Parent.Parent as Predictions;
-            await parent.Navigation.PushAsync(new ShowDetailPage(p));
+            await parent.Navigation.PushModalAsync(new ShowDetailPage(p));
         }
 
         private async void IMDB_Clicked(object sender, EventArgs e)
@@ -48,23 +48,35 @@ namespace TVPredictionsViewer
         private async void PBreakdown_Clicked(object sender, EventArgs e)
         {
             var p = BindingContext as PredictionContainer;
+
             var name = p.Name;
 
+            //if (p.IsShowPage)
+            //Navigation.PushAsync(new PredictionBreakdown(p.show, p.network) { BackgroundColor = Content.BackgroundColor });
+            //await Navigation.PushAsync(new ViewPage(new PredictionBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
+            //{
+            //}
+            //else
+            //{
+            var parent = Parent.Parent.Parent as Grid;
+
+            BreakdownView = new PredictionBreakdown(p.show, p.network)
+            {
+                Opacity = 0,
+                BackgroundColor = Content.BackgroundColor
+            };            
+
+            parent.Children.Add(BreakdownView);
             if (p.IsShowPage)
-                //Navigation.PushAsync(new PredictionBreakdown(p.show, p.network) { BackgroundColor = Content.BackgroundColor });
-                await Navigation.PushAsync(new ViewPage(new PredictionBreakdown(p.show, p.network), name) { BackgroundColor = Content.BackgroundColor });
+                BreakdownView.Padding = new Thickness(0, 50, 0, 0);
             else
             {
-                var parent = Parent.Parent.Parent as Grid;
-                BreakdownView = new PredictionBreakdown(p.show, p.network)
-                {
-                    Opacity = 0,
-                    BackgroundColor = Content.BackgroundColor
-                };
-                parent.Children.Add(BreakdownView);
+                BreakdownView.Padding = 0;
                 Grid.SetColumn(BreakdownView, 1);
-                await BreakdownView.FadeTo(1);
             }
+                
+            await BreakdownView.FadeTo(1);
+            //}
         }
 
         protected override void OnBindingContextChanged()

@@ -157,7 +157,7 @@ namespace TVPredictionsViewer
             {
                 var SelectedShow = Shows.OrderByDescending(x => x.show.year).First();
 
-                await Param.Parent.Navigation.PushAsync(new ShowDetailPage(SelectedShow));
+                await Param.Parent.Navigation.PushModalAsync(new ShowDetailPage(SelectedShow));
             }
             else
             {

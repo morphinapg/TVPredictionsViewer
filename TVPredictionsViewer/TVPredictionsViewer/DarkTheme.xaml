@@ -13,4 +13,5 @@
     <Color x:Key="LinkColor">LightSkyBlue</Color>
     <Color x:Key="PredictionHeader">#FF242424</Color>
     <Color x:Key="DetailBackground">#FF1B1B1B</Color>
+    <Color x:Key="DetailBackgroundTransparent">#E61B1B1B</Color>
 </ResourceDictionary>

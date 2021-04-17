@@ -61,6 +61,18 @@ namespace TVPredictionsViewer
             }
         }
 
+        private bool _transparentButtons = false;
+        public bool TransparentButtons
+        {
+            get { return _transparentButtons; }
+            set 
+            { 
+                _transparentButtons = value;
+                SearchButton.BackgroundColor = Color.Transparent;
+                HomeButton.BackgroundColor = Color.Transparent;
+            }
+        }
+
         Timer timer = new Timer(10);
         double OriginalSize, MaxSize;
         double LastWidth, LastHeight;
@@ -97,7 +109,14 @@ namespace TVPredictionsViewer
 
         private async void HomeButton_Clicked(object sender, EventArgs e)
         {
-            await (Parent as Page).Navigation.PopToRootAsync();
+            if (Parent is Page)
+                await (Parent as Page).Navigation.PopToRootAsync();
+            else
+            {
+                await (Parent.Parent.Parent.Parent as Page).Navigation.PopModalAsync();
+                await (NetworkDatabase.mainpage.Detail as NavigationPage).Navigation.PopToRootAsync();
+            }
+                
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)

@@ -62,7 +62,7 @@
 
                                 <Label Grid.Column="4" Text="{Binding Status}" FontSize="Small" TextColor="{Binding StatusIndex, Converter={StaticResource StatusColor}}" Margin="5" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" HorizontalTextAlignment="End"/>
 
-                                <controls:ShowDetails Grid.Row="1" Grid.ColumnSpan="4" IsVisible="{Binding ShowDetails}"/>
+                                <controls:ShowDetails Grid.Row="1" Grid.ColumnSpan="4" IsVisible="{Binding ShowDetails}" />
                             </Grid>
 
                         </ViewCell>
@@ -84,7 +84,7 @@
                     <controls:ShowDetails x:Name="SidePanel" IsVisible="False"/>
                 </ScrollView>
 
-                <Label x:Name="TVDBNotice" Grid.Row="2" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End"/>
+                <Label x:Name="TMDBNotice" Grid.Row="2" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End"/>
             </Grid>
         </Grid>        
     </ContentPage.Content>
