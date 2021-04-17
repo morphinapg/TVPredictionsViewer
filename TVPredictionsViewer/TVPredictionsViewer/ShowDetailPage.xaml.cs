@@ -83,7 +83,7 @@ namespace TVPredictionsViewer
         private void SideColumn_SizeChanged(object sender, EventArgs e)
         {
             if (SideColumn.Width > 5)
-                ImageRow.Height = SideColumn.Width * 140 / 758;
+                ImageRow.Height = SideColumn.Width * 9 / 16;
         }
 
         async void LoadImage(PredictionContainer p)
@@ -155,14 +155,14 @@ namespace TVPredictionsViewer
             var Formatted = new FormattedString();
             Formatted.Spans.Add(new Span { Text = TVDBText });
 
-            if (NetworkDatabase.TVDBerror)
+            if (NetworkDatabase.TMDBerror)
                 Formatted.Spans.Add(new Span()
                 {
                     Text = " Error connecting to TVDB! Some show details and/or images may temporarily be unavailable.",
                     TextColor = Color.DarkRed
                 });
 
-            TVDBNotice.FormattedText = Formatted;
+            TMDBNotice.FormattedText = Formatted;
         }
 
         protected override void OnDisappearing()

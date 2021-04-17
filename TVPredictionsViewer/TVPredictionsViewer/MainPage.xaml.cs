@@ -71,7 +71,7 @@ namespace TVPredictionsViewer
 
         async Task NoUpdate()
         {
-            await NetworkDatabase.AuthenticateTVDB();
+            await NetworkDatabase.AuthenticateTMDB();
 
             var FilePath = Path.Combine(NetworkDatabase.Folder, "Update.txt");
 

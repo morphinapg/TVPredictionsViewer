@@ -56,20 +56,20 @@ namespace TVPredictionsViewer
             TVDBResults.ItemsSource = ShowList;
             TVDBResults.IsVisible = true;
 
-            foreach (SeriesSearchResult s in result.Data)
+            foreach (TVSearchResult s in result)
             {
-                TvDbResponse<TvDbSharper.Dto.Image[]> Images;
+                //TvDbResponse<TvDbSharper.Dto.Image[]> Images;
 
-                try
-                {
-                    Images = await GetImages(s.Id);
-                }
-                catch (Exception)
-                {
-                    Images = new TvDbResponse<TvDbSharper.Dto.Image[]>();
-                }
+                //try
+                //{
+                //    Images = await GetImages(s.Id);
+                //}
+                //catch (Exception)
+                //{
+                //    Images = new TvDbResponse<TvDbSharper.Dto.Image[]>();
+                //}
 
-                var Series = new TVDBContainer(s, Images, ShowList.Count + 1);
+                var Series = new TVDBContainer(s.Show, s.Show.BackdropPath, ShowList.Count + 1);
                 ShowList.Add(Series);
             }
 
@@ -77,10 +77,10 @@ namespace TVPredictionsViewer
             Loading.IsVisible = false;
         }
 
-        async Task<TvDbResponse<TvDbSharper.Dto.Image[]>> GetImages(int ID)
-        {
-            return await NetworkDatabase.client.Series.GetImagesAsync(ID, new ImagesQuery() { KeyType = KeyType.Series });
-        }
+        //async Task<TvDbResponse<TvDbSharper.Dto.Image[]>> GetImages(int ID)
+        //{
+        //    return await NetworkDatabase.client.Series.GetImagesAsync(ID, new ImagesQuery() { KeyType = KeyType.Series });
+        //}
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
@@ -112,7 +112,7 @@ namespace TVPredictionsViewer
             var context = Confirmation.BindingContext as TVDBContainer;
             NetworkDatabase.ShowIDs[show] = context.ID;
             NetworkDatabase.ShowDescriptions[context.ID] = context.Description;
-            NetworkDatabase.ShowSlugs[context.ID] = context.Slug;
+            //NetworkDatabase.ShowSlugs[context.ID] = context.Slug;
             NetworkDatabase.IMDBList[context.ID] = "";
             NetworkDatabase.ShowImages[context.ID] = context.BaseImage;
             Application.Current.Properties["SHOWID " + show] = context.ID;
@@ -132,24 +132,32 @@ namespace TVPredictionsViewer
 
     class TVDBContainer
     {
-        SeriesSearchResult show;
+        //SeriesSearchResult show;
+        TMDbLib.Objects.TvShows.TvShow show;
 
-        public string Name { get { return show.SeriesName; } }
+        public string Name { get { return show.Name; } }
         public string Description { get { return show.Overview; } }
         public int ID { get { return show.Id; } }
-        public string Slug { get { return show.Slug; } }
+        //public string Slug { get { return show.Slug; } }
 
-        TvDbResponse<TvDbSharper.Dto.Image[]> imgs;
+        string img;
 
         public UriImageSource ImageUri
         {
             get
             {
-                if (imgs.Data is null) return null;
+                //if (imgs.Data is null) return null;
+
+                //return new UriImageSource
+                //{
+                //    Uri = new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName),
+                //    CachingEnabled = true,
+                //    CacheValidity = new TimeSpan(90, 0, 0, 0)
+                //};
 
                 return new UriImageSource
                 {
-                    Uri = new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName),
+                    Uri = new Uri(img),
                     CachingEnabled = true,
                     CacheValidity = new TimeSpan(90, 0, 0, 0)
                 };
@@ -160,18 +168,20 @@ namespace TVPredictionsViewer
         {
             get
             {
-                if (imgs.Data is null) return null;
+                //if (imgs.Data is null) return null;
 
-                return imgs.Data.First().FileName;
+                //return imgs.Data.First().FileName;
+
+                return img;
             }
         }
 
         public String ResultNumber { get; set; }
 
-        public TVDBContainer(TvDbSharper.Dto.SeriesSearchResult s, TvDbResponse<TvDbSharper.Dto.Image[]> Images, int num)
+        public TVDBContainer(TMDbLib.Objects.TvShows.TvShow s, string Image, int num)
         {
             show = s;
-            imgs = Images;
+            img = Image;
             ResultNumber = "#" + num + ". ";
         }
     }

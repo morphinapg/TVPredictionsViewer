@@ -385,7 +385,7 @@ namespace TVPredictionsViewer
                 var Formatted = new FormattedString();
                 Formatted.Spans.Add(new Span { Text = TVDBText });
 
-                if (NetworkDatabase.TVDBerror)
+                if (NetworkDatabase.TMDBerror)
                     Formatted.Spans.Add(new Span()
                     {
                         Text = " Error connecting to TVDB! Some show details and/or images may temporarily be unavailable.",
