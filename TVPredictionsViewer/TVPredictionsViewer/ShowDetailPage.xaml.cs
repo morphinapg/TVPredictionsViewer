@@ -48,12 +48,15 @@ namespace TVPredictionsViewer
 
             ShowImage.Source = null;
             SideColumn.SizeChanged += SideColumn_SizeChanged;
+            SidePanel.PanelOpened += SidePanel_PanelOpened;
 
             LoadImage(p);
 
             if (RemoveStackAfterLoad)
                 Appearing += ShowDetailPage_Appearing;
         }
+
+        
 
         private void ShowDetailPage_Appearing(object sender, EventArgs e)
         {
@@ -84,11 +87,18 @@ namespace TVPredictionsViewer
 
         private void SideColumn_SizeChanged(object sender, EventArgs e)
         {
+            var width = SideColumn.Width;
+
+            if (SidePanel.isDesktop && SidePanel.BreakdownView != null) width /= 2;
+
             if (SideColumn.Width > 5)
-                ImageRow.Height = SideColumn.Width * 9 / 16;
+                ImageRow.Height = width * 9 / 16;
+        }
 
-
-        }        
+        private void SidePanel_PanelOpened(object sender, EventArgs e)
+        {
+            SideColumn_SizeChanged(this, new EventArgs());
+        }
 
         async void LoadImage(PredictionContainer p)
         {
@@ -226,6 +236,7 @@ namespace TVPredictionsViewer
             await SidePanel.BreakdownView.FadeTo(0);
             SideColumn.Children.Remove(SidePanel.BreakdownView);
             SidePanel.BreakdownView = null;
+            SidePanel_PanelOpened(this, new EventArgs());
         }
 
         private void Back_Clicked(object sender, EventArgs e)

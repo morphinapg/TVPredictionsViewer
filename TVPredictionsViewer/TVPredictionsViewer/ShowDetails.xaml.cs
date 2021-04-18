@@ -15,12 +15,14 @@ namespace TVPredictionsViewer
     {
         public ContentView BreakdownView;
         //bool Window_Sizing = false;
-        bool isDesktop = false;
+        public bool isDesktop = false;
 
         public ShowDetails()
         {
             InitializeComponent();
         }
+
+        public event EventHandler PanelOpened;
 
         private async void ShowPage_Clicked(object sender, EventArgs e)
         {
@@ -61,6 +63,13 @@ namespace TVPredictionsViewer
             //else
             //{
             var parent = Parent.Parent.Parent as Grid;
+            var oldview = BreakdownView;
+            if (BreakdownView != null)
+            {
+                await BreakdownView.FadeTo(0);
+                //parent.Children.Remove(BreakdownView);
+                BreakdownView = null;
+            }
 
             BreakdownView = new PredictionBreakdown(p.show, p.network)
             {
@@ -73,8 +82,10 @@ namespace TVPredictionsViewer
             BreakdownView.Padding = p.IsShowPage ? new Thickness(0, 50, 0, 0) : 0;
 
             if (isDesktop) Grid.SetColumn(BreakdownView, 1);
-
+            PanelOpened?.Invoke(this, new EventArgs());
             await BreakdownView.FadeTo(1);
+            if (oldview != null) parent.Children.Remove(oldview);
+
             //}
         }
 
@@ -97,7 +108,7 @@ namespace TVPredictionsViewer
 
             //Window_Sizing = true;
 
-            if (BreakdownView != null && BreakdownView.Opacity > 0 && Grid.GetColumn(BreakdownView) == 1) width *= 2;
+            if (BreakdownView != null && Grid.GetColumn(BreakdownView) == 1) width *= 2;
 
             var tmpDesktop = isDesktop;
             isDesktop = width > (960);
@@ -125,6 +136,9 @@ namespace TVPredictionsViewer
 
         private async void RBreakdown_Clicked(object sender, EventArgs e)
         {
+            
+                
+
             var p = BindingContext as PredictionContainer;
             var name = p.Name;
 
@@ -134,6 +148,14 @@ namespace TVPredictionsViewer
             //else
             //{
             var parent = Parent.Parent.Parent as Grid;
+            var oldview = BreakdownView;
+            if (BreakdownView != null)
+            {
+                await BreakdownView.FadeTo(0);
+                //parent.Children.Remove(BreakdownView);
+                BreakdownView = null;
+            }
+
             BreakdownView = new RatingsBreakdown(p.show, p.network)
             {
                 Opacity = 0,
@@ -143,7 +165,10 @@ namespace TVPredictionsViewer
 
             BreakdownView.Padding = p.IsShowPage ? new Thickness(0, 50, 0, 0) : 0;
 
+            if (isDesktop) Grid.SetColumn(BreakdownView, 1);
+            PanelOpened?.Invoke(this, new EventArgs());
             await BreakdownView.FadeTo(1);
+            if (oldview != null) parent.Children.Remove(oldview);
             //}
         }
     }

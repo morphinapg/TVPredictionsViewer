@@ -140,6 +140,7 @@ namespace TVPredictionsViewer
             Activity.IsVisible = false;
 
             SideColumn.SizeChanged += SideColumn_SizeChanged;
+            SidePanel.PanelOpened += SidePanel_PanelOpened;
 
             var tapped = new TapGestureRecognizer();
             tapped.Tapped += Network_Tapped;
@@ -157,6 +158,8 @@ namespace TVPredictionsViewer
             Disappearing += ScoreBoard_Disappearing;
         }
 
+        
+
         private void ScoreBoard_Disappearing(object sender, EventArgs e)
         {
             NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
@@ -164,8 +167,17 @@ namespace TVPredictionsViewer
 
         private void SideColumn_SizeChanged(object sender, EventArgs e)
         {
+            var width = SideColumn.Width;
+
+            if (SidePanel.isDesktop && SidePanel.BreakdownView != null) width /= 2;
+
             if (SideColumn.Width > 5)
-                ImageRow.Height = SideColumn.Width * 9 / 16;
+                ImageRow.Height = width * 9 / 16;
+        }
+
+        private void SidePanel_PanelOpened(object sender, EventArgs e)
+        {
+            SideColumn_SizeChanged(this, new EventArgs());
         }
 
         private void ScoreBoard_Appearing(object sender, EventArgs e)
@@ -206,8 +218,9 @@ namespace TVPredictionsViewer
         async void FadeOut()
         {
             await SidePanel.BreakdownView.FadeTo(0);
-            Grid1.Children.Remove(SidePanel.BreakdownView);
+            SideColumn.Children.Remove(SidePanel.BreakdownView);
             SidePanel.BreakdownView = null;
+            SideColumn_SizeChanged(this, new EventArgs());
         }
 
         private void Year_Tapped(object sender, EventArgs e)
