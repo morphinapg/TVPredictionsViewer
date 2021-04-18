@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="TVPredictionsViewer.PredictionBreakdown">
   <ContentView.Content>
-        <StackLayout>
+        <StackLayout  HorizontalOptions="Center" WidthRequest="500">
             <Label x:Name="Base" FontSize="Medium" Margin="10" HorizontalOptions="Center"/>
             <ListView x:Name="ShowDetails" ItemsSource="{Binding details}" Margin="15">
                 <ListView.ItemTemplate>

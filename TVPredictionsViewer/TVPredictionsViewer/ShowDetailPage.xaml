@@ -16,7 +16,8 @@
     <ContentPage.Content>
         <Grid>
             
-            <Grid x:Name="SideColumn" RowSpacing="0" ColumnSpacing="0">
+            <Grid x:Name="SideColumn" RowSpacing="0" ColumnSpacing="0">               
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -26,10 +27,11 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" x:Name="ImageRow"/>
                     </Grid.RowDefinitions>
+                    
+                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand"/>                    
+                </Grid>
 
-                    <ActivityIndicator x:Name="ImageLoading" IsRunning="True" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
-                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
-                </Grid>                
+                <ActivityIndicator x:Name="ImageLoading" IsRunning="True" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
 
                 <ScrollView x:Name="DetailScroll">
                     <StackLayout>                        

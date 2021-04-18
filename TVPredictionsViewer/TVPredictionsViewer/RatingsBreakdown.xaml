@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="TVPredictionsViewer.RatingsBreakdown">
   <ContentView.Content>
-        <StackLayout Margin="15">
+        <StackLayout Margin="15"  HorizontalOptions="Center" WidthRequest="500">
             <Grid Margin="15,10,15,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

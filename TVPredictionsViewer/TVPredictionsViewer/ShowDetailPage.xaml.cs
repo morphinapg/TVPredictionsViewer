@@ -14,7 +14,9 @@ namespace TVPredictionsViewer
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ShowDetailPage : ContentPage
     {
+        
         PredictionContainer show;
+        Timer DelayedScroll;
         //ObservableCollection<ListOfPredictions> Results = new ObservableCollection<ListOfPredictions>();
         public TitleTemplate TitleBar
         {
@@ -84,7 +86,9 @@ namespace TVPredictionsViewer
         {
             if (SideColumn.Width > 5)
                 ImageRow.Height = SideColumn.Width * 9 / 16;
-        }
+
+
+        }        
 
         async void LoadImage(PredictionContainer p)
         {
@@ -158,13 +162,18 @@ namespace TVPredictionsViewer
             if (NetworkDatabase.TMDBerror)
                 Formatted.Spans.Add(new Span()
                 {
-                    Text = " Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
+                    Text = "Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
                     TextColor = Color.DarkRed
                 });
 
             TMDBNotice.FormattedText = Formatted;
 
-            var DelayedScroll = new Timer(1000);
+            ScrollTo();
+        }
+
+        void ScrollTo()
+        {
+            DelayedScroll = new Timer(1000);
             DelayedScroll.Elapsed += DelayedScroll_Elapsed;
             DelayedScroll.AutoReset = false;
             DelayedScroll.Start();
@@ -204,6 +213,7 @@ namespace TVPredictionsViewer
             else if (SidePanel.BreakdownView != null && SidePanel.BreakdownView.Opacity > 0)
             {
                 FadeOut();
+                ScrollTo();
                 return true;
             }
             else

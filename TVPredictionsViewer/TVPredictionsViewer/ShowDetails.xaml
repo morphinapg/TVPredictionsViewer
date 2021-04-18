@@ -7,7 +7,13 @@
              x:Class="TVPredictionsViewer.ShowDetails">
     
   <ContentView.Content>
-        <StackLayout Spacing="0" BackgroundColor="{DynamicResource DetailBackgroundTransparent}">
+        <Grid RowDefinitions="Auto" x:Name="SidePanel" BackgroundColor="{DynamicResource DetailBackgroundTransparent}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" x:Name="FirstColumn"/>
+                <ColumnDefinition Width="0" x:Name="SecondColumn"/>
+            </Grid.ColumnDefinitions>           
+            
+            <StackLayout Spacing="0" >
             <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="SpaceBetween" Margin="10">
                 <StackLayout Orientation="Horizontal">
                     <Label FontSize="24" Text="{Binding Name}" VerticalTextAlignment="Center" IsVisible="{Binding ShowDetails}"/>
@@ -59,5 +65,7 @@
             </StackLayout>
             
         </StackLayout>
+        </Grid>
+        
     </ContentView.Content>
 </ContentView>

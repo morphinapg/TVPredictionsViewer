@@ -388,11 +388,16 @@ namespace TVPredictionsViewer
                 if (NetworkDatabase.TMDBerror)
                     Formatted.Spans.Add(new Span()
                     {
-                        Text = " Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
+                        Text = "Error connecting to TMDB! Some show details and/or images may temporarily be unavailable.",
                         TextColor = Color.DarkRed
                     });
 
                 TMDBNotice.FormattedText = Formatted;
+
+                var DelayedScroll = new Timer(1000);
+                DelayedScroll.Elapsed += DelayedScroll_Elapsed;
+                DelayedScroll.AutoReset = false;
+                DelayedScroll.Start();
             }
                        
 
@@ -400,6 +405,10 @@ namespace TVPredictionsViewer
                 PreviousItem.ShowDetails = false;
 
             PreviousItem = p;
+        }
+        private async void DelayedScroll_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Device.InvokeOnMainThreadAsync(async () => await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true));
         }
 
         protected override bool OnBackButtonPressed()
@@ -429,7 +438,7 @@ namespace TVPredictionsViewer
         async void FadeOut()
         {
             await SidePanel.BreakdownView.FadeTo(0);
-            Grid1.Children.Remove(SidePanel.BreakdownView);
+            SideColumn.Children.Remove(SidePanel.BreakdownView);
             SidePanel.BreakdownView = null;
         }
     }
