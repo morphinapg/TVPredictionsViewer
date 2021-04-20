@@ -105,6 +105,7 @@ namespace TVPredictionsViewer
 
             if (SideColumn.Width > 5)
                 ImageRow.Height = width * 9 / 16;
+                
         }
 
         private void SidePanel_PanelOpened(object sender, EventArgs e)
@@ -115,10 +116,10 @@ namespace TVPredictionsViewer
         async void LoadImage(PredictionContainer p)
         {
 
-            bool reload = false;
+            //bool reload = false;
 
-            if (!NetworkDatabase.ShowIDs.ContainsKey(p.show.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.show.Name))
-                reload = true;
+            //if (!NetworkDatabase.ShowIDs.ContainsKey(p.show.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.show.Name))
+            //    reload = true;
 
             var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
 
@@ -126,9 +127,15 @@ namespace TVPredictionsViewer
             {
                 if (Device.RuntimePlatform == Device.UWP)
                 {
-                    //var uri = await NetworkDatabase.GetImageURI(ID);
+                    var uri = await NetworkDatabase.GetImageURI(ID);
+                    ShowImageUri = uri.AbsoluteUri;
 
-                    //ShowImage.SetBinding(ImageEffect.TextProperty, uri.AbsoluteUri);
+                    ShowImage.BindingContext = this;
+                    ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
+
+                    p.IsLoaded = true;
+                    ShowImage.IsVisible = true;
+                    //ImageLoading.IsVisible = false;
                 }
                 else
                 {
@@ -149,22 +156,22 @@ namespace TVPredictionsViewer
                 }
             }
 
-            if (reload)
-            {
-                ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name, true);
+            //if (reload)
+            //{
+            //    ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name, true);
 
-                if (ID > 0)
-                {
-                    ShowImage.Source = new UriImageSource
-                    {
-                        Uri = await NetworkDatabase.GetImageURI(ID),
-                        CachingEnabled = true,
-                        CacheValidity = new TimeSpan(90, 0, 0, 0)
-                    };
+            //    if (ID > 0)
+            //    {
+            //        ShowImage.Source = new UriImageSource
+            //        {
+            //            Uri = await NetworkDatabase.GetImageURI(ID),
+            //            CachingEnabled = true,
+            //            CacheValidity = new TimeSpan(90, 0, 0, 0)
+            //        };
 
-                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
-                }
-            }
+            //        p.Overview = NetworkDatabase.ShowDescriptions[ID];
+            //    }
+            //}
 
             var TMDBText = "This product uses the TMDb API but is not endorsed or certified by TMDb.";
             var Formatted = new FormattedString();

@@ -26,11 +26,10 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" x:Name="ImageRow"/>
                     </Grid.RowDefinitions>
-
-                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" controls:ImageEffect.Text="https://www.themoviedb.org/t/p/original/gHigNYc478aoFmSCZnbYFkv6wU9.jpg"/>
-                </Grid>
-
-                <ActivityIndicator x:Name="ImageLoading" IsRunning="True" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                    
+                    <ActivityIndicator x:Name="ImageLoading" IsRunning="True" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+                </Grid>                
 
                 <ScrollView x:Name="DetailScroll">
                     <StackLayout>                        
@@ -70,7 +69,7 @@
                         <!--<Button x:Name="Hamburger" Text="&#9776;"/>-->
                     </StackLayout>
                     <controls:TitleTemplate Grid.Column="1" x:Name="Bar" TransparentButtons="True"/>
-                    <Button x:Name="Options" />
+                    <!--<Button x:Name="Options" />-->
                 </Grid>
 
                 <controls:ResultsList x:Name="SearchResults" IsVisible="False"/>

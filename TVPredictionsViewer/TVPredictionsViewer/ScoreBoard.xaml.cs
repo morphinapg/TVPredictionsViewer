@@ -102,6 +102,17 @@ namespace TVPredictionsViewer
             }
         }
 
+        string _uri;
+        public string ShowImageUri
+        {
+            get { return _uri; }
+            set
+            {
+                _uri = value;
+                OnPropertyChanged("ShowImageUri");
+            }
+        }
+
         public List<string> NetworkList { get { return NetworkDatabase.NetworkList.Select(x => x.Name).ToList(); } }
 
         public ScoreBoard(MiniNetwork n = null)
@@ -329,37 +340,28 @@ namespace TVPredictionsViewer
                         //    ImageLoading.IsVisible = false;
                         //}
 
-                        bool reload = false;
+                        //bool reload = false;
 
-                        if (!NetworkDatabase.ShowIDs.ContainsKey(LastItem.Name) && Application.Current.Properties.ContainsKey("SHOWID " + LastItem.Name))
-                            reload = true;
+                        //if (!NetworkDatabase.ShowIDs.ContainsKey(LastItem.Name) && Application.Current.Properties.ContainsKey("SHOWID " + LastItem.Name))
+                        //    reload = true;
 
                         var ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name);
 
                         if (ID > 0)
                         {
-                            ShowImage.Source = new UriImageSource
+                            if (Device.RuntimePlatform == Device.UWP)
                             {
-                                Uri = await NetworkDatabase.GetImageURI(ID),
-                                CachingEnabled = true,
-                                CacheValidity = new TimeSpan(90, 0, 0, 0)
-                            };
+                                var uri = await NetworkDatabase.GetImageURI(ID);
+                                ShowImageUri = uri.AbsoluteUri;
 
-                            LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+                                ShowImage.BindingContext = this;
+                                ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
 
-                            if (ShowImage.Source != null)
-                            {
                                 LastItem.IsLoaded = true;
                                 ShowImage.IsVisible = true;
-                                ImageLoading.IsVisible = false;
+                                //ImageLoading.IsVisible = false;
                             }
-                        }
-
-                        if (reload)
-                        {
-                            ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name, true);
-
-                            if (ID > 0)
+                            else
                             {
                                 ShowImage.Source = new UriImageSource
                                 {
@@ -368,8 +370,31 @@ namespace TVPredictionsViewer
                                     CacheValidity = new TimeSpan(90, 0, 0, 0)
                                 };
                                 LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+                                if (ShowImage.Source != null)
+                                {
+                                    LastItem.IsLoaded = true;
+                                    ShowImage.IsVisible = true;
+                                    ImageLoading.IsVisible = false;
+                                }
                             }
                         }
+
+                        //if (reload)
+                        //{
+                        //    ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name, true);
+
+                        //    if (ID > 0)
+                        //    {
+                        //        ShowImage.Source = new UriImageSource
+                        //        {
+                        //            Uri = await NetworkDatabase.GetImageURI(ID),
+                        //            CachingEnabled = true,
+                        //            CacheValidity = new TimeSpan(90, 0, 0, 0)
+                        //        };
+                        //        LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+                        //    }
+                        //}
                     }
 
 
@@ -475,50 +500,63 @@ namespace TVPredictionsViewer
                 //    }
                 //}
 
-                bool reload = false;
+                //bool reload = false;
 
-                if (!NetworkDatabase.ShowIDs.ContainsKey(p.show.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.show.Name))
-                    reload = true;
+                //if (!NetworkDatabase.ShowIDs.ContainsKey(p.show.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.show.Name))
+                //    reload = true;
 
                 var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
 
                 if (ID > 0)
                 {
-                    var image = new UriImageSource
+                    if (Device.RuntimePlatform == Device.UWP)
                     {
-                        Uri = await NetworkDatabase.GetImageURI(ID),
-                        CachingEnabled = true,
-                        CacheValidity = new TimeSpan(90, 0, 0, 0)
-                    };
+                        var uri = await NetworkDatabase.GetImageURI(ID);
+                        ShowImageUri = uri.AbsoluteUri;
 
-                    ShowImage.Source = image;
-                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
+                        ShowImage.BindingContext = this;
+                        ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
 
-                    if (ShowImage.Source != null)
-                    {
                         p.IsLoaded = true;
                         ShowImage.IsVisible = true;
-                        ImageLoading.IsVisible = false;
+                        //ImageLoading.IsVisible = false;
                     }
-                }
-
-                if (reload)
-                {
-                    ID = await NetworkDatabase.GetShowID(p.Name, p.network.name, true);
-
-                    if (ID > 0)
+                    else
                     {
-                        var image = new UriImageSource
+                        ShowImage.Source = new UriImageSource
                         {
                             Uri = await NetworkDatabase.GetImageURI(ID),
                             CachingEnabled = true,
                             CacheValidity = new TimeSpan(90, 0, 0, 0)
                         };
-
-                        ShowImage.Source = image;
                         p.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+                        if (ShowImage.Source != null)
+                        {
+                            p.IsLoaded = true;
+                            ShowImage.IsVisible = true;
+                            ImageLoading.IsVisible = false;
+                        }
                     }
                 }
+
+                //if (reload)
+                //{
+                //    ID = await NetworkDatabase.GetShowID(p.Name, p.network.name, true);
+
+                //    if (ID > 0)
+                //    {
+                //        var image = new UriImageSource
+                //        {
+                //            Uri = await NetworkDatabase.GetImageURI(ID),
+                //            CachingEnabled = true,
+                //            CacheValidity = new TimeSpan(90, 0, 0, 0)
+                //        };
+
+                //        ShowImage.Source = image;
+                //        p.Overview = NetworkDatabase.ShowDescriptions[ID];
+                //    }
+                //}
 
                 var TMDBText = "This product uses the TMDb API but is not endorsed or certified by TMDb.";
                 var Formatted = new FormattedString();

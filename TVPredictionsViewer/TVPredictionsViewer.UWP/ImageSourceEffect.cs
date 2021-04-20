@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using TVPredictionsViewer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
@@ -13,9 +14,12 @@ using Xamarin.Forms.Platform.UWP;
 [assembly: ResolutionGroupName("MyCompany")]
 [assembly: ExportEffect(typeof(TVPredictionsViewer.UWP.ImageSourceEffect), nameof(ImageEffect))]
 namespace TVPredictionsViewer.UWP
-{    
+{
     public class ImageSourceEffect : PlatformEffect
     {
+        Timer timer = new Timer(100) { Enabled = false, AutoReset = false };
+        int Width, Height;
+
         protected override void OnAttached()
         {
             try
@@ -26,7 +30,6 @@ namespace TVPredictionsViewer.UWP
                 {
                     var image = control as Windows.UI.Xaml.Controls.Image;
                     var uri = ImageEffect.GetText(Element);
-
                     var bitmap = new BitmapImage(new Uri(uri));
                     bitmap.ImageOpened += Bitmap_ImageOpened;
                     image.Source = bitmap;
@@ -43,10 +46,26 @@ namespace TVPredictionsViewer.UWP
         {
             if (bitmapImage != null)
             {
-                bitmapImage.DecodePixelType = DecodePixelType.Logical;
-                bitmapImage.DecodePixelHeight = (int)e.NewSize.Height;
-                bitmapImage.DecodePixelWidth = (int)e.NewSize.Width;
+                timer.Stop();
+                timer.Elapsed -= Timer_Elapsed;
+
+                Width = (int)e.NewSize.Width;
+                Height = (int)e.NewSize.Height;
+
+                timer.Elapsed += Timer_Elapsed;
+                timer.Start();
             }
+        }
+
+        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Device.InvokeOnMainThreadAsync(async () =>
+            {
+                await Task.Delay(1000);
+                bitmapImage.DecodePixelType = DecodePixelType.Logical;
+                bitmapImage.DecodePixelHeight = Height;
+                bitmapImage.DecodePixelWidth = Width;
+            });
         }
 
         private BitmapImage bitmapImage;

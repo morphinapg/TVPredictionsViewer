@@ -80,9 +80,8 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" x:Name="ImageRow"/>
                     </Grid.RowDefinitions>
-
-                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
                     <ActivityIndicator x:Name="ImageLoading" IsRunning="True" VerticalOptions="Center" Color="{DynamicResource ActivityColor}"/>
+                    <Image x:Name="ShowImage" IsVisible="False" Aspect="AspectFit" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>                    
                 </Grid>
 
                 <ScrollView x:Name="DetailScroll">
