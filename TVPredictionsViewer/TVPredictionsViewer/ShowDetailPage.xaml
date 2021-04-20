@@ -77,11 +77,11 @@
 
             </StackLayout>
 
-            <Grid x:Name="OptionsMenu" ColumnDefinitions="*, Auto" RowDefinitions="Auto, *" IsVisible="False">
+            <Grid x:Name="OptionsScreen" ColumnDefinitions="*, Auto" RowDefinitions="Auto, *" IsVisible="False">
                 <Frame Opacity="0"/>
-                <StackLayout Grid.Column="1" Opacity="0">
+                <StackLayout Grid.Column="1" Opacity="0" x:Name="OptionsMenu" Spacing="0" BackgroundColor="{DynamicResource TitleColor}">
                     <BindableLayout.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="controls:ShowDetailMenuItem">
                             <Button Text="{Binding Text}" Command="{Binding Command}"/>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>

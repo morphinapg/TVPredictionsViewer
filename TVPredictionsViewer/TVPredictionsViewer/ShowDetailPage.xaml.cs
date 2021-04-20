@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Input;
 using TV_Ratings_Predictions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -41,21 +42,20 @@ namespace TVPredictionsViewer
         public ShowDetailPage(PredictionContainer p, bool RemoveStackAfterLoad = false)
         {
             var network = p.network;
+            var MenuItems = new ObservableCollection<ShowDetailMenuItem>();
+            
 
             if (p.UseNetwork)
                 foreach (ToolbarItem t in new Toolbar(this, network, p).ToolBarItems)
-                {
-                    ToolbarItems.Add(t);
-                }
+                    MenuItems.Add(new ShowDetailMenuItem(t));
             else
                 foreach (ToolbarItem t in new Toolbar(this, p).ToolBarItems)
-                { 
-                    ToolbarItems.Add(t); 
-                }
+                    MenuItems.Add(new ShowDetailMenuItem(t));
 
             BindingContext = p;
             show = p;
             InitializeComponent();
+            BindableLayout.SetItemsSource(OptionsMenu, MenuItems);
 
             Bar.Title = p.Name;
 
@@ -255,5 +255,14 @@ namespace TVPredictionsViewer
         {
             _ = OnBackButtonPressed();
         }
+    }
+
+    class ShowDetailMenuItem
+    {
+        ToolbarItem OriginalItem;
+        public string Text { get { return OriginalItem.Text; } }
+        public ICommand Command { get { return OriginalItem.Command; } }
+
+        public ShowDetailMenuItem(ToolbarItem item) => OriginalItem = item;
     }
 }
