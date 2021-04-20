@@ -47,7 +47,6 @@ namespace TVPredictionsViewer.UWP
                 bitmapImage.DecodePixelHeight = (int)e.NewSize.Height;
                 bitmapImage.DecodePixelWidth = (int)e.NewSize.Width;
             }
-
         }
 
         private BitmapImage bitmapImage;
