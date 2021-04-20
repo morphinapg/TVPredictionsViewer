@@ -126,11 +126,9 @@ namespace TVPredictionsViewer
             {
                 if (Device.RuntimePlatform == Device.UWP)
                 {
+                    //var uri = await NetworkDatabase.GetImageURI(ID);
 
-
-                    //ShowImageUri = uri.AbsoluteUri;
-
-                    //ShowImage.Effects.Add(new SourceEffect());
+                    //ShowImage.SetBinding(ImageEffect.TextProperty, uri.AbsoluteUri);
                 }
                 else
                 {
