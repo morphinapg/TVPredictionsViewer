@@ -2,6 +2,7 @@
 Redesigned several areas of the UI for a better, friendlier experience
 Removed code for old notification service
 Switched from TVDB to TMDB for show info and images
+[Windows] Improved image scaling
 
 1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.

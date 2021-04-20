@@ -69,12 +69,24 @@
                         <!--<Button x:Name="Hamburger" Text="&#9776;"/>-->
                     </StackLayout>
                     <controls:TitleTemplate Grid.Column="1" x:Name="Bar" TransparentButtons="True"/>
+                    
                     <!--<Button x:Name="Options" />-->
                 </Grid>
 
                 <controls:ResultsList x:Name="SearchResults" IsVisible="False"/>
+
             </StackLayout>
-            
+
+            <Grid x:Name="OptionsMenu" ColumnDefinitions="*, Auto" RowDefinitions="Auto, *" IsVisible="False">
+                <Frame Opacity="0"/>
+                <StackLayout Grid.Column="1" Opacity="0">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Button Text="{Binding Text}" Command="{Binding Command}"/>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </Grid>
         </Grid>        
     </ContentPage.Content>
 </ContentPage>

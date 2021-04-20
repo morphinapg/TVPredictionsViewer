@@ -44,10 +44,14 @@ namespace TVPredictionsViewer
 
             if (p.UseNetwork)
                 foreach (ToolbarItem t in new Toolbar(this, network, p).ToolBarItems)
+                {
                     ToolbarItems.Add(t);
+                }
             else
                 foreach (ToolbarItem t in new Toolbar(this, p).ToolBarItems)
-                    ToolbarItems.Add(t);
+                { 
+                    ToolbarItems.Add(t); 
+                }
 
             BindingContext = p;
             show = p;

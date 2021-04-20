@@ -1,2 +1,3 @@
 ﻿FlexLayout for cards
 BindableLayout for Card Template
+Replace Toolbar popup menu on ShowDetailPage
