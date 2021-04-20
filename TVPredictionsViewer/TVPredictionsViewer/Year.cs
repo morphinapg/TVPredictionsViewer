@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TVPredictionsViewer
+namespace TV_Ratings_Predictions
 {
     public class Year : IComparable<Year>
     {

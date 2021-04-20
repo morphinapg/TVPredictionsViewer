@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TV_Ratings_Predictions;
 
-namespace TVPredictionsViewer
+namespace TV_Ratings_Predictions
 {
     [Serializable]
     public class NeuralPredictionModel : IComparable<NeuralPredictionModel>

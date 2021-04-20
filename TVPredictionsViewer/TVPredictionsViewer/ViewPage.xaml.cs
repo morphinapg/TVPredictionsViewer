@@ -1,11 +1,7 @@
-﻿using Plugin.Connectivity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -64,7 +60,7 @@ namespace TVPredictionsViewer
 
         private async void SearchResults_ClickResult(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://www.themoviedb.org/"))
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 var p = SearchResults.SelectedItem;
                 MainGrid.Children.Clear();

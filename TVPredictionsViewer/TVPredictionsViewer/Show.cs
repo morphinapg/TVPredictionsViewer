@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace TVPredictionsViewer
+namespace TV_Ratings_Predictions
 {
     [Serializable]
     public class Show : IComparable<Show>

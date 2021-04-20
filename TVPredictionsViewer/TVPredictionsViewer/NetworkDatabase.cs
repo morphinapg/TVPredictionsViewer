@@ -8,12 +8,10 @@ using System.Net;
 using System.Threading.Tasks;
 using TVPredictionsViewer;
 using Xamarin.Forms;
-using System.Globalization;
-using Plugin.Connectivity;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using MathNet.Numerics.Distributions;
 using TMDbLib.Client;
+using Xamarin.Essentials;
 
 namespace TV_Ratings_Predictions
 {
@@ -25,7 +23,6 @@ namespace TV_Ratings_Predictions
         public static List<Year> YearList = new List<Year>();
         public static string currentText = "";
         public static TMDbClient Client;
-        //public static ITvDbClient client = new TvDbClient();
         public static bool backup = false, TMDBerror = false;
         public static MainPage mainpage;
         public static bool IsLoaded = false;
@@ -82,13 +79,13 @@ namespace TV_Ratings_Predictions
         public static bool UseOdds = false;
 
         public static event EventHandler CurrentYearUpdated;
-        public static async void ReadSettings(MainPage page)
+        public static void ReadSettings(MainPage page)
         {
             var predictions = "https://github.com/morphinapg/TVPredictions/raw/master/Predictions.TVP";                
 
             Directory.CreateDirectory(Folder);
 
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 try
                 {
@@ -141,7 +138,7 @@ namespace TV_Ratings_Predictions
                         }
                     }
 
-                if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
+                if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 {
                     try
                     {
@@ -215,20 +212,6 @@ namespace TV_Ratings_Predictions
             //    ApiTime = DateTime.Now;
             //}   
         }
-
-        //public static async Task RefreshTVDB()
-        //{
-        //    try
-        //    {
-        //        TMDBerror = false;
-        //        await client.Authentication.RefreshTokenAsync();
-        //        ApiTime = DateTime.Now;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        TMDBerror = true;
-        //    }
-        //}
         
         public static async Task<int> GetShowID(string name, string network, bool ForceDownload = false)
         {
@@ -238,9 +221,6 @@ namespace TV_Ratings_Predictions
             {
                 try
                 {
-                    //if (DateTime.Now - ApiTime > TimeSpan.FromHours(24))
-                    //    await RefreshTVDB();
-
                     if (TMDBerror)
                         await AuthenticateTMDB();
 
@@ -408,7 +388,7 @@ namespace TV_Ratings_Predictions
 
             var ID = ShowIDs[name];
 
-            if (string.IsNullOrWhiteSpace(IMDBList[ID]) && CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://www.themoviedb.org/"))
+            if (string.IsNullOrWhiteSpace(IMDBList[ID]) && Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 try
                 {

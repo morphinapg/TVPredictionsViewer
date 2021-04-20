@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using TV_Ratings_Predictions;
 using Xamarin.Forms;
 
-namespace TVPredictionsViewer
+namespace TV_Ratings_Predictions
 {
     [Serializable]
     public class MiniNetwork

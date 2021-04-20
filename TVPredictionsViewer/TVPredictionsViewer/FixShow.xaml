@@ -24,7 +24,7 @@
                 
                 <ActivityIndicator x:Name="Loading" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="True" Color="{DynamicResource ActivityColor}" Margin="15"/>                
 
-                <ListView x:Name="TVDBResults" IsVisible="False" HorizontalOptions="Center" WidthRequest="800" Grid.Row="1" HasUnevenRows="True" ItemTapped="TVDBResults_ItemTapped">
+                <ListView x:Name="TMDBResults" IsVisible="False" HorizontalOptions="Center" WidthRequest="800" Grid.Row="1" HasUnevenRows="True" ItemTapped="TMDBResults_ItemTapped">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -56,7 +56,7 @@
 
                 
             </Grid>
-            <Label Grid.Row="3" Text="TV information and images are provided by TheTVDB.com, but we are not endorsed or certified by TheTVDB.com or its affiliates." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" VerticalOptions="End"/>
+            <Label Grid.Row="3" Text="This product uses the TMDb API but is not endorsed or certified by TMDb." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" VerticalOptions="End"/>
 
             <Grid x:Name="Confirmation" IsVisible="False" Opacity="0" Grid.RowSpan="4" BackgroundColor="#F2000000" Margin="-15" RowSpacing="0" ColumnSpacing="0" Padding="10">
                 <Grid.RowDefinitions>

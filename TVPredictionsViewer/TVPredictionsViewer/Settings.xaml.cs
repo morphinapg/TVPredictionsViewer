@@ -1,14 +1,9 @@
-﻿using Plugin.Connectivity;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TV_Ratings_Predictions;
-
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -217,7 +212,7 @@ namespace TVPredictionsViewer
 
         private async void Refresh_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://github.com/"))
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
                 if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
                     File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
@@ -239,7 +234,7 @@ namespace TVPredictionsViewer
 
         private async void Fix_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://www.themoviedb.org/"))
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new FixShow(), "Fix Show Details"));
             else
                 await(Parent.Parent as Page).DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");

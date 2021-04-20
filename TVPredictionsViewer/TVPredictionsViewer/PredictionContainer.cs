@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using TV_Ratings_Predictions;
 
-namespace TVPredictionsViewer
+namespace TV_Ratings_Predictions
 {
     public class PredictionContainer : IComparable<PredictionContainer>, INotifyPropertyChanged
     {

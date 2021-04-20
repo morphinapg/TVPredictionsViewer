@@ -1,10 +1,8 @@
-﻿using Plugin.Connectivity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using TV_Ratings_Predictions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace TVPredictionsViewer
@@ -58,7 +56,7 @@ namespace TVPredictionsViewer
 
         private async void Prediction_Clicked(object sender, EventArgs e)
         {
-            if (CrossConnectivity.Current.IsConnected && await CrossConnectivity.Current.IsRemoteReachable("https://www.themoviedb.org/"))
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 await Parent.Navigation.PushAsync(new ViewPage(new FixShow(prediction), "Fix Show Details"));
             else
                 await Parent.DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,22 @@ using Xamarin.Forms.Xaml;
 namespace TVPredictionsViewer
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ShowDetailPage : ContentPage
+    public partial class ShowDetailPage : ContentPage, INotifyPropertyChanged
     {
         
         PredictionContainer show;
         Timer DelayedScroll;
+        string _uri;
+        public string ShowImageUri
+        {
+            get { return _uri; }
+            set 
+            { 
+                _uri = value;
+                OnPropertyChanged("ShowImageUri");
+            }
+        }
+
         //ObservableCollection<ListOfPredictions> Results = new ObservableCollection<ListOfPredictions>();
         public TitleTemplate TitleBar
         {
@@ -102,26 +114,6 @@ namespace TVPredictionsViewer
 
         async void LoadImage(PredictionContainer p)
         {
-            //var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
-            //if (ID > 0)
-            //{
-            //    ShowImage.Source = new UriImageSource
-            //    {
-            //        Uri = await NetworkDatabase.GetImageURI(ID),
-            //        CachingEnabled = true,
-            //        CacheValidity = new TimeSpan(90, 0, 0, 0)
-            //    };                    
-
-            //    p.Overview = NetworkDatabase.ShowDescriptions[ID];
-
-            //    if (ShowImage.Source != null)
-            //    {
-            //        ShowImage.IsVisible = true;
-            //        p.IsLoaded = true;
-            //        ImageLoading.IsVisible = false;
-            //    }
-
-            //}
 
             bool reload = false;
 
@@ -132,19 +124,30 @@ namespace TVPredictionsViewer
 
             if (ID > 0)
             {
-                ShowImage.Source = new UriImageSource
+                if (Device.RuntimePlatform == Device.UWP)
                 {
-                    Uri = await NetworkDatabase.GetImageURI(ID),
-                    CachingEnabled = true,
-                    CacheValidity = new TimeSpan(90, 0, 0, 0)
-                };
-                p.Overview = NetworkDatabase.ShowDescriptions[ID];
 
-                if (ShowImage.Source != null)
+
+                    //ShowImageUri = uri.AbsoluteUri;
+
+                    //ShowImage.Effects.Add(new SourceEffect());
+                }
+                else
                 {
-                    p.IsLoaded = true;
-                    ShowImage.IsVisible = true;
-                    ImageLoading.IsVisible = false;
+                    ShowImage.Source = new UriImageSource
+                    {
+                        Uri = await NetworkDatabase.GetImageURI(ID),
+                        CachingEnabled = true,
+                        CacheValidity = new TimeSpan(90, 0, 0, 0)
+                    };
+                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
+
+                    if (ShowImage.Source != null)
+                    {
+                        p.IsLoaded = true;
+                        ShowImage.IsVisible = true;
+                        ImageLoading.IsVisible = false;
+                    }
                 }
             }
 

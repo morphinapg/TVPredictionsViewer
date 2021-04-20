@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TV_Ratings_Predictions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using TvDbSharper.Dto;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using Plugin.Connectivity;
 
 namespace TVPredictionsViewer
 {
@@ -51,36 +45,20 @@ namespace TVPredictionsViewer
         async void LoadSearch()
         {
             var result = await NetworkDatabase.GetSearchResults(show);
-            var ShowList = new ObservableCollection<TVDBContainer>();
+            var ShowList = new ObservableCollection<TMDBContainer>();
 
-            TVDBResults.ItemsSource = ShowList;
-            TVDBResults.IsVisible = true;
+            TMDBResults.ItemsSource = ShowList;
+            TMDBResults.IsVisible = true;
 
             foreach (TVSearchResult s in result)
             {
-                //TvDbResponse<TvDbSharper.Dto.Image[]> Images;
-
-                //try
-                //{
-                //    Images = await GetImages(s.Id);
-                //}
-                //catch (Exception)
-                //{
-                //    Images = new TvDbResponse<TvDbSharper.Dto.Image[]>();
-                //}
-
-                var Series = new TVDBContainer(s.Show, s.Show.BackdropPath, ShowList.Count + 1);
+                var Series = new TMDBContainer(s.Show, s.Show.BackdropPath, ShowList.Count + 1);
                 ShowList.Add(Series);
             }
 
 
             Loading.IsVisible = false;
         }
-
-        //async Task<TvDbResponse<TvDbSharper.Dto.Image[]>> GetImages(int ID)
-        //{
-        //    return await NetworkDatabase.client.Series.GetImagesAsync(ID, new ImagesQuery() { KeyType = KeyType.Series });
-        //}
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
@@ -91,9 +69,9 @@ namespace TVPredictionsViewer
                 grid.RowDefinitions[0].Height = grid.Width * 140 / 758;
         }
 
-        private async void TVDBResults_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void TMDBResults_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            var item = TVDBResults.SelectedItem as TVDBContainer;
+            var item = TMDBResults.SelectedItem as TMDBContainer;
 
             Confirmation.BindingContext = item;
 
@@ -109,7 +87,7 @@ namespace TVPredictionsViewer
 
         private async void Yes_Clicked(object sender, EventArgs e)
         {
-            var context = Confirmation.BindingContext as TVDBContainer;
+            var context = Confirmation.BindingContext as TMDBContainer;
             NetworkDatabase.ShowIDs[show] = context.ID;
             NetworkDatabase.ShowDescriptions[context.ID] = context.Description;
             //NetworkDatabase.ShowSlugs[context.ID] = context.Slug;
@@ -130,7 +108,7 @@ namespace TVPredictionsViewer
         }
     }
 
-    class TVDBContainer
+    class TMDBContainer
     {
         //SeriesSearchResult show;
         TMDbLib.Objects.TvShows.TvShow show;
@@ -146,15 +124,6 @@ namespace TVPredictionsViewer
         {
             get
             {
-                //if (imgs.Data is null) return null;
-
-                //return new UriImageSource
-                //{
-                //    Uri = new Uri("https://artworks.thetvdb.com/banners/" + imgs.Data.First().FileName),
-                //    CachingEnabled = true,
-                //    CacheValidity = new TimeSpan(90, 0, 0, 0)
-                //};
-
                 return new UriImageSource
                 {
                     Uri = new Uri("https://www.themoviedb.org/t/p/original/" + img),
@@ -178,7 +147,7 @@ namespace TVPredictionsViewer
 
         public String ResultNumber { get; set; }
 
-        public TVDBContainer(TMDbLib.Objects.TvShows.TvShow s, string Image, int num)
+        public TMDBContainer(TMDbLib.Objects.TvShows.TvShow s, string Image, int num)
         {
             show = s;
             img = Image;

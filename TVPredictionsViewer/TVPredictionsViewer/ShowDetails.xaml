@@ -60,7 +60,7 @@
                 <Label Text="More information:" HorizontalOptions="Center" IsVisible="{Binding isLoaded}"/>
                 <StackLayout Orientation="Horizontal" IsVisible="{Binding isLoaded}">
                     <Button x:Name="IMDB" Text="IMDb" Clicked="IMDB_Clicked"/>
-                    <Button x:Name="TVDB" Text="TVDB" Clicked="TVDB_Clicked"/>
+                    <Button x:Name="TMDB" Text="TMDB" Clicked="TMDB_Clicked"/>
                 </StackLayout>                
             </StackLayout>
             
