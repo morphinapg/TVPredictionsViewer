@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using TV_Ratings_Predictions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -19,6 +20,9 @@ namespace TVPredictionsViewer
         }
 
         ResultsList SearchResults;
+
+        bool UsePrediction;
+        PredictionContainer prediction;
 
         public ViewPage(ContentView View, string Title)
         {
@@ -49,6 +53,28 @@ namespace TVPredictionsViewer
             }   
             else
                 MainGrid.Children.Add(View);
+
+            if (View is Settings)
+            {
+                var settings = View as Settings;
+                UsePrediction = settings.UsePrediction;
+
+                if (UsePrediction) prediction = settings.prediction;
+            }
+            else if (View is About)
+            {
+                var about = View as About;
+                UsePrediction = about.UsePrediction;
+
+                if (UsePrediction) prediction = about.prediction;
+            }
+            else if (View is FixShow)
+            {
+                var fix = View as FixShow;
+                UsePrediction = fix.IsInitialized;
+
+                if (UsePrediction) prediction = fix.prediction;
+            }
 
             MainGrid.Children.Add(SearchResults);
 
@@ -97,10 +123,21 @@ namespace TVPredictionsViewer
             {
                 view.No_Clicked(this, new EventArgs());
                 return true;
-            }                
+            }    
+            else if (UsePrediction)
+            {
+                PopAndPush();
+                return true;
+            }
             else
                 return base.OnBackButtonPressed();
                 
+        }
+
+        async void PopAndPush()
+        {
+            await Navigation.PushModalAsync(new ShowDetailPage(prediction));
+            await Navigation.PopAsync();            
         }
     }
 

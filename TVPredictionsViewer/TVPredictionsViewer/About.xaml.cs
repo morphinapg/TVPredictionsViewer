@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TV_Ratings_Predictions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -12,8 +13,17 @@ namespace TVPredictionsViewer
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class About : ContentView
     {
+        public bool UsePrediction;
+        public PredictionContainer prediction;
         public About()
         {
+            InitializeComponent();
+        }
+
+        public About(PredictionContainer p)
+        {
+            UsePrediction = true;
+            prediction = p;
             InitializeComponent();
         }
 

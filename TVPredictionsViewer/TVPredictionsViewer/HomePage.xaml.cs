@@ -1,6 +1,8 @@
-﻿using CarouselView.FormsPlugin.Abstractions;
+﻿//using CarouselView.FormsPlugin.Abstractions;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,23 +14,29 @@ using Xamarin.Forms.Xaml;
 namespace TVPredictionsViewer
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage
+    public partial class HomePage : ContentPage, INotifyPropertyChanged
     {
-        CarouselViewControl YearList = new CarouselViewControl();
+        Picker YearList;
         ActivityIndicator Activity = new ActivityIndicator();
         ResultsList SearchResults = new ResultsList();
         public TitleTemplate TitleBar => Bar;
-        Timer timer, HyperlinkTimer;
+        Timer HyperlinkTimer;
+
+        public int CurrentYear
+        {
+            get { return NetworkDatabase.CurrentYear; }
+            set
+            {
+                NetworkDatabase.CurrentYear = value;
+                OnPropertyChanged("CurrentYear");
+            }
+        }
+
+        public ObservableCollection<Year> _seasonList = new ObservableCollection<Year>();
+        public ObservableCollection<Year> SeasonList => _seasonList;
 
         public HomePage()
         {
-            Appearing += HomePage_Appearing;
-            Disappearing += HomePage_Disappearing;
-
-            timer = new Timer(1000);
-            timer.Elapsed += Timer_Elapsed;
-            timer.AutoReset = false;
-
             HyperlinkTimer = new Timer(100);
             HyperlinkTimer.Elapsed += HyperlinkTimer_Elapsed;
             HyperlinkTimer.AutoReset = false;
@@ -40,15 +48,6 @@ namespace TVPredictionsViewer
             Device.BeginInvokeOnMainThread(async () =>
             {
                 CurrentStatus.FormattedText = await FetchLabels();
-            });
-        }
-
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (Navigation.NavigationStack.Last() == this)
-                    NetworkDatabase.CurrentYear = YearList.Position;
             });
         }
 
@@ -188,17 +187,22 @@ namespace TVPredictionsViewer
 
         public async void CompletedSettings()
         {
+            
+
             PredictionWeek.Text = CurrentWeek();
 
-            YearList = FindTemplateElementByName<CarouselViewControl>(this, "YearList");
+            YearList = FindTemplateElementByName<Picker>(this, "YearList");
             Activity = FindTemplateElementByName<ActivityIndicator>(this, "Activity");
             SearchResults = FindTemplateElementByName<ResultsList>(this, "SearchResults");
             SearchResults.NavigationParent = this;
 
-            YearList.ItemsSource = NetworkDatabase.YearList;
+            SeasonList.Clear();
+            foreach (Year y in NetworkDatabase.YearList)
+                SeasonList.Add(y);
+            YearList.BindingContext = this;
             YearList.IsVisible = true;
-            YearList.Position = NetworkDatabase.YearList.Count - 1;
-            YearList.PositionSelected += YearList_PositionSelected;
+            YearList.SelectedIndexChanged += YearList_SelectedIndexChanged;
+            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
 
 
             foreach (ToolbarItem t in new Toolbar(this).ToolBarItems)
@@ -215,16 +219,6 @@ namespace TVPredictionsViewer
             Completed = true;
         }
 
-        private void HomePage_Disappearing(object sender, EventArgs e)
-        {
-            NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
-        }
-
-        private void HomePage_Appearing(object sender, EventArgs e)
-        {
-            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
-        }
-
         public void RefreshYearlist()
         {
             PredictionWeek.Text = CurrentWeek();
@@ -233,19 +227,15 @@ namespace TVPredictionsViewer
 
         private void NetworkDatabase_CurrentYearUpdated(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                YearList.Position = NetworkDatabase.CurrentYear;
-            });
-
+            OnPropertyChanged("CurrentYear");
         }
 
-        private void YearList_PositionSelected(object sender, CarouselView.FormsPlugin.Abstractions.PositionSelectedEventArgs e)
+        private void YearList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (YearList.Position > -1)
+            if (YearList.SelectedIndex > -1)
             {
-                PredictionYear.Text = NetworkDatabase.YearList[YearList.Position].Season + " Predictions";
-                if (NetworkDatabase.MaxYear > NetworkDatabase.YearList[YearList.Position].year)
+                PredictionYear.Text = NetworkDatabase.YearList[YearList.SelectedIndex].Season + " Predictions";
+                if (NetworkDatabase.MaxYear > NetworkDatabase.YearList[CurrentYear].year)
                 {
                     PredictionWeek.Text = "";
                     CurrentStatus.Text = "";
@@ -261,9 +251,6 @@ namespace TVPredictionsViewer
                     HyperlinkTimer.Stop();
                     HyperlinkTimer.Start();
                 }
-
-                timer.Stop();
-                timer.Start();
             }
         }
 
@@ -303,17 +290,17 @@ namespace TVPredictionsViewer
             base.OnSizeAllocated(dblWidth, dblHeight);
 
             // fix for carouselview orientation bug on android
-            if (Device.RuntimePlatform == Device.Android)
-            {
-                YearList.Orientation =
-                    CarouselViewOrientation.Vertical;
-                YearList.Orientation =
-                    CarouselViewOrientation.Horizontal;
-            }
+            //if (Device.RuntimePlatform == Device.Android)
+            //{
+            //    YearList.Orientation =
+            //        CarouselViewOrientation.Vertical;
+            //    YearList.Orientation =
+            //        CarouselViewOrientation.Horizontal;
+            //}
 
             //re-label Blog Post
-            timer.Stop();
-            timer.Start();
+            //timer.Stop();
+            //timer.Start();
         }
 
         protected override bool OnBackButtonPressed()

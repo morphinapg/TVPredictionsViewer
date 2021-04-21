@@ -12,6 +12,7 @@ namespace TVPredictionsViewer
     {
         String show;
         public bool IsInitialized;
+        public PredictionContainer prediction;
 
         public FixShow(PredictionContainer p)
         {
@@ -22,6 +23,7 @@ namespace TVPredictionsViewer
             p.DisplayYear = DisplayYear;
 
             IsInitialized = true;
+            prediction = p;
 
             InitializeComponent();
 
@@ -66,7 +68,7 @@ namespace TVPredictionsViewer
             var grid = img.Parent as Grid;
 
             if (grid.Width > 5)
-                grid.RowDefinitions[0].Height = grid.Width * 140 / 758;
+                grid.RowDefinitions[0].Height = grid.Width * 9 / 16;
         }
 
         private async void TMDBResults_ItemTapped(object sender, ItemTappedEventArgs e)

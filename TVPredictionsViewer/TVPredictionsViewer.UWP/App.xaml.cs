@@ -1,5 +1,4 @@
-﻿using CarouselView.FormsPlugin.UWP;
-using Microsoft.WindowsAzure.Messaging;
+﻿using Microsoft.WindowsAzure.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,8 +47,8 @@ namespace TVPredictionsViewer.UWP
                 rootFrame = new Windows.UI.Xaml.Controls.Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                Xamarin.Forms.Forms.Init(e, new[] { typeof(CarouselViewRenderer).GetTypeInfo().Assembly });
-                CarouselViewRenderer.Init();
+                Xamarin.Forms.Forms.Init(e);
+                //CarouselViewRenderer.Init();
 
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

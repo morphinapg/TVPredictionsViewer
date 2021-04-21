@@ -18,7 +18,7 @@ namespace TVPredictionsViewer
     {
         
         PredictionContainer show;
-        Timer DelayedScroll;
+        Timer DelayedScroll = new Timer(1000);
         string _uri;
         public string ShowImageUri
         {
@@ -55,7 +55,10 @@ namespace TVPredictionsViewer
             BindingContext = p;
             show = p;
             InitializeComponent();
-            BindableLayout.SetItemsSource(OptionsMenu, MenuItems);
+            BindableLayout.SetItemsSource(OptionsMenuHidden, MenuItems);
+            OptionsMenu.ItemsSource = MenuItems;
+
+            OptionsMenuHidden.SizeChanged += OptionsMenuHidden_SizeChanged;
 
             Bar.Title = p.Name;
 
@@ -72,11 +75,20 @@ namespace TVPredictionsViewer
                 Appearing += ShowDetailPage_Appearing;
         }
 
-        
+        private void OptionsMenuHidden_SizeChanged(object sender, EventArgs e)
+        {
+            var w = OptionsMenuHidden.Width;
+            var h = OptionsMenuHidden.Height;
+            OptionsMenu.WidthRequest = w;
+            OptionsMenu.HeightRequest = h;
+            OptionsMenuHidden.IsVisible = false;
+
+            OptionsMenu.IsVisible = true;
+        }
 
         private void ShowDetailPage_Appearing(object sender, EventArgs e)
         {
-            var stack = Navigation.NavigationStack;
+            var stack = NetworkDatabase.mainpage.Detail.Navigation.NavigationStack;
             var count = stack.Count;
             for (int i = count - 2; i > 0; i--)
                 Navigation.RemovePage(stack[i]);
@@ -109,6 +121,8 @@ namespace TVPredictionsViewer
 
             if (SideColumn.Width > 5)
                 ImageRow.Height = width * 9 / 16;
+
+            ScrollTo();
                 
         }
 
@@ -190,14 +204,14 @@ namespace TVPredictionsViewer
 
             TMDBNotice.FormattedText = Formatted;
 
+            DelayedScroll.Elapsed += DelayedScroll_Elapsed;
+            DelayedScroll.AutoReset = false;
             ScrollTo();
         }
 
         void ScrollTo()
         {
-            DelayedScroll = new Timer(1000);
-            DelayedScroll.Elapsed += DelayedScroll_Elapsed;
-            DelayedScroll.AutoReset = false;
+            DelayedScroll.Stop();            
             DelayedScroll.Start();
         }
 
@@ -254,6 +268,19 @@ namespace TVPredictionsViewer
         private void Back_Clicked(object sender, EventArgs e)
         {
             _ = OnBackButtonPressed();
+        }
+
+        private async void Options_Clicked(object sender, EventArgs e)
+        {
+            OptionsScreen.Opacity = 0;
+            OptionsScreen.IsVisible = true;
+            await OptionsScreen.FadeTo(1);
+        }
+
+        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        {
+            //await OptionsScreen.FadeTo(0);
+            OptionsScreen.IsVisible = false;
         }
     }
 

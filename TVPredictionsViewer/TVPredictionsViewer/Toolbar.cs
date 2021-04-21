@@ -19,7 +19,8 @@ namespace TVPredictionsViewer
                 {
                     var results = new ToolbarItem() { Text = "Prediction Results", Order = ToolbarItemOrder.Secondary };
                     results.Clicked += Results_Clicked;
-                    results.Command = new Command(() => Results());
+                    if (UsePrediction)
+                        results.Command = new Command(() => Results());
                     list.Add(results);
                 }                
 
@@ -27,7 +28,8 @@ namespace TVPredictionsViewer
                 {
                     var prediction = new ToolbarItem() { Text = "Fix Show Details", Order = ToolbarItemOrder.Secondary };
                     prediction.Clicked += Prediction_Clicked;
-                    prediction.Command = new Command(() => Prediction());
+                    if (UsePrediction)
+                        prediction.Command = new Command(() => Prediction());
                     list.Add(prediction);
                 }
 
@@ -35,13 +37,15 @@ namespace TVPredictionsViewer
                 {
                     var settings = new ToolbarItem() { Text = "Settings", Order = ToolbarItemOrder.Secondary };
                     settings.Clicked += Settings_Clicked;
-                    settings.Command = new Command(() => Settings());
+                    if (UsePrediction)
+                        settings.Command = new Command(() => Settings());
                     list.Add(settings);
                 }
 
                 var about = new ToolbarItem() { Text = "About", Order = ToolbarItemOrder.Secondary };
                 about.Clicked += About_Clicked;
-                about.Command = new Command(() => About());
+                if (UsePrediction)
+                    about.Command = new Command(() => About());
                 list.Add(about);
 
                 return list;
@@ -58,7 +62,7 @@ namespace TVPredictionsViewer
             var page = NetworkDatabase.mainpage.Detail;
 
             await page.Navigation.PopModalAsync();
-            await page.Navigation.PushAsync(new ScoreBoard(network));
+            await page.Navigation.PushAsync(new ScoreBoard(prediction));
         }
 
         private async void About_Clicked(object sender, EventArgs e)
@@ -72,7 +76,8 @@ namespace TVPredictionsViewer
 
             await page.Navigation.PopModalAsync();
 
-            await page.Navigation.PushAsync(new ViewPage(new About(), "About"));
+            
+            await page.Navigation.PushAsync(new ViewPage(new About(prediction), "About"));
         }
 
         private async void Prediction_Clicked(object sender, EventArgs e)
@@ -167,7 +172,7 @@ namespace TVPredictionsViewer
             Parent = page;
         }
 
-        public Toolbar(ContentPage page, MiniNetwork n, PredictionContainer p)
+        public Toolbar(ContentPage page, MiniNetwork n, PredictionContainer p) //ShowDetailPage with Network
         {
             network = n;
             UseNetwork = true;
@@ -176,7 +181,7 @@ namespace TVPredictionsViewer
             Parent = page;
         }
 
-        public Toolbar(ContentPage page, PredictionContainer p)
+        public Toolbar(ContentPage page, PredictionContainer p) //ShowDetail Page Without Network
         {
             prediction = p;
             UsePrediction = true;

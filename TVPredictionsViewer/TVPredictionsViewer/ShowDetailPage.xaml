@@ -69,23 +69,47 @@
                         <!--<Button x:Name="Hamburger" Text="&#9776;"/>-->
                     </StackLayout>
                     <controls:TitleTemplate Grid.Column="1" x:Name="Bar" TransparentButtons="True"/>
-                    
-                    <!--<Button x:Name="Options" />-->
+
+                    <Button x:Name="Options" Grid.Column="2" Clicked="Options_Clicked">
+                        <Button.Text>
+                            <OnPlatform x:TypeArguments="x:String">
+                                <On Platform="UWP" Value="&#8943;"/>
+                                <On Platform="Android" Value="&#8942;"/>
+                                <On Platform="iOS" Value="&#8942;"/>
+                            </OnPlatform>
+                        </Button.Text>
+                    </Button>
                 </Grid>
 
                 <controls:ResultsList x:Name="SearchResults" IsVisible="False"/>
 
             </StackLayout>
 
-            <Grid x:Name="OptionsScreen" ColumnDefinitions="*, Auto" RowDefinitions="Auto, *" IsVisible="False">
+            <Grid x:Name="OptionsScreen" ColumnDefinitions="*, Auto" RowDefinitions="Auto, *" IsVisible="False" Opacity="0">
                 <Frame Opacity="0"/>
-                <StackLayout Grid.Column="1" Opacity="0" x:Name="OptionsMenu" Spacing="0" BackgroundColor="{DynamicResource TitleColor}">
+                <StackLayout Grid.Column="1" Opacity="0" x:Name="OptionsMenuHidden" Spacing="0" BackgroundColor="{DynamicResource TitleColor}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="controls:ShowDetailMenuItem">
-                            <Button Text="{Binding Text}" Command="{Binding Command}"/>
+                            <Button Text="{Binding Text}" Command="{Binding Command}" Padding="10"/>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </StackLayout>
+                <ListView Grid.Column="1" x:Name="OptionsMenu" HorizontalOptions="End" VerticalOptions="Start" BackgroundColor="{DynamicResource TitleColor}" IsVisible="False">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="controls:ShowDetailMenuItem">
+                            <ViewCell>
+                                <Label Text="{Binding Text}" Padding="10">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Command}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                </Grid.GestureRecognizers>
             </Grid>
         </Grid>        
     </ContentPage.Content>

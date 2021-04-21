@@ -1,5 +1,4 @@
-﻿using CarouselView.FormsPlugin.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,14 +15,15 @@ namespace TVPredictionsViewer
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ScoreBoard : ContentPage, INotifyPropertyChanged
     {
-        CarouselViewControl YearList = new CarouselViewControl();
+        Picker YearList;
         ActivityIndicator Activity = new ActivityIndicator();
         ResultsList SearchResults = new ResultsList();
         public TitleTemplate TitleBar => Bar;
-        Timer timer;
         public PredictionContainer LastItem;
         bool isDesktop = false;
         double height;
+        public bool UsePrediction;
+        public PredictionContainer prediction;
 
         List<Year> FilteredYearList;
 
@@ -113,18 +113,52 @@ namespace TVPredictionsViewer
             }
         }
 
+        public int CurrentYear
+        {
+            get 
+            {
+                if (SeasonList.Contains(NetworkDatabase.YearList[NetworkDatabase.CurrentYear]))
+                    return SeasonList.IndexOf(NetworkDatabase.YearList[NetworkDatabase.CurrentYear]);
+                else if (NetworkDatabase.YearList[NetworkDatabase.CurrentYear].year > SeasonList[SeasonList.Count - 1].year)
+                    return SeasonList.Count - 1;
+                else
+                    return 0;
+                    
+            }
+            set
+            {
+                NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(SeasonList[value]);
+                LoadPredictions();
+                OnPropertyChanged("CurrentYear");
+            }
+        }
+
+        public ObservableCollection<Year> _seasonList = new ObservableCollection<Year>();
+        public ObservableCollection<Year> SeasonList => _seasonList;
+
         public List<string> NetworkList { get { return NetworkDatabase.NetworkList.Select(x => x.Name).ToList(); } }
 
         public ScoreBoard(MiniNetwork n = null)
         {
+            Load(n);
+        }
+
+        public ScoreBoard(PredictionContainer p)
+        {
+            UsePrediction = true;
+            prediction = p;
+
+            Load(p.network);
+        }
+
+        void Load(MiniNetwork n)
+        {
             foreach (ToolbarItem t in new Toolbar(this, ref Predictions).ToolBarItems)
                 ToolbarItems.Add(t);
 
-            timer = new Timer(100);
-            timer.Elapsed += Timer_Elapsed;
-            timer.AutoReset = false;
-
             FilteredYearList = NetworkDatabase.YearList.Where(x => NetworkDatabase.NetworkList.AsParallel().SelectMany(y => y.shows).Where(y => y.year == x).Where(y => y.FinalPrediction > 0 && (y.Renewed || y.Canceled)).Count() > 0).ToList();
+            foreach (Year y in FilteredYearList)
+                SeasonList.Add(y);
 
             network = n;
 
@@ -132,20 +166,23 @@ namespace TVPredictionsViewer
 
             BindingContext = this;
 
-            YearList = FindTemplateElementByName<CarouselViewControl>(this, "YearList");
+            YearList = FindTemplateElementByName<Picker>(this, "YearList");
             Activity = FindTemplateElementByName<ActivityIndicator>(this, "Activity");
             SearchResults = FindTemplateElementByName<ResultsList>(this, "SearchResults");
             SearchResults.NavigationParent = this;
 
-            YearList.ItemsSource = FilteredYearList;
+            YearList.BindingContext = this;
+            //YearList.ItemsSource = FilteredYearList;
             YearList.IsVisible = true;
             //YearList.Position = FilteredYearList.Count - 1;
 
-            YearList.PositionSelected += YearList_PositionSelected;
+            //YearList.PositionSelected += YearList_PositionSelected;
+            //YearList.PositionChanged += YearList_PositionChanged;
+            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
 
 
             NetworkDatabase_CurrentYearUpdated(this, new EventArgs());
-            NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
+            //NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(SeasonList[SeasonList.Count-1]);
 
             Activity.IsRunning = false;
             Activity.IsVisible = false;
@@ -173,7 +210,7 @@ namespace TVPredictionsViewer
 
         private void ScoreBoard_Disappearing(object sender, EventArgs e)
         {
-            NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
+            //NetworkDatabase.CurrentYearUpdated -= NetworkDatabase_CurrentYearUpdated;
         }
 
         private void SideColumn_SizeChanged(object sender, EventArgs e)
@@ -197,7 +234,7 @@ namespace TVPredictionsViewer
             Navigation.NavigationStack.Where(x => x is Predictions).ToList().ForEach(x => Navigation.RemovePage(x));
             LoadPredictions();
 
-            NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
+            
         }
 
         private void Model_Tapped(object sender, EventArgs e)
@@ -222,8 +259,19 @@ namespace TVPredictionsViewer
                 FadeOut();
                 return true;
             }
+            else if (UsePrediction)
+            {
+                PopAndPush();
+                return true;
+            }
             else
                 return base.OnBackButtonPressed();
+        }
+
+        async void PopAndPush()
+        {
+            await Navigation.PushModalAsync(new ShowDetailPage(prediction));
+            await Navigation.PopAsync();
         }
 
         async void FadeOut()
@@ -244,42 +292,44 @@ namespace TVPredictionsViewer
             Filtered = !Filtered;
         }
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timer.Stop();
+        //private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        //{
+        //    timer.Stop();
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (YearList.Position > -1)
-                {
-                    var oldyear = NetworkDatabase.CurrentYear;
-                    NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
-                    if (!AllYears && Predictions.Count > 0 && NetworkDatabase.CurrentYear != oldyear) LoadPredictions();
-                }                
-            });
+        //    Device.BeginInvokeOnMainThread(() =>
+        //    {
+        //        if (YearList.Position > -1)
+        //        {
+        //            var oldyear = NetworkDatabase.CurrentYear;
+        //            NetworkDatabase.CurrentYear = NetworkDatabase.YearList.IndexOf(FilteredYearList[YearList.Position]);
+        //            if (!AllYears && Predictions.Count > 0 && NetworkDatabase.CurrentYear != oldyear) LoadPredictions();
+        //        }                
+        //    });
 
-        }
+        //}
 
         private void NetworkDatabase_CurrentYearUpdated(object sender, EventArgs e)
         {
-            var CurrentYear = NetworkDatabase.YearList[NetworkDatabase.CurrentYear];
+            //var CurrentYear = NetworkDatabase.YearList[NetworkDatabase.CurrentYear];
 
-            if (FilteredYearList.Contains(CurrentYear))
-                YearList.Position = FilteredYearList.IndexOf(CurrentYear);
-            else if (FilteredYearList.Where(x => x.year < CurrentYear.year).Count() > 0)
-                YearList.Position = FilteredYearList.Count - 1;
-            else
-                YearList.Position = 0;
+            //if (FilteredYearList.Contains(CurrentYear))
+            //    YearList.Position = FilteredYearList.IndexOf(CurrentYear);
+            //else if (FilteredYearList.Where(x => x.year < CurrentYear.year).Count() > 0)
+            //    YearList.Position = FilteredYearList.Count - 1;
+            //else
+            //    YearList.Position = 0;
+
+            OnPropertyChanged("CurrentYear");
         }
 
-        private void YearList_PositionSelected(object sender, PositionSelectedEventArgs e)
-        {
-            if (Navigation.NavigationStack.LastOrDefault() == this && YearList.Position > -1)
-            {
-                timer.Stop();
-                timer.Start();
-            }
-        }
+        //private void YearList_PositionChanged(object sender, PositionChangedEventArgs e)
+        //{
+        //    if (Navigation.NavigationStack.LastOrDefault() == this && YearList.Position > -1)
+        //    {
+        //        timer.Stop();
+        //        timer.Start();
+        //    }
+        //}
 
         public T FindTemplateElementByName<T>(Page page, string name) where T : Element
         {
@@ -305,13 +355,13 @@ namespace TVPredictionsViewer
             base.OnSizeAllocated(width, height);
 
             // fix for carouselview orientation bug on android
-            if (Device.RuntimePlatform == Device.Android)
-            {
-                YearList.Orientation =
-                    CarouselViewOrientation.Vertical;
-                YearList.Orientation =
-                    CarouselViewOrientation.Horizontal;
-            }
+            //if (Device.RuntimePlatform == Device.Android)
+            //{
+            //    YearList.Orientation =
+            //        CarouselViewOrientation.Vertical;
+            //    YearList.Orientation =
+            //        CarouselViewOrientation.Horizontal;
+            //}
 
             var tmpDesktop = isDesktop;
             isDesktop = width > (1080);
@@ -408,10 +458,6 @@ namespace TVPredictionsViewer
 
                 }
             }
-
-            //Prevent Year position from changing during window resize
-            timer.Stop();
-            timer.Start();
         }
 
         void LoadPredictions()

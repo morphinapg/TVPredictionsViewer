@@ -13,7 +13,6 @@ using Xamarin.Forms;
 using WindowsAzure.Messaging;
 using System.Linq;
 using Android.Content;
-using CarouselView.FormsPlugin.Droid;
 using AndroidX.Core.App;
 
 namespace TVPredictionsViewer.Droid
@@ -32,7 +31,7 @@ namespace TVPredictionsViewer.Droid
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            CarouselViewRenderer.Init();
+            //CarouselViewRenderer.Init();
             NetworkDatabase.Folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             LoadApplication(new App());
 

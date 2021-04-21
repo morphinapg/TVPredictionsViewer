@@ -147,8 +147,8 @@ namespace TVPredictionsViewer
         MiniNetwork network;
         bool UseNetwork;
 
-        PredictionContainer prediction;
-        bool UsePrediction;
+        public PredictionContainer prediction;
+        public bool UsePrediction;
 
         ObservableCollection<ListOfPredictions> PredictionList;
         bool UsePredictionList;
@@ -260,6 +260,6 @@ namespace TVPredictionsViewer
         private async void Log_Clicked(object sender, EventArgs e)
         {
             await (Parent.Parent as Page).Navigation.PushAsync(new ViewPage(new ChangeLog(), "Changelog"));
-        }
+        }        
     }
 }
