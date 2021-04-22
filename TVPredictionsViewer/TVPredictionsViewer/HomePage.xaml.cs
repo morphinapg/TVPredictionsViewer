@@ -1,6 +1,7 @@
 ﻿//using CarouselView.FormsPlugin.Abstractions;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -21,6 +22,8 @@ namespace TVPredictionsViewer
         ResultsList SearchResults = new ResultsList();
         public TitleTemplate TitleBar => Bar;
         Timer HyperlinkTimer;
+
+        public ObservableCollection<ShowHighlights> Highlights { get; } = new ObservableCollection<ShowHighlights>();
 
         public int CurrentYear
         {
@@ -52,10 +55,9 @@ namespace TVPredictionsViewer
         }
 
         public void CompletedUpdate(string update)
-        {
-            
+        {           
 
-            CurrentStatus.Text = update;
+            CurrentStatus.Text = "Loading Predictions...";
 
             NetworkDatabase.currentText = update;
         }
@@ -201,7 +203,7 @@ namespace TVPredictionsViewer
                 SeasonList.Add(y);
             YearList.BindingContext = this;
             YearList.IsVisible = true;
-            YearList.SelectedIndexChanged += YearList_SelectedIndexChanged;
+            //YearList.SelectedIndexChanged += YearList_SelectedIndexChanged;
             NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
 
 
@@ -210,11 +212,50 @@ namespace TVPredictionsViewer
 
             PredictionYear.Text = NetworkDatabase.YearList[NetworkDatabase.YearList.Count - 1].Season + " Predictions";
 
+            
+
+            var year = NetworkDatabase.YearList[CurrentYear].year;
+
+            var Thresholds = new Dictionary<string, double>();
+
+            foreach (MiniNetwork n in NetworkDatabase.NetworkList)
+                Thresholds[n.name] = n.model.GetNetworkRatingsThreshold(year);
+
+            HighlightsList.BindingContext = this;
+
+            var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
+                
+            foreach (Show s in NewShows)
+            {
+                var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                var highlight = new ShowHighlights(prediction, 0);
+                Highlights.Add(highlight);
+            }
+
+            var RenewedOrCanceledShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == NetworkDatabase.YearList[CurrentYear] && (x.Renewed || x.Canceled) && x.FinalPrediction == x.OldOdds).OrderByDescending(x => x.PredictedOdds);
+
+            foreach (Show s in RenewedOrCanceledShows)
+            {
+                var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                var highlight = new ShowHighlights(prediction, 1);
+                Highlights.Add(highlight);
+            }
+
             Activity.IsRunning = false;
             Activity.IsVisible = false;
             UseMenu.IsVisible = true;
+            CurrentStatus.IsVisible = false;
 
             CurrentStatus.FormattedText = await FetchLabels();
+
+            if (Highlights.Count > 0)
+            {
+                HighlightsTitle.IsVisible = true;
+                ViewPost.IsVisible = true;                
+            }
+                
+            else
+                CurrentStatus.IsVisible = true;
 
             Completed = true;
         }
@@ -228,10 +269,6 @@ namespace TVPredictionsViewer
         private void NetworkDatabase_CurrentYearUpdated(object sender, EventArgs e)
         {
             OnPropertyChanged("CurrentYear");
-        }
-
-        private void YearList_SelectedIndexChanged(object sender, EventArgs e)
-        {
             if (YearList.SelectedIndex > -1)
             {
                 PredictionYear.Text = NetworkDatabase.YearList[YearList.SelectedIndex].Season + " Predictions";
@@ -241,12 +278,21 @@ namespace TVPredictionsViewer
                     CurrentStatus.Text = "";
                     UseMenu.Text = "You are now viewing historical data. We have ratings and renewal/cancellation data going back to 2014. \r\n\r\n" +
                     "use the menu on the left to see what the current prediction models would have predicted for those shows";
+
+                    HighlightsList.IsVisible = false;
+                    HighlightsTitle.IsVisible = false;
+                    ViewPost.IsVisible = false;
+
                 }
                 else
                 {
                     PredictionWeek.Text = CurrentWeek();
                     CurrentStatus.Text = NetworkDatabase.currentText;
                     UseMenu.Text = "use the menu on the left to see predictions for each network";
+
+                    HighlightsList.IsVisible = true;
+                    HighlightsTitle.IsVisible = Highlights.Count > 0;
+                    ViewPost.IsVisible = HighlightsTitle.IsVisible;
 
                     HyperlinkTimer.Stop();
                     HyperlinkTimer.Start();
@@ -332,6 +378,20 @@ namespace TVPredictionsViewer
 
             RefreshPredictions.IsVisible = false;
             await NetworkDatabase.ReadUpdateAsync();
+        }
+
+        private void ViewPost_Clicked(object sender, EventArgs e)
+        {
+            if (CurrentStatus.IsVisible)
+            {
+                CurrentStatus.IsVisible = false;
+                ViewPost.Text = "View Full Post";
+            }
+            else
+            {
+                CurrentStatus.IsVisible = true;
+                ViewPost.Text = "Hide Post";
+            }
         }
     }
 

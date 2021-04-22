@@ -60,9 +60,9 @@
 
             <Grid x:Name="Confirmation" IsVisible="False" Opacity="0" Grid.RowSpan="4" BackgroundColor="#F2000000" Margin="-15" RowSpacing="0" ColumnSpacing="0" Padding="10">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid BackgroundColor="{DynamicResource PageBackground}" Padding="25" VerticalOptions="EndAndExpand">
@@ -83,10 +83,10 @@
 
                     <Grid Grid.Column="1" >
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Image Source="{Binding ImageUri}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                        <Image Source="{Binding ImageUri}" HorizontalOptions="Fill" VerticalOptions="Fill"/>
 
                         <StackLayout Grid.Row="1">
                             <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>

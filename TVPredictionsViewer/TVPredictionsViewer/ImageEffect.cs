@@ -41,7 +41,8 @@ namespace TVPredictionsViewer
                 {
                     view.Effects.Remove(toRemove);
                 }
-            }
+            }           
+
         }
 
     }
