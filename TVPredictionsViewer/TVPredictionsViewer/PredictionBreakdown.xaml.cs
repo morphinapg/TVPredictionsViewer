@@ -161,8 +161,8 @@ namespace TVPredictionsViewer
                         var NewShowIndex = network.factors.IndexOf("New Show");
                         if (NewShowIndex > -1)
                         {
-                            CurrentFactors[NewShowIndex] = (NewShow ? 1 : -1) - network.FactorAverages[NewShowIndex];
                             NewShow = s.factorValues[NewShowIndex];
+                            CurrentFactors[NewShowIndex] = (NewShow ? 1 : -1) - network.FactorAverages[NewShowIndex];
                         }
 
                         var hundredpart = s.Season / 100;

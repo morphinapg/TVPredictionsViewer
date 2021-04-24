@@ -4,6 +4,7 @@ Removed code for old notification service
 Switched from TVDB to TMDB for show info and images
 [Windows] Improved image scaling
 Replaced the control to select the year because the CarouselView control I used caused a lot of bugs.
+Improved the Prediction Breakdown calculation. Adjust precision in settings if this runs slowly on your device.
 
 1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.

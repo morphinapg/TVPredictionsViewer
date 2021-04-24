@@ -1,5 +1,4 @@
 ﻿Recreate Flyout Menu on ShowDetailPage?
 Option to disable Highlights for slow devices
 Disable modal back button when coming from non home page on UWP
-Option for speeding up Prediction Breakdown (Minimum = FactorCount^2, Maximum = 20,000)
 Title Shrink automatically on ShowDetailPage
