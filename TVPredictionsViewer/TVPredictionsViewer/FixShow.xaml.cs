@@ -105,8 +105,8 @@ namespace TVPredictionsViewer
             var Average = Network.model.GetAverageThreshold(true);
             var Prediction = new PredictionContainer(NewestShow, Network, Adjustments[NewestShow.year], Average);
 
-            await (Parent.Parent as ViewPage).Navigation.PushModalAsync(new ShowDetailPage(Prediction, true));           
-            
+            await (Parent.Parent as ViewPage).Navigation.PushModalAsync(new ShowDetailPage(Prediction, true));
+            await (Parent.Parent as ViewPage).Navigation.PopAsync();
         }
     }
 

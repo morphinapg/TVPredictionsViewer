@@ -201,12 +201,11 @@ namespace TVPredictionsViewer
         public int OptimalEpisodes;
         public double BaseOdds, CurrentOdds;
 
-        public DetailsCombo(List<DetailsContainer> d, double b, double c, int o)
+        public DetailsCombo(List<DetailsContainer> d, double b, double c)
         {
             details = d;
             BaseOdds = b;
             CurrentOdds = c;
-            OptimalEpisodes = o;
         }
     }
 }

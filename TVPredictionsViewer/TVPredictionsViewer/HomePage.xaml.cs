@@ -223,41 +223,74 @@ namespace TVPredictionsViewer
 
             HighlightsList.BindingContext = this;
 
-            var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
+
+                    foreach (Show s in NewShows)
+                    {
+                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                        var highlight = new ShowHighlights(prediction, 0);
+                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                    }
+
+                    var RenewedOrCanceledShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && (x.Renewed || x.Canceled) && x.FinalPrediction == x.OldOdds).OrderByDescending(x => x.PredictedOdds);
+
+                    foreach (Show s in RenewedOrCanceledShows)
+                    {
+                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                        var highlight = new ShowHighlights(prediction, 1);
+                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                    }
+
+                    var PredictionChanged = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.5) != (int)(x.PredictedOdds / 0.5))).OrderByDescending(x => x.PredictedOdds);
+
+                    foreach (Show s in PredictionChanged)
+                    {
+                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                        var highlight = new ShowHighlights(prediction, 2);
+                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                    }
+
+                    var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2))).OrderByDescending(x => x.PredictedOdds);
+
+                    foreach (Show s in UpgradedOrDownGradedShows)
+                    {
+                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                        var highlight = new ShowHighlights(prediction, 2);
+                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                    }
+
+                    await Device.InvokeOnMainThreadAsync(async () =>
+                    {
+                        Activity.IsRunning = false;
+                        Activity.IsVisible = false;
+                        UseMenu.IsVisible = true;
+                        CurrentStatus.IsVisible = false;
+
+                        CurrentStatus.FormattedText = await FetchLabels();
+
+                        if (Highlights.Count > 0)
+                        {
+                            HighlightsTitle.IsVisible = true;
+                            ViewPost.IsVisible = true;
+                            TMDBNotice.IsVisible = true;
+                        }
+
+                        else
+                            CurrentStatus.IsVisible = true;
+
+                        Completed = true;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    string error = ex.ToString();
+                }
                 
-            foreach (Show s in NewShows)
-            {
-                var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                var highlight = new ShowHighlights(prediction, 0);
-                Highlights.Add(highlight);
-            }
-
-            var RenewedOrCanceledShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == NetworkDatabase.YearList[CurrentYear] && (x.Renewed || x.Canceled) && x.FinalPrediction == x.OldOdds).OrderByDescending(x => x.PredictedOdds);
-
-            foreach (Show s in RenewedOrCanceledShows)
-            {
-                var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                var highlight = new ShowHighlights(prediction, 1);
-                Highlights.Add(highlight);
-            }
-
-            Activity.IsRunning = false;
-            Activity.IsVisible = false;
-            UseMenu.IsVisible = true;
-            CurrentStatus.IsVisible = false;
-
-            CurrentStatus.FormattedText = await FetchLabels();
-
-            if (Highlights.Count > 0)
-            {
-                HighlightsTitle.IsVisible = true;
-                ViewPost.IsVisible = true;                
-            }
-                
-            else
-                CurrentStatus.IsVisible = true;
-
-            Completed = true;
+            });            
         }
 
         public void RefreshYearlist()
@@ -282,7 +315,7 @@ namespace TVPredictionsViewer
                     HighlightsList.IsVisible = false;
                     HighlightsTitle.IsVisible = false;
                     ViewPost.IsVisible = false;
-
+                    TMDBNotice.IsVisible = false;
                 }
                 else
                 {
@@ -293,6 +326,7 @@ namespace TVPredictionsViewer
                     HighlightsList.IsVisible = true;
                     HighlightsTitle.IsVisible = Highlights.Count > 0;
                     ViewPost.IsVisible = HighlightsTitle.IsVisible;
+                    TMDBNotice.IsVisible = ViewPost.IsVisible;
 
                     HyperlinkTimer.Stop();
                     HyperlinkTimer.Start();
@@ -391,7 +425,15 @@ namespace TVPredictionsViewer
             {
                 CurrentStatus.IsVisible = true;
                 ViewPost.Text = "Hide Post";
+
             }
+        }
+
+        private void HighlightButton_Clicked(object sender, EventArgs e)
+        {
+            var p = (sender as Element).BindingContext as ShowHighlights;
+
+            p.Navigate(Navigation);
         }
     }
 

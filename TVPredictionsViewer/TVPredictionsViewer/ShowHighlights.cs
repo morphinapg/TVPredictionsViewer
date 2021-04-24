@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using TV_Ratings_Predictions;
 using Xamarin.Forms;
 
@@ -11,13 +12,15 @@ namespace TVPredictionsViewer
     {
         PredictionContainer show;
         Uri imagesource;
-        int Category;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        bool _visibility = true;
+        public bool ActivityVisibility => _visibility;
 
         public UriImageSource ImageUri
         {
@@ -46,7 +49,7 @@ namespace TVPredictionsViewer
         }
 
         public string NewShow { get; }
-        public string Description { get; }
+        public FormattedString Description { get; }
         public string Prediction { get; }
 
         public double RenewalIndex { get; }
@@ -56,7 +59,6 @@ namespace TVPredictionsViewer
         public ShowHighlights (PredictionContainer p, int category)
         {
             show = p;
-            Category = category;
 
             GetImage();
 
@@ -64,12 +66,43 @@ namespace TVPredictionsViewer
             {
                 case 0:
                     NewShow = (show.show.Season == 1) ? "Series Premiere" : "Season Premiere";
-                    Prediction = show.Prediction;
+                    Prediction = show.Status == "" ? show.Category : show.Status;
                     RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
+                    Description = show.Season;
                     break;
                 case 1:
                     Prediction = show.Status;
                     RenewalIndex = show.show.Renewed ? 1 : -1;
+                    {
+                        var correct = (show.show.Renewed && show.show.FinalPrediction > 0.5) || (show.show.Canceled && show.show.FinalPrediction < 0.5);
+
+                        var formats = new FormattedString();
+                        var part1 = new Span { Text = correct ? "Prediction was correct " : "Prediction was incorrect "};
+                        var part2 = correct ? new Span { Text = "✔", TextColor = Color.Green } : new Span { Text = "❌", TextColor = Color.Red };
+                        formats.Spans.Add(part1);
+                        formats.Spans.Add(part2);
+                        Description = formats;
+                    }         
+                    break;
+                case 2:
+                    Prediction = show.Category;
+                    RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
+                    {
+                        string OldCategory;
+                        if (show.show.OldOdds > 0.8)
+                            OldCategory = "Certain Renewal";
+                        else if (show.show.OldOdds > 0.6)
+                            OldCategory = "Likely Renewal";
+                        else if (show.show.OldOdds > 0.5)
+                            OldCategory = "Leaning Towards Renewal";
+                        else if (show.show.OldOdds > 0.4)
+                            OldCategory = "Leaning Towards Cancellation";
+                        else if (show.show.OldOdds > 0.2)
+                            OldCategory = "Likely Cancellation";
+                        else
+                            OldCategory = "Certain Cancellation";                                        
+                        Description = (show.show.PredictedOdds > show.show.OldOdds ? "Upgraded from " : "Downgraded from ") + OldCategory;
+                    }
                     break;
             }
         }
@@ -85,12 +118,25 @@ namespace TVPredictionsViewer
 
         async void GetImage()
         {
-            var ID = await NetworkDatabase.GetShowID(show.show.Name, show.network.name);
+            await Task.Run(async () =>
+            {
+                var ID = await NetworkDatabase.GetShowID(show.show.Name, show.network.name);
 
-            imagesource = await NetworkDatabase.GetImageURI(ID);
+                imagesource = await NetworkDatabase.GetImageURI(ID);
 
-            OnPropertyChanged("ImageUri");
-            OnPropertyChanged("ImageURL");
+                await Device.InvokeOnMainThreadAsync(() =>
+                {
+                    OnPropertyChanged("ImageUri");
+                    OnPropertyChanged("ImageURL");
+                    _visibility = false;
+                    OnPropertyChanged("ActivityVisibility");
+                });
+            });
+        }
+
+        public void Navigate(INavigation Navigation)
+        {
+            Navigation.PushModalAsync(new ShowDetailPage(show));
         }
     }
 }

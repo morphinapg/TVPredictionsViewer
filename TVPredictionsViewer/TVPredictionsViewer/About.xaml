@@ -8,8 +8,9 @@
   <ContentView.Content>
         <StackLayout Margin="15">
             <ScrollView>
-                <Label LineBreakMode="WordWrap">
-                    Hello there! My name is Andy Gilleand. Some of you may recognize my name if you’ve ever visited the comment section of TV by the Numbers, where I have posted my predictions for years. Some people may even recognize my name from a popular gaming YouTube channel I run. I have a lot of interests and hobbies, and one of those is TV. I watch a ton of TV. Chances are, I probably watch more new TV a week than most of you. I’m currently tracking over 80 shows throughout the year, most of them being currently running TV series, although I do have one or two older shows I watch at a time as well. 
+                <StackLayout>
+                    <Label LineBreakMode="WordWrap">
+                        Hello there! My name is Andy Gilleand. Some of you may recognize my name if you’ve ever visited the comment section of TV by the Numbers, where I have posted my predictions for years. Some people may even recognize my name from a popular gaming YouTube channel I run. I have a lot of interests and hobbies, and one of those is TV. I watch a ton of TV. Chances are, I probably watch more new TV a week than most of you. I’m currently tracking over 80 shows throughout the year, most of them being currently running TV series, although I do have one or two older shows I watch at a time as well. 
 
 On top of being a big fan of TV, I’m also a huge data nerd. Put both of these things together, and I’ve always been super interested in why certain shows are renewed and others are canceled. I always understood that “ratings” were a big part of it, but what are ratings exactly? They’re not reviews. They don’t measure how high quality a show is, how much people like or dislike a show. They’re also not exactly a general “how many people are watching this show” either. They specifically refer to a relative measure of the proportion of people in the 18-49-year age group that watched an episode of TV the same night it aired, between airtime and 3AM that night. This is called the Live + Same Day demographic rating.
 
@@ -42,7 +43,10 @@ That being said, they are data-driven models, and the more data we have availabl
 I have two apps. I have this app you’re using right now, which displays the predictions, and I also have an app only I use, which is used to actually perform the learning/training process of the neural network. I leave this app using the full power of my CPU (a fairly beefy one as of 2019) 24 hours a day all week (unless I need the CPU power for something else like encoding videos for my YouTube channel). I then export images of each chart from that app, write a post about what’s changed in the last week, and post it to my Facebook Page (link below). As soon as that gets posted to the Facebook page, this app will be able to download the new predictions, and display them in an interactive, customizable, user friendly format. 
 
 If you’ve made it this far, thank you for reading this, and I hope you enjoy using my app! Be sure to give the app a review so I know what people think about it. You can also comment on my most recent predictions by vising the Facebook Page below.
-                </Label>
+                    </Label>
+                    <Label x:Name="TMDBNotice" Text="This product uses the TMDb API but is not endorsed or certified by TMDb." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End"/>
+                </StackLayout>
+                
             </ScrollView>
             <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
                 <Grid>

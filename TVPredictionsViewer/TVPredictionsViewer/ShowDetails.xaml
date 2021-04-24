@@ -57,8 +57,8 @@
             <Button x:Name="ShowPage" Text="More Details" IsVisible="{Binding ShowDetails}" HorizontalOptions="Center" Margin="10" Clicked="ShowPage_Clicked"/>
             
             <StackLayout IsVisible="{Binding ShowDetails, Converter={StaticResource InverseBool}}" HorizontalOptions="Center" Margin="10">
-                <Label Text="More information:" HorizontalOptions="Center" IsVisible="{Binding isLoaded}"/>
-                <StackLayout Orientation="Horizontal" IsVisible="{Binding isLoaded}">
+                <Label Text="More information:" HorizontalOptions="Center" IsVisible="{Binding IsLoaded}"/>
+                <StackLayout Orientation="Horizontal" IsVisible="{Binding IsLoaded}">
                     <Button x:Name="IMDB" Text="IMDb" Clicked="IMDB_Clicked"/>
                     <Button x:Name="TMDB" Text="TMDB" Clicked="TMDB_Clicked"/>
                 </StackLayout>                

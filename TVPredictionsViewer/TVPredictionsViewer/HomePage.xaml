@@ -18,15 +18,15 @@
 
     <ContentPage.Content>
 
-        <StackLayout x:Name="HomeLayout" HorizontalOptions="Center"  VerticalOptions="CenterAndExpand" Margin="25">
-            <StackLayout Spacing="0" HorizontalOptions="CenterAndExpand">
+        <Grid RowDefinitions="Auto, *, Auto" x:Name="HomeLayout" HorizontalOptions="Center"  VerticalOptions="CenterAndExpand" >
+            <StackLayout Spacing="0" HorizontalOptions="CenterAndExpand" Margin="5">
                 <Label x:Name="PredictionYear" FontSize="24" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
                 <Label x:Name="PredictionWeek" FontSize="18" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
-            <ScrollView  Margin="10">
+            <ScrollView Grid.Row="1" >
                 <StackLayout>
-                    <Button x:Name="ViewPost" Text="View Full Post" Clicked="ViewPost_Clicked" IsVisible="False"/>
-                    <Label x:Name="CurrentStatus" Opacity="0.8" HorizontalOptions="CenterAndExpand"/>                    
+                    <Button x:Name="ViewPost" Text="View Full Post" Clicked="ViewPost_Clicked" IsVisible="False" Margin="25,5"/>
+                    <Label x:Name="CurrentStatus" Opacity="0.8" HorizontalOptions="CenterAndExpand" Margin="25,5"/>                    
                     <Button x:Name="RefreshPredictions" Text="🔃 Try Again" FontSize="Large" IsVisible="False" Clicked="RefreshPredictions_Clicked"/>
                     <Label x:Name="HighlightsTitle" Text="Weekly Highlights:" FontSize="Large" HorizontalOptions="Center" IsVisible="False"/>
                     <FlexLayout x:Name="HighlightsList" BindableLayout.ItemsSource="{Binding Highlights}" Wrap="Wrap" JustifyContent="SpaceEvenly" AlignContent="Start">
@@ -35,6 +35,7 @@
                                 <Frame BackgroundColor="Black" Padding="0" CornerRadius="30" WidthRequest="330" HeightRequest="190" Margin="15">
                                     <Frame WidthRequest="320" HeightRequest="180" CornerRadius="25" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                                         <Grid>
+                                            <ActivityIndicator Margin="25" Opacity="0.25" IsRunning="{Binding ActivityVisibility}" Color="{DynamicResource ActivityColor}"/>
                                             <Image Aspect="AspectFill" tvpredictionsviewer:ImageEffect.Text="{Binding ImageURL}" Source="{Binding ImageUri}" Opacity="0.25">
                                                 <!--<Image.Source>
                                                     <OnPlatform x:TypeArguments="ImageSource">
@@ -43,28 +44,31 @@
                                                     </OnPlatform>
                                                 </Image.Source>-->
                                             </Image>
-                                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="*, Auto">                                                
-                                                <Label Text="{Binding ShowName}" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" TextColor="Black" Margin="12"/>
-                                                <Label Text="{Binding ShowName}" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" Margin="10"/>
+                                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="*, Auto, Auto">                                                
+                                                <Label Text="{Binding ShowName}" Grid.ColumnSpan="2" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" TextColor="Black" Margin="12,12,0,0"/>
+                                                <Label Text="{Binding ShowName}" Grid.ColumnSpan="2" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" Margin="10,10,10,0"/>
 
-                                                <Label Grid.Column="1" Text="{Binding NewShow}" HorizontalOptions="End" VerticalOptions="Start" FontSize="Medium" TextColor="Black" Margin="8,12"/>
-                                                <Label Grid.Column="1" Text="{Binding NewShow}" HorizontalOptions="End" VerticalOptions="Start" FontSize="Medium" TextColor="DarkGoldenrod" Margin="10"/>
+                                                <Label Grid.Row="1" Text="{Binding NewShow}" HorizontalOptions="Start" FontSize="Medium" TextColor="Black" Margin="12,2,0,0"/>
+                                                <Label Grid.Row="1" Text="{Binding NewShow}" HorizontalOptions="Start" FontSize="Medium" TextColor="DarkGoldenrod" Margin="10,0,0,0"/>
 
-                                                <Label Grid.Column="1" Grid.Row="2" Text="{Binding Prediction}" HorizontalOptions="End" VerticalOptions="End" FontSize="Medium" TextColor="Black" Margin="8"/>
-                                                <Label Grid.Column="1" Grid.Row="2" Text="{Binding Prediction}" HorizontalOptions="End" VerticalOptions="End" FontSize="Medium" TextColor="{Binding RenewalIndex, Converter={StaticResource NumberColor}}" Margin="10"/>                                                
+                                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Prediction}" HorizontalTextAlignment="End" FontSize="Medium" TextColor="Black" Margin="0,2,3,0"/>
+                                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Prediction}" HorizontalTextAlignment="End" FontSize="Medium" TextColor="{Binding RenewalIndex, Converter={StaticResource NumberColor}}" Margin="0,0,5,0"/>
+
+                                                <Label Grid.Row="2" Grid.ColumnSpan="2" FormattedText="{Binding Description}" HorizontalOptions="Start" Opacity="0.8" Margin="10,0,10,5"/>
                                             </Grid>
-                                            <Button BackgroundColor="Transparent"/>
+                                            <Button x:Name="HighlightButton" BackgroundColor="Transparent" Clicked="HighlightButton_Clicked"/>
                                         </Grid>                                        
                                     </Frame>
                                 </Frame>                                
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </FlexLayout>
+                    <Label x:Name="TMDBNotice" Text="This product uses the TMDb API but is not endorsed or certified by TMDb." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End" IsVisible="False"/>
                 </StackLayout>                
             </ScrollView>
 
-            <Label x:Name="UseMenu" Text="use the menu on the left to see predictions for each network" IsVisible="False" FontAttributes="Bold" HorizontalOptions="Center" Margin="15"/>
+            <Label Grid.Row="2" x:Name="UseMenu" Text="use the menu on the left to see predictions for each network" IsVisible="False" FontAttributes="Bold" HorizontalOptions="Center"/>
             
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

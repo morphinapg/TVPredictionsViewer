@@ -317,7 +317,12 @@ namespace TV_Ratings_Predictions
                     IMDBList[ID] = "";
 
                     Application.Current.Properties[key] = ID;
-                    ShowIDs[name] = ID;
+
+                    lock (ShowIDs)
+                    {
+                        ShowIDs[name] = ID;
+                    }
+
 
                     backup = true;
                     return ID;
@@ -437,13 +442,21 @@ namespace TV_Ratings_Predictions
                     ShowImages = new Dictionary<int, string>()
                 };
 
-                ShowIDs.Where(x => ShowDescriptions.ContainsKey(x.Value) && IMDBList.ContainsKey(x.Value) && ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                try
                 {
-                    NewBackup.ShowIDs[x.Key] = x.Value;
-                    NewBackup.ShowDescriptions[x.Value] = ShowDescriptions[x.Value];
-                    NewBackup.IMDBList[x.Value] = IMDBList[x.Value];
-                    NewBackup.ShowImages[x.Value] = ShowImages[x.Value];
-                });
+                    ShowIDs.ToList().Where(x => ShowDescriptions.ContainsKey(x.Value) && IMDBList.ContainsKey(x.Value) && ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                    {
+                        NewBackup.ShowIDs[x.Key] = x.Value;
+                        NewBackup.ShowDescriptions[x.Value] = ShowDescriptions[x.Value];
+                        NewBackup.IMDBList[x.Value] = IMDBList[x.Value];
+                        NewBackup.ShowImages[x.Value] = ShowImages[x.Value];
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                
 
                 if (File.Exists(Path.Combine(Folder, "backup")))
                 {

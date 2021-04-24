@@ -91,7 +91,7 @@ namespace TVPredictionsViewer
             var stack = NetworkDatabase.mainpage.Detail.Navigation.NavigationStack;
             var count = stack.Count;
             for (int i = count - 2; i > 0; i--)
-                Navigation.RemovePage(stack[i]);
+                if (stack[i] is NavigationPage) Navigation.RemovePage(stack[i]);
         }
 
         public T FindTemplateElementByName<T>(Page page, string name) where T : Element

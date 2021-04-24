@@ -336,7 +336,7 @@ namespace TV_Ratings_Predictions
             set
             {
                 _isLoaded = value;
-                OnPropertyChanged("isLoaded");
+                OnPropertyChanged("IsLoaded");
             }
         }
 
