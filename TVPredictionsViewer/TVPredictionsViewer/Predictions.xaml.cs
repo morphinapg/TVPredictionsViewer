@@ -298,8 +298,16 @@ namespace TVPredictionsViewer
         {
             var p = ShowsList.SelectedItem as PredictionContainer;
 
+            if (PreviousItem != null && PreviousItem != p)
+            {
+                PreviousItem.ShowDetails = false;
+                FadeOut(false);
+            }                
+
             SidePanel.BindingContext = p;
             SidePanel.IsVisible = true;
+
+            SidePanel_PanelOpened(this, new EventArgs());
 
             if (!isDesktop)
             {
@@ -412,8 +420,8 @@ namespace TVPredictionsViewer
             }
                        
 
-            if (PreviousItem != null && PreviousItem != p)
-                PreviousItem.ShowDetails = false;
+            
+                
 
             PreviousItem = p;
         }
@@ -446,12 +454,15 @@ namespace TVPredictionsViewer
                 
         }
 
-        async void FadeOut()
+        async void FadeOut(bool animation = true)
         {
-            await SidePanel.BreakdownView.FadeTo(0);
+            if (animation)
+                await SidePanel.BreakdownView.FadeTo(0);
             SideColumn.Children.Remove(SidePanel.BreakdownView);
             SidePanel.BreakdownView = null;
-            SidePanel_PanelOpened(this, new EventArgs());
+
+            if (animation)
+                SidePanel_PanelOpened(this, new EventArgs());
         }
     }
 }

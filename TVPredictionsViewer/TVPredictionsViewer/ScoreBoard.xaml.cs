@@ -274,12 +274,15 @@ namespace TVPredictionsViewer
             await Navigation.PopAsync();
         }
 
-        async void FadeOut()
+        async void FadeOut(bool animation = true)
         {
-            await SidePanel.BreakdownView.FadeTo(0);
+            if (animation)
+                await SidePanel.BreakdownView.FadeTo(0);
             SideColumn.Children.Remove(SidePanel.BreakdownView);
             SidePanel.BreakdownView = null;
-            SideColumn_SizeChanged(this, new EventArgs());
+
+            if (animation)
+                SideColumn_SizeChanged(this, new EventArgs());
         }
 
         private void Year_Tapped(object sender, EventArgs e)
@@ -506,10 +509,13 @@ namespace TVPredictionsViewer
             {
                 LastItem.ShowDetails = false;
                 LastItem.ShowFinal = false;
+                FadeOut(false);
             }                
 
             SidePanel.BindingContext = p;
             SidePanel.IsVisible = true;
+
+            SidePanel_PanelOpened(this, new EventArgs());
 
             if (!isDesktop)
             {
