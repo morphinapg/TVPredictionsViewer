@@ -20,7 +20,7 @@ namespace TVPredictionsViewer
     {
         //ObservableCollection<MiniNetwork> Networks = new ObservableCollection<MiniNetwork>();
         //ObservableCollection<Year> Years = new ObservableCollection<Year>();
-        HomePage home = new HomePage();
+        public HomePage home = new HomePage();
         Timer SaveBackup = new Timer(1000);
 
         public MainPage()

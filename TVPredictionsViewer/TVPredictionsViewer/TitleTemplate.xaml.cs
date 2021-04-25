@@ -119,16 +119,16 @@ namespace TVPredictionsViewer
                 
         }
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (TitleColumn.Width > 0 && TitleLabel.Width > 0)
-                if (TitleColumn.Width <= TitleLabel.Width)
+                if (Math.Round(TitleLabel.Width,1) >= Math.Round(TitleColumn.Width,1))
                 {
-                    Device.BeginInvokeOnMainThread(() => TitleLabel.FontSize -= 0.1);
-                    MaxSize = TitleLabel.FontSize -0.1;
+                    await Device.InvokeOnMainThreadAsync(() => TitleLabel.FontSize -= 0.1);
+                    MaxSize = TitleLabel.FontSize - 0.1;
                 }
                 else if (TitleLabel.FontSize < MaxSize)
-                    Device.BeginInvokeOnMainThread(() => TitleLabel.FontSize += 0.1);
+                    await Device.InvokeOnMainThreadAsync(() => TitleLabel.FontSize += 0.1);
                 else
                 {
                     MaxSize = OriginalSize;

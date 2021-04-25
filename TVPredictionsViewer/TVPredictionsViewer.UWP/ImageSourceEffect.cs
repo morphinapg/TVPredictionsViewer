@@ -78,7 +78,13 @@ namespace TVPredictionsViewer.UWP
 
         protected override void OnDetached()
         {
-
+            var control = Control ?? Container;
+            if (control is DependencyObject)
+            {
+                var image = control as Windows.UI.Xaml.Controls.Image;
+                image.Source = null;
+            }
+                
         }
     }
 }

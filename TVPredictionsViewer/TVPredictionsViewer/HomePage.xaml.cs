@@ -30,7 +30,8 @@ namespace TVPredictionsViewer
             get { return NetworkDatabase.CurrentYear; }
             set
             {
-                NetworkDatabase.CurrentYear = value;
+                if (value > -1)
+                    NetworkDatabase.CurrentYear = value;
                 OnPropertyChanged("CurrentYear");
             }
         }
@@ -44,6 +45,9 @@ namespace TVPredictionsViewer
             HyperlinkTimer.Elapsed += HyperlinkTimer_Elapsed;
             HyperlinkTimer.AutoReset = false;
             InitializeComponent();
+
+            foreach (ToolbarItem t in new Toolbar(this).ToolBarItems)
+                ToolbarItems.Add(t);
         }
 
         private void HyperlinkTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -199,104 +203,133 @@ namespace TVPredictionsViewer
             SearchResults.NavigationParent = this;
 
             SeasonList.Clear();
+            Highlights.Clear();
             foreach (Year y in NetworkDatabase.YearList)
                 SeasonList.Add(y);
+
+            
             YearList.BindingContext = this;
+            if (YearList.SelectedIndex == -1)
+            {
+                YearList.BindingContext = null;
+                YearList.BindingContext = this;
+            }
+
             YearList.IsVisible = true;
             //YearList.SelectedIndexChanged += YearList_SelectedIndexChanged;
             NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
 
 
-            foreach (ToolbarItem t in new Toolbar(this).ToolBarItems)
-                ToolbarItems.Add(t);
+            
 
             PredictionYear.Text = NetworkDatabase.YearList[NetworkDatabase.YearList.Count - 1].Season + " Predictions";
 
-            
+            CurrentStatus.IsVisible = false;
 
-            var year = NetworkDatabase.YearList[CurrentYear].year;
+            LoadHighlights();
 
-            var Thresholds = new Dictionary<string, double>();
+            Activity.IsRunning = false;
+            Activity.IsVisible = false;
+            UseMenu.IsVisible = true;            
 
-            foreach (MiniNetwork n in NetworkDatabase.NetworkList)
-                Thresholds[n.name] = n.model.GetNetworkRatingsThreshold(year);
+            CurrentStatus.FormattedText = await FetchLabels();
 
-            HighlightsList.BindingContext = this;
+            //if (Highlights.Count > 0)
+            //{
+            //    HighlightsTitle.IsVisible = true;
+            //    ViewPost.IsVisible = true;
+            //    TMDBNotice.IsVisible = true;
+            //}
+            //else
+            //    CurrentStatus.IsVisible = true;
 
-            await Task.Run(async () =>
+            Completed = true;
+        }
+
+        public async void LoadHighlights()
+        {
+            if (!Application.Current.Properties.ContainsKey("EnableHighlights") || (bool)Application.Current.Properties["EnableHighlights"])
             {
-                try
+                var year = NetworkDatabase.YearList[CurrentYear].year;
+
+                var Thresholds = new Dictionary<string, double>();
+
+                foreach (MiniNetwork n in NetworkDatabase.NetworkList)
+                    Thresholds[n.name] = n.model.GetNetworkRatingsThreshold(year);
+
+                HighlightsList.BindingContext = this;
+
+                await Task.Run(async () =>
                 {
-                    var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
-
-                    foreach (Show s in NewShows)
+                    try
                     {
-                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                        var highlight = new ShowHighlights(prediction, 0);
-                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
-                    }
+                        var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
 
-                    var RenewedOrCanceledShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && (x.Renewed || x.Canceled) && x.FinalPrediction == x.OldOdds).OrderByDescending(x => x.PredictedOdds);
-
-                    foreach (Show s in RenewedOrCanceledShows)
-                    {
-                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                        var highlight = new ShowHighlights(prediction, 1);
-                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
-                    }
-
-                    var PredictionChanged = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.5) != (int)(x.PredictedOdds / 0.5))).OrderByDescending(x => x.PredictedOdds);
-
-                    foreach (Show s in PredictionChanged)
-                    {
-                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                        var highlight = new ShowHighlights(prediction, 2);
-                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
-                    }
-
-                    var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2))).OrderByDescending(x => x.PredictedOdds);
-
-                    foreach (Show s in UpgradedOrDownGradedShows)
-                    {
-                        var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
-                        var highlight = new ShowHighlights(prediction, 2);
-                        await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
-                    }
-
-                    await Device.InvokeOnMainThreadAsync(async () =>
-                    {
-                        Activity.IsRunning = false;
-                        Activity.IsVisible = false;
-                        UseMenu.IsVisible = true;
-                        CurrentStatus.IsVisible = false;
-
-                        CurrentStatus.FormattedText = await FetchLabels();
-
-                        if (Highlights.Count > 0)
+                        foreach (Show s in NewShows)
                         {
-                            HighlightsTitle.IsVisible = true;
-                            ViewPost.IsVisible = true;
-                            TMDBNotice.IsVisible = true;
+                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var highlight = new ShowHighlights(prediction, 0);
+                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
 
-                        else
-                            CurrentStatus.IsVisible = true;
+                        var RenewedOrCanceledShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && (x.Renewed || x.Canceled) && x.FinalPrediction == x.OldOdds).OrderByDescending(x => x.PredictedOdds);
 
-                        Completed = true;
-                    });
-                }
-                catch (Exception ex)
-                {
-                    string error = ex.ToString();
-                }
+                        foreach (Show s in RenewedOrCanceledShows)
+                        {
+                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var highlight = new ShowHighlights(prediction, 1);
+                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                        }
+
+                        var PredictionChanged = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.5) != (int)(x.PredictedOdds / 0.5))).OrderByDescending(x => x.PredictedOdds);
+
+                        foreach (Show s in PredictionChanged)
+                        {
+                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var highlight = new ShowHighlights(prediction, 2);
+                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                        }
+
+                        var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2))).OrderByDescending(x => x.PredictedOdds);
+
+                        foreach (Show s in UpgradedOrDownGradedShows)
+                        {
+                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var highlight = new ShowHighlights(prediction, 2);
+                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = ex.ToString();
+                    }
+
+                });
                 
-            });            
+            }
+
+            UnhideHighlights();
+        }
+
+        public void UnhideHighlights()
+        {
+            HighlightsList.IsVisible = true;
+
+            if (Highlights.Count > 0)
+            {
+                CurrentStatus.IsVisible = false;
+                HighlightsTitle.IsVisible = true;
+                ViewPost.IsVisible = true;
+                TMDBNotice.IsVisible = true;
+            }
+            else
+                HideHighlights();
         }
 
         public void RefreshYearlist()
         {
             PredictionWeek.Text = CurrentWeek();
-            YearList.ItemsSource = NetworkDatabase.YearList;
+            //YearList.ItemsSource = NetworkDatabase.YearList;
         }
 
         private void NetworkDatabase_CurrentYearUpdated(object sender, EventArgs e)
@@ -435,6 +468,15 @@ namespace TVPredictionsViewer
 
             p.Navigate(Navigation);
         }
+
+        public void HideHighlights()
+        {
+            HighlightsList.IsVisible = false;
+            CurrentStatus.IsVisible = true;
+            ViewPost.IsVisible = false;
+            TMDBNotice.IsVisible = false;
+            HighlightsTitle.IsVisible = false;
+        }
     }
 
     class NavigateParameter
@@ -467,5 +509,6 @@ namespace TVPredictionsViewer
         }
     }
 
+    
 
 }

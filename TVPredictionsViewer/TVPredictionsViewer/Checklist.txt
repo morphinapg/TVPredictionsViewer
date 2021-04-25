@@ -1,4 +1,1 @@
-﻿Recreate Flyout Menu on ShowDetailPage?
-Option to disable Highlights for slow devices
-Disable modal back button when coming from non home page on UWP
-Title Shrink automatically on ShowDetailPage
+﻿

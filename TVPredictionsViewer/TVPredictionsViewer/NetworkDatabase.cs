@@ -119,9 +119,9 @@ namespace TV_Ratings_Predictions
 
         public static async Task ReadUpdateAsync()
         {
-            if (!NetworkDatabase.CurrentlyLoading)
+            if (!CurrentlyLoading)
             {
-                NetworkDatabase.CurrentlyLoading = true;
+                CurrentlyLoading = true;
 
                 var update = "https://github.com/morphinapg/TVPredictions/raw/master/Update.txt";
 
@@ -375,6 +375,7 @@ namespace TV_Ratings_Predictions
             }
             catch (Exception)
             {
+                TMDBerror = true;
                 return null;
             }
         }

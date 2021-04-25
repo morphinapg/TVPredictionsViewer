@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:TVPredictionsViewer"
+             xmlns:controls="clr-namespace:TVPredictionsViewer" xmlns:TVP="clr-namespace:TV_Ratings_Predictions"
              mc:Ignorable="d"
              BackgroundColor="{DynamicResource DetailBackground}"
              x:Class="TVPredictionsViewer.ShowDetailPage"
@@ -14,7 +14,7 @@
     </NavigationPage.TitleView>-->
 
     <ContentPage.Content>
-        <Grid>            
+        <Grid x:Name="PageGrid">            
             <Grid x:Name="SideColumn" RowSpacing="0" ColumnSpacing="0">               
 
                 <Grid.RowDefinitions>
@@ -66,7 +66,7 @@
                                 </OnPlatform>
                             </Button.IsVisible>
                         </Button>
-                        <!--<Button x:Name="Hamburger" Text="&#9776;"/>-->
+                        <!--<Button x:Name="Hamburger" Text="&#9776;" Clicked="Hamburger_Clicked"/>-->
                     </StackLayout>
                     <controls:TitleTemplate Grid.Column="1" x:Name="Bar" TransparentButtons="True"/>
 
@@ -82,6 +82,8 @@
                 </Grid>
 
                 <controls:ResultsList x:Name="SearchResults" IsVisible="False"/>
+
+                             
 
             </StackLayout>
 

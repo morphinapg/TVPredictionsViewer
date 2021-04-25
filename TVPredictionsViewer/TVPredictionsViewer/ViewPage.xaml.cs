@@ -132,12 +132,21 @@ namespace TVPredictionsViewer
             else
                 return base.OnBackButtonPressed();
                 
+                
         }
 
         async void PopAndPush()
         {
             await Navigation.PushModalAsync(new ShowDetailPage(prediction));
             await Navigation.PopAsync();            
+        }
+
+        protected override void OnDisappearing()
+        {
+            if (NetworkDatabase.mainpage.home.Highlights.Count == 0 && Application.Current.Properties.ContainsKey("EnableHighlights") && (bool)Application.Current.Properties["EnableHighlights"])
+                NetworkDatabase.mainpage.home.LoadHighlights();
+
+            base.OnDisappearing();
         }
     }
 

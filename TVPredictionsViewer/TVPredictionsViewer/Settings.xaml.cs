@@ -156,6 +156,28 @@ namespace TVPredictionsViewer
             set => Application.Current.Properties["PredictionPrecision"] = value;
         }
 
+        public bool EnableHighlights
+        {
+            get
+            {
+                if (Application.Current.Properties.ContainsKey("EnableHighlights"))
+                    return (bool)Application.Current.Properties["EnableHighlights"];
+                else
+                    return true;
+            }
+            set
+            {
+                Application.Current.Properties["EnableHighlights"] = value;
+
+                if (!value)
+                    NetworkDatabase.mainpage.home.HideHighlights();
+                else
+                {
+                    NetworkDatabase.mainpage.home.UnhideHighlights();
+                }                   
+            }
+        }
+
         MiniNetwork network;
         bool UseNetwork;
 
@@ -232,6 +254,8 @@ namespace TVPredictionsViewer
                 if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
                     File.Delete(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"));
 
+                NetworkDatabase.mainpage.home.Completed = false;
+
                 NetworkDatabase.IsLoaded = false;
 
                 Refresh.Text = "Downloading...";
@@ -294,6 +318,13 @@ namespace TVPredictionsViewer
         {
             PredictionPrecision = 1;
             OnPropertyChanged("PredictionPrecision");
+        }
+
+        private void HighlightsOption_Tapped(object sender, EventArgs e)
+        {
+            EnableHighlights = !EnableHighlights;
+
+            OnPropertyChanged("EnableHighlights");
         }
     }
 }

@@ -189,6 +189,9 @@ namespace TVPredictionsViewer
                             }
                         }
 
+                        if (s.Season == 1 && !NewShow)
+                            detailName += " (Re-aired from another network)";
+
                         NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
 
                         detailValue = NewOdds - CurrentOdds;

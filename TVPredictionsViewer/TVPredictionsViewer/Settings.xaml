@@ -76,6 +76,13 @@
                             </StackLayout>
                         </ViewCell>
 
+                        <ViewCell x:Name="HighlightsOption" Tapped="HighlightsOption_Tapped">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Enable Weekly Highlight Cards" Margin="10"/>
+                                <Switch IsToggled="{Binding EnableHighlights}" Margin="5" Grid.Column="1"/>
+                            </Grid>
+                        </ViewCell>
+
                         <ViewCell>
                             <Button x:Name="Refresh" Clicked="Refresh_Clicked" Text="Refresh Predictions" Margin="5"/>
                         </ViewCell>

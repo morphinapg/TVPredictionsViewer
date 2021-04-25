@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using TV_Ratings_Predictions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -20,7 +21,11 @@ namespace TVPredictionsViewer
         public ShowDetails()
         {
             InitializeComponent();
+
+            BreakdownTimer.Elapsed += BreakdownTimer_Elapsed;
         }
+
+        
 
         public event EventHandler PanelOpened;
 
@@ -87,8 +92,7 @@ namespace TVPredictionsViewer
                 var parent = Parent.Parent.Parent as Grid;
                 parent.Children.Remove(BreakdownView);
                 BreakdownView = null;
-            }
-                
+            }                
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -98,6 +102,27 @@ namespace TVPredictionsViewer
             if (BreakdownView != null && Grid.GetColumn(BreakdownView) == 1) width *= 2;
 
             isDesktop = width > (960);
+
+            if (BreakdownView != null && ((Grid.GetColumn(BreakdownView) == 1 && !isDesktop) || (Grid.GetColumn(BreakdownView) == 0 && isDesktop)))
+            {
+                BreakdownTimer.Stop();
+                BreakdownTimer.Start();
+            }
+        }
+
+        Timer BreakdownTimer = new Timer(100) { AutoReset = false };
+        private async void BreakdownTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Device.InvokeOnMainThreadAsync(() =>
+            {
+                if (!isDesktop)
+                    Grid.SetColumn(BreakdownView, 0);
+                else
+                    Grid.SetColumn(BreakdownView, 1);
+
+                PanelOpened?.Invoke(this, new EventArgs());
+
+            });
         }
 
         private async void RBreakdown_Clicked(object sender, EventArgs e)

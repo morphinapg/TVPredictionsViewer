@@ -301,7 +301,7 @@ namespace TVPredictionsViewer
             if (PreviousItem != null && PreviousItem != p)
             {
                 PreviousItem.ShowDetails = false;
-                FadeOut(false);
+                if (SidePanel.BreakdownView != null) FadeOut(false);
             }                
 
             SidePanel.BindingContext = p;
@@ -319,6 +319,7 @@ namespace TVPredictionsViewer
             {
                 p.ShowDetails = false;
                 ShowImage.Source = null;
+                ShowImageUri = null;
                 ImageLoading.IsVisible = true;
 
                 //var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);

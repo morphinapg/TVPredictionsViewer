@@ -55,7 +55,8 @@ namespace TVPredictionsViewer
             BindingContext = p;
             show = p;
             InitializeComponent();
-            BindableLayout.SetItemsSource(OptionsMenuHidden, MenuItems);
+            Back.IsVisible = Device.RuntimePlatform == Device.UWP && NetworkDatabase.mainpage.home.Navigation.NavigationStack.Count == 1;
+
             OptionsMenu.ItemsSource = MenuItems;
 
             OptionsMenuHidden.SizeChanged += OptionsMenuHidden_SizeChanged;
@@ -117,7 +118,7 @@ namespace TVPredictionsViewer
         {
             var width = SideColumn.Width;
 
-            if (SidePanel.isDesktop && SidePanel.BreakdownView != null) width /= 2;
+            if (SidePanel.isDesktop && SidePanel.BreakdownView != null && Grid.GetColumn(SidePanel.BreakdownView) == 1) width /= 2;
 
             if (SideColumn.Width > 5)
                 ImageRow.Height = width * 9 / 16;
@@ -282,6 +283,36 @@ namespace TVPredictionsViewer
             //await OptionsScreen.FadeTo(0);
             OptionsScreen.IsVisible = false;
         }
+
+        private void NetworkList_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+
+        }
+
+        private void AllNetworks_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
+        //private void Hamburger_Clicked(object sender, EventArgs e)
+        //{
+        //    var FlyoutTimer = new Timer(15);
+        //    var StartTime = DateTime.Now;
+        //    var Opening = FlyoutOffset == 0;
+        //    FlyoutTimer.Start();
+
+        //    FlyoutTimer.Elapsed += async (se, ee) =>
+        //     {
+        //         var TimePassed = (DateTime.Now - StartTime).TotalSeconds;
+        //         FlyoutOffset = Opening ? (TimePassed / 0.5) : Math.Max(1 - TimePassed / 0.5, 0);
+        //         FlyOutPosition.Constant = -FlyoutOffset * this.Width;
+        //         await Device.InvokeOnMainThreadAsync(() => OnPropertyChanged("FlyoutPosition"));
+
+        //         if (TimePassed >= 0.5)
+        //             FlyoutTimer.Stop();
+        //     };
+
+        //}
     }
 
     class ShowDetailMenuItem
