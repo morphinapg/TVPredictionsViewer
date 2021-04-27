@@ -320,10 +320,12 @@ namespace TVPredictionsViewer
                 CurrentStatus.IsVisible = false;
                 HighlightsTitle.IsVisible = true;
                 ViewPost.IsVisible = true;
+                ViewPost.Text = "View Full Post";
                 TMDBNotice.IsVisible = true;
             }
             else
                 HideHighlights();
+                
         }
 
         public void RefreshYearlist()

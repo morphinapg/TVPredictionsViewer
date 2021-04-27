@@ -127,9 +127,6 @@ namespace TVPredictionsViewer
 
         private async void RBreakdown_Clicked(object sender, EventArgs e)
         {
-            
-                
-
             var p = BindingContext as PredictionContainer;
             var name = p.Name;
 

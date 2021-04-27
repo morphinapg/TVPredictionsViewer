@@ -207,7 +207,6 @@ namespace TVPredictionsViewer
     class DetailsCombo
     {
         public List<DetailsContainer> details;
-        public int OptimalEpisodes;
         public double BaseOdds, CurrentOdds;
 
         public DetailsCombo(List<DetailsContainer> d, double b, double c)

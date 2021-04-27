@@ -107,49 +107,54 @@ namespace TVPredictionsViewer
             else
             {
                 string text;
-                
-                
-                    
 
-                    try
+
+
+
+                try
+                {
+                    using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var reader = new StreamReader(fs))
                         {
-                            using (var reader = new StreamReader(fs))
-                            {
-                                text = await reader.ReadToEndAsync();
-                            }
+                            text = await reader.ReadToEndAsync();
                         }
+                    }
 
-                        if (text != NetworkDatabase.currentText)
+                    if (text != NetworkDatabase.currentText)
+                    {
+                        NetworkDatabase.currentText = text;
+                        await home.Navigation.PopToRootAsync();
+                        home.Downloading();
+                        NetworkDatabase.ReadSettings(this);
+                    }
+                    else
+                    {
+                        if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
                         {
-                            NetworkDatabase.currentText = text;
+
+                            var ee = new AsyncCompletedEventArgs(null, false, this);
+                            CompletedSettings(this, ee);
+                        }
+                        else
+                        {
                             await home.Navigation.PopToRootAsync();
                             home.Downloading();
                             NetworkDatabase.ReadSettings(this);
                         }
-                        else
-                        {
-                            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
-                            {
-
-                                var ee = new AsyncCompletedEventArgs(null, false, this);
-                                CompletedSettings(this, ee);
-                            }
-                            else
-                            {
-                                await home.Navigation.PopToRootAsync();
-                                home.Downloading();
-                                NetworkDatabase.ReadSettings(this);
-                            }
-                            NetworkDatabase.IsLoaded = true;
-                        }
+                        NetworkDatabase.IsLoaded = true;
                     }
-                    catch (Exception)
+                }
+                catch (Exception)
+                {
+                    if (!home.Completed)
                     {
                         _ = DisplayAlert("TV Predictions", "Error reading predictions. Try again.", "Close");
                         home.IncompleteUpdate();
-                    }             
+                    }
+                    else
+                        home.CompletedSettings();
+                }
             }
 
             NetworkDatabase.CurrentlyLoading = false;
@@ -207,8 +212,13 @@ namespace TVPredictionsViewer
 
                 if (error)
                 {
-                    _ = DisplayAlert("TV Predictions", "Could not read predictions file. Please try again.", "Close");
-                    home.IncompleteUpdate();
+                    if (!home.Completed)
+                    {
+                        _ = DisplayAlert("TV Predictions", "Could not read predictions file. Please try again.", "Close");
+                        home.IncompleteUpdate();
+                    }
+                    else
+                        home.CompletedSettings();
                 }
                 else
                 {
@@ -267,8 +277,10 @@ namespace TVPredictionsViewer
             Device.BeginInvokeOnMainThread(() =>
             {
                 if (msg != "IntentTap")
+                {
                     DisplayAlert("TV Predictions", "New Predictions Received: \r\n\r\n" + msg, "OK");
-                home.RefreshPredictions_Clicked(this, new EventArgs());
+                    home.RefreshPredictions_Clicked(this, new EventArgs());
+                }
             });
         }
     }

@@ -90,12 +90,16 @@ namespace TVPredictionsViewer
         private async void Yes_Clicked(object sender, EventArgs e)
         {
             var context = Confirmation.BindingContext as TMDBContainer;
-            NetworkDatabase.ShowIDs[show] = context.ID;
-            NetworkDatabase.ShowDescriptions[context.ID] = context.Description;
-            //NetworkDatabase.ShowSlugs[context.ID] = context.Slug;
-            NetworkDatabase.IMDBList[context.ID] = "";
-            NetworkDatabase.ShowImages[context.ID] = context.BaseImage;
-            Application.Current.Properties["SHOWID " + show] = context.ID;
+
+            lock (NetworkDatabase.ShowIDs)
+            {
+                NetworkDatabase.ShowIDs[show] = context.ID;
+                NetworkDatabase.ShowDescriptions[context.ID] = context.Description;
+                NetworkDatabase.IMDBList[context.ID] = "";
+                NetworkDatabase.ShowImages[context.ID] = context.BaseImage;
+                Application.Current.Properties["SHOWID " + show] = context.ID;
+            }
+            
             NetworkDatabase.backup = true;
 
 

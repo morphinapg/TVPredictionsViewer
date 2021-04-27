@@ -86,10 +86,15 @@
 
                 <ScrollView x:Name="DetailScroll">
                     <StackLayout>
-                        <Frame BindingContext="{x:Reference ShowImage}" WidthRequest="{Binding Width}" HeightRequest="{Binding Height}" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent"/>
+                        <Frame BindingContext="{x:Reference ShowImage}" WidthRequest="{Binding Width}" HeightRequest="{Binding Height}" BackgroundColor="Transparent" HasShadow="False" BorderColor="Transparent" Padding="0"/>
                         <controls:ShowDetails x:Name="SidePanel" IsVisible="False"/>
                     </StackLayout>
                 </ScrollView>
+
+                <Grid x:Name="ScrollDown" IsVisible="False" Opacity="0" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center" VerticalOptions="End">
+                    <Button BackgroundColor="Black" CornerRadius="55" WidthRequest="55" HeightRequest="55" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0.5"/>
+                    <Button x:Name="DownButton" BackgroundColor="#80FFFFFF" CornerRadius="50" WidthRequest="50" HeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,0,2" TextColor="Black" FontAttributes="Bold" FontSize="24" Text="&#129139;" Clicked="DownButton_Clicked"/>
+                </Grid>
 
                 <StackLayout BackgroundColor="{DynamicResource DetailBackgroundTransparent}" Grid.Row="1">
                     <Label x:Name="TMDBNotice" Text="This product uses the TMDb API but is not endorsed or certified by TMDb." FontAttributes="Italic" FontSize="Micro" Opacity="0.5" Margin="15" VerticalOptions="End" />

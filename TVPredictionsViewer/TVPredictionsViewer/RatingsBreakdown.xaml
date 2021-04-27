@@ -7,7 +7,7 @@
              x:Class="TVPredictionsViewer.RatingsBreakdown">
     <ContentView.Content>
         <Grid Margin="15" RowDefinitions="*,Auto">
-            <StackLayout WidthRequest="500" HorizontalOptions="Center" >
+            <StackLayout WidthRequest="500" HorizontalOptions="Center">
                 <Grid Margin="15,10,15,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -50,7 +50,8 @@
 
                 <Label x:Name="FinalRating" FontSize="Large"/>
 
-                <Label Text="Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions." LineBreakMode="WordWrap"/>
+                <Label x:Name="Disclaimer" Text="Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions." LineBreakMode="WordWrap"/>
+                <Button x:Name="Info" Text="Info" IsVisible="false" Clicked="Info_Clicked"/>
             </StackLayout>
         </Grid>
     </ContentView.Content>

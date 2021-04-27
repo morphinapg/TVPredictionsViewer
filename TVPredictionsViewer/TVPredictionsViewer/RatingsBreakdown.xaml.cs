@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using TV_Ratings_Predictions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -21,8 +22,12 @@ namespace TVPredictionsViewer
             network = n;
             InitializeComponent();
 
+            ShowInfo.Elapsed += ShowInfo_Elapsed;ShowInfo.Start();
+
             Load_Ratings(s);
         }
+
+        
 
         void Load_Ratings(Show s)
         {
@@ -68,6 +73,44 @@ namespace TVPredictionsViewer
                     weight += NewWeight;
                 }
             //});
+
+        }
+
+        Timer ShowInfo = new Timer(1000) { AutoReset = false };
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            ShowInfo.Stop();
+            ShowInfo.Start();
+        }
+
+        private async void ShowInfo_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Device.InvokeOnMainThreadAsync(() =>
+            {
+                if (RatingsList.Height < 500)
+                {
+                    Disclaimer.IsVisible = false;
+                    Info.IsVisible = true;
+                }
+                else
+                {
+                    Disclaimer.IsVisible = true;
+                    Info.IsVisible = false;
+                }
+            });
+            
+        }
+
+        private async void Info_Clicked(object sender, EventArgs e)
+        {
+            var stack = NetworkDatabase.mainpage.Navigation.NavigationStack;
+
+            if (stack.Count > 0)
+                await stack.Last().DisplayAlert("Ratings Info", "Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions.", "OK");
+            else
+                await NetworkDatabase.mainpage.DisplayAlert("Ratings Info", "Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions.", "OK");
 
         }
     }

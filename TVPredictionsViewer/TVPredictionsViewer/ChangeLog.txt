@@ -1,10 +1,11 @@
 ﻿2.0.0
 New visual cards highlighting the weekly updates
 Other improvements in the UI
-Removed code for old notification service
 Switched from TVDB to TMDB for show info and images
 Replaced the control to select the year because the CarouselView control I used caused a lot of bugs.
 Improved the Prediction Breakdown calculation. Adjust precision in settings if this runs slowly on your device.
+Fixed a rare bug that would crash the app on startup
+Fixed a bug when resuming app
 [Windows] Improved image scaling
 
 1.6.5

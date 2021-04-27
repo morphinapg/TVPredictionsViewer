@@ -18,7 +18,7 @@ namespace TVPredictionsViewer
     {
         
         PredictionContainer show;
-        Timer DelayedScroll = new Timer(1000);
+        Timer DelayedScroll = new Timer(1000), CheckVisible = new Timer(100);
         string _uri;
         public string ShowImageUri
         {
@@ -55,8 +55,11 @@ namespace TVPredictionsViewer
             BindingContext = p;
             show = p;
             InitializeComponent();
+
+            
             Back.IsVisible = Device.RuntimePlatform == Device.UWP && NetworkDatabase.mainpage.home.Navigation.NavigationStack.Count == 1;
 
+            BindableLayout.SetItemsSource(OptionsMenuHidden, MenuItems);
             OptionsMenu.ItemsSource = MenuItems;
 
             OptionsMenuHidden.SizeChanged += OptionsMenuHidden_SizeChanged;
@@ -76,15 +79,40 @@ namespace TVPredictionsViewer
                 Appearing += ShowDetailPage_Appearing;
         }
 
+        private async void CheckVisible_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var Visibility = DetailScroll.ScrollY + DetailScroll.Height;
+            if (Visibility < ShowImage.Height && !ScrollDown.IsVisible)
+                await Device.InvokeOnMainThreadAsync(async () =>
+                {
+                    ScrollDown.Opacity = 0;
+                    ScrollDown.IsVisible = true;
+                    await ScrollDown.FadeTo(1);
+                });  
+            else if (Visibility > ShowImage.Height && ScrollDown.IsVisible)
+                await Device.InvokeOnMainThreadAsync(async () =>
+                {
+                    await ScrollDown.FadeTo(0);
+                    ScrollDown.IsVisible = false;
+                });
+        }
+
         private void OptionsMenuHidden_SizeChanged(object sender, EventArgs e)
         {
             var w = OptionsMenuHidden.Width;
             var h = OptionsMenuHidden.Height;
-            OptionsMenu.WidthRequest = w;
-            OptionsMenu.HeightRequest = h;
-            OptionsMenuHidden.IsVisible = false;
 
-            OptionsMenu.IsVisible = true;
+            if (w > 0 && h > 0)
+            {
+                OptionsMenu.WidthRequest = w;
+                OptionsMenu.HeightRequest = h;
+                OptionsMenuHidden.IsVisible = false;
+
+                OptionsMenu.IsVisible = true;
+
+                OptionsMenuHidden.SizeChanged -= OptionsMenuHidden_SizeChanged;
+            }
+            
         }
 
         private void ShowDetailPage_Appearing(object sender, EventArgs e)
@@ -208,6 +236,8 @@ namespace TVPredictionsViewer
             DelayedScroll.Elapsed += DelayedScroll_Elapsed;
             DelayedScroll.AutoReset = false;
             ScrollTo();
+
+            CheckVisible.Elapsed += CheckVisible_Elapsed;
         }
 
         void ScrollTo()
@@ -219,6 +249,8 @@ namespace TVPredictionsViewer
         private async void DelayedScroll_Elapsed(object sender, ElapsedEventArgs e)
         {
             await Device.InvokeOnMainThreadAsync(async () => await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true));
+
+            CheckVisible.Start();
         }
 
         protected override void OnDisappearing()
@@ -284,14 +316,9 @@ namespace TVPredictionsViewer
             OptionsScreen.IsVisible = false;
         }
 
-        private void NetworkList_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void DownButton_Clicked(object sender, EventArgs e)
         {
-
-        }
-
-        private void AllNetworks_Clicked(object sender, EventArgs e)
-        {
-
+            await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true);
         }
 
         //private void Hamburger_Clicked(object sender, EventArgs e)

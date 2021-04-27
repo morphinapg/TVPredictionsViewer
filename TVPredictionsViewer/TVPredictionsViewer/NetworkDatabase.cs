@@ -32,7 +32,6 @@ namespace TV_Ratings_Predictions
         public static Dictionary<int, string>
             ShowDescriptions = new Dictionary<int, string>(),
             IMDBList = new Dictionary<int, string>(),
-            //ShowSlugs = new Dictionary<int, string>(),
             ShowImages = new Dictionary<int, string>();
 
         public static Dictionary<string, int> ShowIDs = new Dictionary<string, int>();
@@ -175,19 +174,23 @@ namespace TV_Ratings_Predictions
 
             if (!Application.Current.Properties.ContainsKey("TMDB"))
             {
-                foreach (string ShowName in ShowIDs.Keys)
+                lock (ShowIDs)
                 {
-                    string key = "SHOWID " + ShowName;
 
-                    if (Application.Current.Properties.ContainsKey(key))
-                        Application.Current.Properties.Remove(key);
+                    foreach (string ShowName in ShowIDs.Keys)
+                    {
+                        string key = "SHOWID " + ShowName;
+
+                        if (Application.Current.Properties.ContainsKey(key))
+                            Application.Current.Properties.Remove(key);
+                    }
+
+                    ShowIDs = new Dictionary<string, int>();
+                    ShowDescriptions = new Dictionary<int, string>();
+                    ShowImages = new Dictionary<int, string>();
+                    IMDBList = new Dictionary<int, string>();
                 }
 
-                ShowIDs = new Dictionary<string, int>();
-                //ShowSlugs = new Dictionary<int, string>();
-                ShowDescriptions = new Dictionary<int, string>();
-                ShowImages = new Dictionary<int, string>();
-                IMDBList = new Dictionary<int, string>();
 
                 if (File.Exists(Path.Combine(Folder, "backup")))
                     File.Delete(Path.Combine(Folder, "backup"));
@@ -293,7 +296,7 @@ namespace TV_Ratings_Predictions
 
                     int ID = showResults.First().Id;
                     
-                    ShowDescriptions[ID] = showResults.First().Show.Overview;
+                    
                     //ShowSlugs[ID] = showResults.First().Slug;
 
                     //TvDbSharper.Dto.TvDbResponse<TvDbSharper.Dto.Image[]> imgs;
@@ -312,15 +315,17 @@ namespace TV_Ratings_Predictions
                     //else
                     //    ShowImages[ID] = imgs.Data.First().FileName;
 
-                    ShowImages[ID] = showResults.First().Show.BackdropPath;
-
-                    IMDBList[ID] = "";
-
-                    Application.Current.Properties[key] = ID;
-
                     lock (ShowIDs)
                     {
                         ShowIDs[name] = ID;
+
+                        ShowImages[ID] = showResults.First().Show.BackdropPath;
+
+                        IMDBList[ID] = "";
+
+                        Application.Current.Properties[key] = ID;
+
+                        ShowDescriptions[ID] = showResults.First().Show.Overview;
                     }
 
 
@@ -405,7 +410,8 @@ namespace TV_Ratings_Predictions
                         await AuthenticateTMDB();
 
                     var result = await Client.GetTvShowExternalIdsAsync(ID);
-                    IMDBList[ID] = result.ImdbId;
+                    lock (ShowIDs)
+                        IMDBList[ID] = result.ImdbId;
                 }
                 catch (Exception)
                 {
@@ -445,13 +451,16 @@ namespace TV_Ratings_Predictions
 
                 try
                 {
-                    ShowIDs.ToList().Where(x => ShowDescriptions.ContainsKey(x.Value) && IMDBList.ContainsKey(x.Value) && ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                    lock (ShowIDs)
                     {
-                        NewBackup.ShowIDs[x.Key] = x.Value;
-                        NewBackup.ShowDescriptions[x.Value] = ShowDescriptions[x.Value];
-                        NewBackup.IMDBList[x.Value] = IMDBList[x.Value];
-                        NewBackup.ShowImages[x.Value] = ShowImages[x.Value];
-                    });
+                        ShowIDs.Where(x => ShowDescriptions.ContainsKey(x.Value) && IMDBList.ContainsKey(x.Value) && ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
+                        {
+                            NewBackup.ShowIDs[x.Key] = x.Value;
+                            NewBackup.ShowDescriptions[x.Value] = ShowDescriptions[x.Value];
+                            NewBackup.IMDBList[x.Value] = IMDBList[x.Value];
+                            NewBackup.ShowImages[x.Value] = ShowImages[x.Value];
+                        });
+                    }                    
                 }
                 catch (Exception ex)
                 {
@@ -521,10 +530,13 @@ namespace TV_Ratings_Predictions
                         //Append any missing OldBackup data
                         OldBackup.ShowIDs.Where(x => (x.Key == name || x.Value == ID) && !ShowIDs.ContainsKey(x.Key) && OldBackup.ShowDescriptions.ContainsKey(x.Value) && OldBackup.IMDBList.ContainsKey(x.Value) && OldBackup.ShowImages.ContainsKey(x.Value)).ToList().ForEach(x =>
                         {
-                            ShowIDs[x.Key] = x.Value;
-                            ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
-                            IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
-                            ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                            lock (ShowIDs)
+                            {
+                                ShowIDs[x.Key] = x.Value;
+                                ShowDescriptions[x.Value] = OldBackup.ShowDescriptions[x.Value];
+                                IMDBList[x.Value] = OldBackup.IMDBList[x.Value];
+                                ShowImages[x.Value] = OldBackup.ShowImages[x.Value];
+                            }                            
                         });
                     }
                     catch (Exception)

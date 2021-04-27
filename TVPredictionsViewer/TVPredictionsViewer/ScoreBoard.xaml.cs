@@ -24,6 +24,7 @@ namespace TVPredictionsViewer
         double height;
         public bool UsePrediction;
         public PredictionContainer prediction;
+        Timer DelayedScroll = new Timer(1000), CheckVisible = new Timer(100);
 
         List<Year> FilteredYearList;
 
@@ -221,6 +222,9 @@ namespace TVPredictionsViewer
 
             if (SideColumn.Width > 5)
                 ImageRow.Height = width * 9 / 16;
+
+            DelayedScroll.Stop();
+            DelayedScroll.Start();
         }
 
         private void SidePanel_PanelOpened(object sender, EventArgs e)
@@ -624,18 +628,44 @@ namespace TVPredictionsViewer
 
                 TMDBNotice.FormattedText = Formatted;
 
-                var DelayedScroll = new Timer(1000);
                 DelayedScroll.Elapsed += DelayedScroll_Elapsed;
                 DelayedScroll.AutoReset = false;
                 DelayedScroll.Start();
+
+                CheckVisible.Elapsed += CheckVisible_Elapsed;
             }
 
             LastItem = p;
         }
 
+        private async void CheckVisible_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var Visibility = DetailScroll.ScrollY + DetailScroll.Height;
+            if (Visibility < ShowImage.Height && !ScrollDown.IsVisible)
+                await Device.InvokeOnMainThreadAsync(async () =>
+                {
+                    ScrollDown.Opacity = 0;
+                    ScrollDown.IsVisible = true;
+                    await ScrollDown.FadeTo(1);
+                });
+            else if (Visibility > ShowImage.Height && ScrollDown.IsVisible)
+                await Device.InvokeOnMainThreadAsync(async () =>
+                {
+                    await ScrollDown.FadeTo(0);
+                    ScrollDown.IsVisible = false;
+                });
+        }
+
         private async void DelayedScroll_Elapsed(object sender, ElapsedEventArgs e)
         {
             await Device.InvokeOnMainThreadAsync(async () => await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true));
+
+            CheckVisible.Start();
+        }
+
+        private async void DownButton_Clicked(object sender, EventArgs e)
+        {
+            await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true);
         }
 
         private async void ShowPage_Clicked(object sender, EventArgs e)
