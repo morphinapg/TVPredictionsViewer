@@ -326,5 +326,14 @@ namespace TVPredictionsViewer
 
             OnPropertyChanged("EnableHighlights");
         }
+
+        private void FixNotifications_Clicked(object sender, EventArgs e)
+        {
+            NetworkDatabase.RefreshToken();
+
+            if (parent is null) parent = NetworkDatabase.mainpage.Detail;
+
+            parent.DisplayAlert("Fix Notifications", "Notification Token Refreshed", "OK");
+        }
     }
 }

@@ -14,6 +14,7 @@ using WindowsAzure.Messaging;
 using System.Linq;
 using Android.Content;
 using AndroidX.Core.App;
+using Firebase.Installations;
 
 namespace TVPredictionsViewer.Droid
 {
@@ -39,15 +40,25 @@ namespace TVPredictionsViewer.Droid
 
             CreateNotificationChannel();
 
-//#if DEBUG
-//            Task.Run(() =>
-//            {
-//                FirebaseInstanceId.Instance.DeleteInstanceId();
-//                Console.WriteLine("Forced token: " + FirebaseInstanceId.Instance.Token);
-//            });
-//#endif
+            //#if DEBUG
+            //            Task.Run(() =>
+            //            {
+            //                FirebaseInstanceId.Instance.DeleteInstanceId();
+            //                Console.WriteLine("Forced token: " + FirebaseInstanceId.Instance.Token);
+            //            });
+            //#endif
 
             //var token = FirebaseInstanceId.Instance.Token; //For testing notifications
+
+            if (!App.Current.Properties.ContainsKey("Token"))
+                FirebaseInstallations.Instance.GetToken(true).AddOnCompleteListener(new AppFirebaseMessagingRequestToken());
+
+            NetworkDatabase.TokenRefreshed += NetworkDatabase_TokenRefreshed;
+        }
+
+        private void NetworkDatabase_TokenRefreshed(object sender, EventArgs e)
+        {
+            FirebaseInstallations.Instance.GetToken(true).AddOnCompleteListener(new AppFirebaseMessagingRequestToken());
         }
 
         protected override void OnNewIntent(Intent intent)
@@ -108,6 +119,7 @@ namespace TVPredictionsViewer.Droid
         {
             var refreshedToken = s;
             Console.WriteLine($"Token received: {refreshedToken}");
+            App.Current.Properties["Token"] = s;
             SendRegistrationToServer(refreshedToken);           
         }
 

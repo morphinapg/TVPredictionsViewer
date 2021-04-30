@@ -90,6 +90,19 @@
                             <Button x:Name="Fix" Text="Fix Incorrect Show Details" Clicked="Fix_Clicked" Margin="5"/>
                         </ViewCell>
                         <ViewCell>
+                            <StackLayout>
+                                <Button x:Name="FixNotifications" Text="Fix Notifications" Clicked="FixNotifications_Clicked" Margin="5">
+                                    <Button.IsVisible>
+                                        <OnPlatform x:TypeArguments="x:Boolean">
+                                            <On Platform="Android" Value="True"/>
+                                            <On Platform="UWP" Value="False"/>
+                                            <On Platform="iOS" Value="False"/>
+                                        </OnPlatform>
+                                    </Button.IsVisible>
+                                </Button>
+                            </StackLayout>                            
+                        </ViewCell>
+                        <ViewCell>
                             <Button x:Name="Log" Text="Changelog" Clicked="Log_Clicked" Margin="5"/>
                         </ViewCell>
                     </TableSection>

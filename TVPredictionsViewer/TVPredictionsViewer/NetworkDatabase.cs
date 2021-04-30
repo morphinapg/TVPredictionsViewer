@@ -74,6 +74,12 @@ namespace TV_Ratings_Predictions
         }
 
         public static event EventHandler HomeButtonChanged;
+        public static event EventHandler TokenRefreshed;
+
+        public static void RefreshToken()
+        {
+            TokenRefreshed?.Invoke(new object(), new EventArgs());
+        }
 
         public static bool UseOdds = false;
 
