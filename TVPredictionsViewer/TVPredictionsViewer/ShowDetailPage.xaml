@@ -40,7 +40,14 @@
 
                 <Grid x:Name="ScrollDown" IsVisible="False" Opacity="0" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center" VerticalOptions="End">
                     <Button BackgroundColor="Black" CornerRadius="55" WidthRequest="55" HeightRequest="55" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0.5"/>
-                    <Button x:Name="DownButton" BackgroundColor="#80FFFFFF" CornerRadius="50" WidthRequest="50" HeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,0,2" TextColor="Black" FontAttributes="Bold" FontSize="24" Text="&#129139;" Clicked="DownButton_Clicked"/>
+                    <Button x:Name="DownButton" BackgroundColor="#80FFFFFF" CornerRadius="50" WidthRequest="50" HeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,0,2" TextColor="Black" FontFamily="Segoe UI" FontAttributes="Bold" FontSize="32" Text="🡳" Clicked="DownButton_Clicked">
+                        <Button.Padding>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="Android" Value="0,-8,0,0" />
+                                <On Platform="UWP" Value="0"/>
+                            </OnPlatform>
+                        </Button.Padding>
+                    </Button>
                 </Grid>
 
 

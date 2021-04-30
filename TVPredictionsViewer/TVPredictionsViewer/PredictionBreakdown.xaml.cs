@@ -69,8 +69,14 @@ namespace TVPredictionsViewer
             ProgressBox.IsVisible = true;
             var CompletedProgress = new int[Iterations];
 
-            var ProgressTimer = new Timer(100) { AutoReset = true };
-            ProgressTimer.Elapsed += async (se, ee) => await Device.InvokeOnMainThreadAsync(() => BreakdownProgress.Progress = CompletedProgress.Sum() / (double)Iterations);
+            var ProgressTimer = new Timer(100);
+
+            ProgressTimer.Elapsed += (se, ee) =>
+            {
+                ProgressTimer.Stop();
+                Device.BeginInvokeOnMainThread(() => BreakdownProgress.Progress = CompletedProgress.Sum() / (double)Iterations);                
+                ProgressTimer.Start();
+            };
             ProgressTimer.Start();
 
             Task.Run(async () =>
@@ -79,7 +85,7 @@ namespace TVPredictionsViewer
                 AllResults[0] = GenerateDetails(show, Adjustments, Numbers);
                 CompletedProgress[0] = 1;
 
-                Parallel.For(1, Iterations, i =>
+                Parallel.For(1, Iterations, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 }, i =>
                 {
                     var OrderedNumbers = Numbers.OrderBy(x => Random.NextDouble()).ToArray();
                     AllResults[i] = GenerateDetails(show, Adjustments, OrderedNumbers);

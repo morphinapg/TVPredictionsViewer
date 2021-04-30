@@ -33,8 +33,8 @@
             </StackLayout>
             <StackLayout Grid.Row="1">
                 <Label x:Name="Odds" FontSize="Large" Margin="10" HorizontalOptions="Center"/>                            
-                <Label x:Name="Disclaimer" Margin="15" Opacity="0.655" Text="The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate." HorizontalOptions="Center" LineBreakMode="WordWrap"/>
-                <Button x:Name="Info" Text="Info" IsVisible="false" Clicked="Info_Clicked"/>
+                <Label x:Name="Disclaimer" Margin="15" Opacity="0.655" IsVisible="False" Text="The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate." HorizontalOptions="Center" LineBreakMode="WordWrap"/>
+                <Button x:Name="Info" Text="Info" IsVisible="True" Clicked="Info_Clicked"/>
             </StackLayout>
         </Grid>
     </ContentView.Content>

@@ -2,7 +2,7 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:tvpredictionsviewer="clr-namespace:TVPredictionsViewer"
              mc:Ignorable="d"
              x:Class="TVPredictionsViewer.RatingsBreakdown">
     <ContentView.Content>
@@ -26,7 +26,7 @@
 
                 <ListView x:Name="RatingsList" Margin="15">
                     <ListView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="tvpredictionsviewer:RatingsDetails">
                             <ViewCell>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -50,8 +50,8 @@
 
                 <Label x:Name="FinalRating" FontSize="Large"/>
 
-                <Label x:Name="Disclaimer" Text="Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions." LineBreakMode="WordWrap"/>
-                <Button x:Name="Info" Text="Info" IsVisible="false" Clicked="Info_Clicked"/>
+                <Label x:Name="Disclaimer" IsVisible="False" Text="Average values are calculated using a weighted average that weighs newer episodes higher. Each Episode's weight is the square of the episode number. This is done because the ratings a show has at the end of the season are far more important for renewal odds. Future episode ratings and averages are projected using historical data about how ratings tend to drop off for this network. This is done because different shows premiere at different parts of the year. Projecting their final ratings averages allows us to compare their performances despite being at different parts of their respective seasons. This allows for a much more reliable comparison for the purpose of our predictions." LineBreakMode="WordWrap"/>
+                <Button x:Name="Info" Text="Info" IsVisible="True" Clicked="Info_Clicked"/>
             </StackLayout>
         </Grid>
     </ContentView.Content>

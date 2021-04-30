@@ -6,7 +6,9 @@ Replaced the control to select the year because the CarouselView control I used 
 Improved the Prediction Breakdown calculation. Adjust precision in settings if this runs slowly on your device.
 Fixed a rare bug that would crash the app on startup
 Fixed a bug when resuming app
+Foxed a bug where predictions would sometimes not be categorized
 [Windows] Improved image scaling
+[Android] Improved the look of the search bar
 
 1.6.5
 Changed "Network Average Renewal Threshold" to "Network Typical Renewal Threshold" to better reflect the way that threshold is calculated.

@@ -4,8 +4,9 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
+[assembly: ExportFont("seguisym.ttf", Alias = "Segoe UI")]
 namespace TVPredictionsViewer
-{
+{    
     public partial class App : Application
     {
         public const string NotificationReceivedKey = "NotificationReceived";

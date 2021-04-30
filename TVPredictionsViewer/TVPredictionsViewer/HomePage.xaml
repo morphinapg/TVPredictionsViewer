@@ -20,8 +20,8 @@
 
         <Grid RowDefinitions="Auto, *, Auto" x:Name="HomeLayout" HorizontalOptions="Center"  VerticalOptions="CenterAndExpand" >
             <StackLayout Spacing="0" HorizontalOptions="CenterAndExpand" Margin="5">
-                <Label x:Name="PredictionYear" FontSize="24" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
-                <Label x:Name="PredictionWeek" FontSize="18" HorizontalOptions="CenterAndExpand"/>
+                <Label x:Name="PredictionYear" FontSize="24" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                <Label x:Name="PredictionWeek" FontSize="18" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
             </StackLayout>
             <ScrollView Grid.Row="1" >
                 <StackLayout>
@@ -67,7 +67,7 @@
                 </StackLayout>                
             </ScrollView>
 
-            <Label Grid.Row="2" x:Name="UseMenu" Text="use the menu on the left to see predictions for each network" IsVisible="False" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <Label Grid.Row="2" x:Name="UseMenu" Text="use the menu on the left to see predictions for each network" Margin="5,0" IsVisible="False" FontAttributes="Bold" HorizontalOptions="Center"/>
             
         </Grid>
     </ContentPage.Content>

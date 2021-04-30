@@ -17,7 +17,7 @@ using AndroidX.Core.App;
 
 namespace TVPredictionsViewer.Droid
 {
-    [Activity(Label = "TV Predictions", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, LaunchMode= LaunchMode.SingleTop)]
+    [Activity(Label = "TV Predictions",Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, LaunchMode= LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public const string TAG = "MainActivity";

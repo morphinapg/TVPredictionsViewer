@@ -15,8 +15,14 @@
             
             <Grid x:Name="TitleColumn">
                 <Label x:Name="TitleLabel" FontSize="24" TextColor="{DynamicResource TitleText}" VerticalOptions="Center" HorizontalOptions="Start" LineBreakMode="NoWrap"/>
-            </Grid>            
-            <SearchBar x:Name="Search" IsVisible="False" Margin="5"/>
+            </Grid>
+            <SearchBar x:Name="Search" IsVisible="False" Margin="5">
+                <SearchBar.BackgroundColor>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="Android" Value="#COFFFFFF"/>
+                    </OnPlatform>
+                </SearchBar.BackgroundColor>
+            </SearchBar>
             <StackLayout Orientation="Horizontal" Grid.Column="1">                
                 <Button x:Name="SearchButton" Text="&#x2315;" FontSize="24" TextColor="{DynamicResource TitleText}" BackgroundColor="{DynamicResource TitleColor}" WidthRequest="50"/>
                 <Button x:Name="HomeButton" Text="&#x2302;" FontSize="24" TextColor="{DynamicResource TitleText}" BackgroundColor="{DynamicResource TitleColor}" Clicked="HomeButton_Clicked" WidthRequest="50"/>
