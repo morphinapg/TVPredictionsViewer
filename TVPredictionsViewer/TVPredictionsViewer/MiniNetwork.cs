@@ -40,7 +40,7 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        public void Filter(bool BlankPredictions = false, bool UseFinal = false, bool UseYear = false, List<Year> years = null)
+        public void Filter(bool UseFinal = false, bool UseYear = false, List<Year> years = null)
         {
             Predictions.Clear();
             FilteredShows.Clear();
@@ -53,7 +53,7 @@ namespace TV_Ratings_Predictions
 
             shows.Where(x => years.Select(y => y.year).Contains(x.year)).ToList().ForEach(x => FilteredShows.Add(x));
 
-            if (BlankPredictions)
+            if (UseYear)
             {
                 var p = new ListOfPredictions { Category = "Predictions" };
 
@@ -64,6 +64,8 @@ namespace TV_Ratings_Predictions
                     throw new Exception("Predictions were not empty!");
 
                 Predictions.Add(p);
+
+                pendingFilter = true;
             }
             else
             {
@@ -92,8 +94,6 @@ namespace TV_Ratings_Predictions
                 }
                 else
                     Filter_Odds(average);
-
-                pendingFilter = !UseYear;
             }
         }
 

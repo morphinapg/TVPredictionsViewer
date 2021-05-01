@@ -472,10 +472,10 @@ namespace TVPredictionsViewer
             Predictions.Clear();
 
             if (Filtered && SelectedNetwork > -1)
-                NetworkDatabase.NetworkList[SelectedNetwork].Filter(false, !CurrentModel, AllYears, FilteredYearList);
+                NetworkDatabase.NetworkList[SelectedNetwork].Filter(!CurrentModel, AllYears, FilteredYearList);
             else
                 foreach (MiniNetwork x in NetworkDatabase.NetworkList)
-                    x.Filter(false, !CurrentModel, AllYears, FilteredYearList);
+                    x.Filter(!CurrentModel, AllYears, FilteredYearList);
 
             var AllPredictions = (Filtered && SelectedNetwork > -1) ?
                 NetworkDatabase.NetworkList[SelectedNetwork].Predictions.AsParallel().SelectMany(x => x).Where(x => CurrentModel || (x.finalodds > 0 && (x.show.Renewed || x.show.Canceled || x.Status == ""))).OrderByDescending(x => CurrentModel ? x.odds : x.finalodds) :
