@@ -68,18 +68,14 @@
                             </Style>
                         </ResourceDictionary>
                     </Grid.Resources>
-                    <StackLayout Orientation="Horizontal" Spacing="0">
-                        <Button x:Name="Back" Text="&#129120;" Clicked="Back_Clicked">
-                            <Button.IsVisible>
-                                <OnPlatform x:TypeArguments="x:Boolean">
-                                    <On Platform="UWP" Value="True"/>
-                                    <On Platform="iOS" Value="True"/>
-                                    <On Platform="Android" Value="False"/>
-                                </OnPlatform>
-                            </Button.IsVisible>
-                        </Button>
-                        <!--<Button x:Name="Hamburger" Text="&#9776;" Clicked="Hamburger_Clicked"/>-->
-                    </StackLayout>
+                    <Button x:Name="Back" Text="&#129120;" FontFamily="Segoe UI" Clicked="Back_Clicked" FontSize="20" VerticalOptions="CenterAndExpand">
+                        <Button.Padding>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="Android" Value="0" />
+                                <On Platform="UWP" Value="0"/>
+                            </OnPlatform>
+                        </Button.Padding>
+                    </Button>
                     <controls:TitleTemplate Grid.Column="1" x:Name="Bar" TransparentButtons="True"/>
 
                     <Button x:Name="Options" Grid.Column="2" Clicked="Options_Clicked">

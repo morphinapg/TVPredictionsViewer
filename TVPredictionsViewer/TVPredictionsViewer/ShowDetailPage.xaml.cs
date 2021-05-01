@@ -56,8 +56,8 @@ namespace TVPredictionsViewer
             show = p;
             InitializeComponent();
 
-            
-            Back.IsVisible = Device.RuntimePlatform == Device.UWP && NetworkDatabase.mainpage.home.Navigation.NavigationStack.Count == 1;
+            if (Device.RuntimePlatform == Device.UWP)
+                Back.IsVisible = NetworkDatabase.mainpage.home.Navigation.NavigationStack.Count == 1;
 
             BindableLayout.SetItemsSource(OptionsMenuHidden, MenuItems);
             OptionsMenu.ItemsSource = MenuItems;
