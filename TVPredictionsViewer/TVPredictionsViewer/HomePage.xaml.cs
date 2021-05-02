@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using TV_Ratings_Predictions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -178,6 +179,8 @@ namespace TVPredictionsViewer
             CurrentStatus.Text = "";
             Activity = FindTemplateElementByName<ActivityIndicator>(this, "Activity");
             Activity.IsRunning = false;
+            HideHighlights();
+            NetworkDatabase.mainpage.HideNetworks();
 
             RefreshPredictions.IsVisible = true;
         }
@@ -263,6 +266,8 @@ namespace TVPredictionsViewer
                 {
                     try
                     {
+                        await Device.InvokeOnMainThreadAsync(() => HighlightsList.IsVisible = true);
+
                         var NewShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.OldOdds == 0 && x.OldRating == 0).OrderByDescending(x => x.PredictedOdds);
 
                         foreach (Show s in NewShows)
@@ -437,17 +442,23 @@ namespace TVPredictionsViewer
 
         public async void RefreshPredictions_Clicked(object sender, EventArgs e)
         {
-            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
-                File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+            {
+                if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Update.txt")))
+                    File.Delete(Path.Combine(NetworkDatabase.Folder, "Update.txt"));
 
-            if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
-                File.Delete(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"));
+                if (File.Exists(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP")))
+                    File.Delete(Path.Combine(NetworkDatabase.Folder, "Predictions.TVP"));
 
-            Activity.IsRunning = true;
-            CurrentStatus.Text = "Downloading Latest Predictions...";
+                Activity.IsRunning = true;
+                CurrentStatus.Text = "Downloading Latest Predictions...";
 
-            RefreshPredictions.IsVisible = false;
-            await NetworkDatabase.ReadUpdateAsync();
+                RefreshPredictions.IsVisible = false;
+                await NetworkDatabase.ReadUpdateAsync();
+            }
+            else
+                await DisplayAlert("TV Predictions", "Not Connected to the Internet! Try again later.", "Close");
+
         }
 
         private void ViewPost_Clicked(object sender, EventArgs e)

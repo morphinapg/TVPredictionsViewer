@@ -167,6 +167,7 @@ namespace TVPredictionsViewer
             if (e.Error != null)
             {
                 await DisplayAlert("TV Predictions", e.Error.Message, "Close");
+                home.IncompleteUpdate();
             }
             else
             {
@@ -236,6 +237,12 @@ namespace TVPredictionsViewer
                         home.RefreshYearlist();
                 }
             }
+        }
+
+        public void HideNetworks()
+        {
+            NetworkList.IsVisible = false;
+            AllNetworks.IsVisible = false;
         }
 
         private void NetworkList_ItemTapped(object sender, ItemTappedEventArgs e)
