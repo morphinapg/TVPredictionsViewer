@@ -1,1 +1,5 @@
 ﻿
+Main app:
+Finish adding viewer #s
+Modify neural network to make use of viewer #s
+New Factor: Previously Aired Episodes - Use this, plus the season year to allow the AI to determine syndication requirements

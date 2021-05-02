@@ -1,4 +1,7 @@
-﻿2.0.1
+﻿2.0.5
+Add the option to cancel prediction breakdown calculations if they're taking too long.
+Fixed a bug where Weekly update blog post wouldn't appear on load
+[Android] Facebook link will now open Facebook app if installed
 [Android] Added back button to Show Detail page
 
 2.0.0

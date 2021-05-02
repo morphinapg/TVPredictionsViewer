@@ -308,7 +308,7 @@ namespace TVPredictionsViewer
                 
             }
 
-            if (NetworkDatabase.CurrentYear == NetworkDatabase.MaxYear)
+            if (NetworkDatabase.YearList[NetworkDatabase.CurrentYear] == NetworkDatabase.MaxYear)
                 UnhideHighlights();
         }
 

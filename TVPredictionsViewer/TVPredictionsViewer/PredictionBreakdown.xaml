@@ -28,7 +28,8 @@
                 </ListView>
                 <StackLayout x:Name="ProgressBox" Margin="50,10" IsVisible="False">
                     <Label HorizontalOptions="Center" VerticalOptions="Center" x:Name="ProgressLabel"/>
-                    <ProgressBar x:Name="BreakdownProgress" HeightRequest="50"/>                    
+                    <ProgressBar x:Name="BreakdownProgress" HeightRequest="50"/>
+                    <Button x:Name="Cancel" Text="Cancel" Clicked="Cancel_Clicked"/>
                 </StackLayout>
             </StackLayout>
             <StackLayout Grid.Row="1">

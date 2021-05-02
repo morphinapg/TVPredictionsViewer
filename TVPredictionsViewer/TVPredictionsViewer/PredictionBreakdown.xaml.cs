@@ -18,6 +18,7 @@ namespace TVPredictionsViewer
         Show show;
         MiniNetwork network;
         ObservableCollection<DetailsContainer> details;
+        bool CancelCalculations = false;
 
         public PredictionBreakdown(Show s, MiniNetwork n)
         {
@@ -87,9 +88,12 @@ namespace TVPredictionsViewer
 
                 Parallel.For(1, Iterations, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 }, i =>
                 {
-                    var OrderedNumbers = Numbers.OrderBy(x => Random.NextDouble()).ToArray();
-                    AllResults[i] = GenerateDetails(show, Adjustments, OrderedNumbers);
-                    CompletedProgress[i] = 1;
+                    if (!CancelCalculations)
+                    {
+                        var OrderedNumbers = Numbers.OrderBy(x => Random.NextDouble()).ToArray();
+                        AllResults[i] = GenerateDetails(show, Adjustments, OrderedNumbers);
+                        CompletedProgress[i] = 1;
+                    }                    
                 });
 
                 await Device.InvokeOnMainThreadAsync(() =>
@@ -103,7 +107,7 @@ namespace TVPredictionsViewer
                 var count = FactorNames.Count;
                 var FactorValues = new double[count];
 
-                Parallel.For(0, count, i => FactorValues[i] = AllResults.SelectMany(x => x.details).Where(x => x.Name == FactorNames[i]).Select(x => x.Value).Average());
+                Parallel.For(0, count, i => FactorValues[i] = AllResults.Where( (x, y) => CompletedProgress[y] == 1).SelectMany(x => x.details).Where(x => x.Name == FactorNames[i]).Select(x => x.Value).Average());
 
                 var DetailsList = new List<DetailsContainer>();
                 for (int i = 0; i < count; i++)
@@ -491,6 +495,11 @@ namespace TVPredictionsViewer
             else
                 await NetworkDatabase.mainpage.DisplayAlert("Prediction Breakdown Info", "The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate.", "OK");
 
+        }
+
+        private void Cancel_Clicked(object sender, EventArgs e)
+        {
+            CancelCalculations = true;
         }
     }
 }

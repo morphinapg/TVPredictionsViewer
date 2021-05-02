@@ -29,7 +29,19 @@ namespace TVPredictionsViewer
 
         private async void ImageButton_Clicked(object sender, EventArgs e)
         {
-            await Launcher.OpenAsync("https://www.Facebook.com/TVPredictions");
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                try
+                {
+                    await Launcher.OpenAsync("fb://page/609673106087592/");
+                }
+                catch (Exception)
+                {
+                    await Launcher.OpenAsync("https://www.Facebook.com/TVPredictions");
+                }
+            }
+            else
+                await Launcher.OpenAsync("https://www.Facebook.com/TVPredictions");
         }
 
         private async void PayPalButton_Clicked(object sender, EventArgs e)

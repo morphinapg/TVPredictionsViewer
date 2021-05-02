@@ -22,7 +22,8 @@ namespace TVPredictionsViewer
             network = n;
             InitializeComponent();
 
-            ShowInfo.Elapsed += ShowInfo_Elapsed;ShowInfo.Start();
+            ShowInfo.Elapsed += ShowInfo_Elapsed;
+            ShowInfo.Start();
 
             Load_Ratings(s);
         }
