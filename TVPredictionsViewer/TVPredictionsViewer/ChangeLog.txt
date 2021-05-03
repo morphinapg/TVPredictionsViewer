@@ -1,5 +1,7 @@
 ﻿2.0.6
 Fixed a rare bug that could occur if the predictions didn't download correctly
+Improvement to the categorization of some predictions
+fixed a bug with prediction results
 
 2.0.5
 Add the option to cancel prediction breakdown calculations if they're taking too long.

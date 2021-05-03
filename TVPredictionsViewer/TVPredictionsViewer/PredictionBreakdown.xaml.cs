@@ -132,7 +132,7 @@ namespace TVPredictionsViewer
 
                     if (show.Renewed || show.Canceled)
                     {
-                        if ((show.Renewed && Results.CurrentOdds > 0.5) || (show.Canceled && Results.CurrentOdds < 0.5))
+                        if ((show.Renewed && Results.CurrentOdds >= 0.5) || (show.Canceled && Results.CurrentOdds <= 0.5))
                             Odds.Text += " ✔";
                         else
                             Odds.Text += " ❌";

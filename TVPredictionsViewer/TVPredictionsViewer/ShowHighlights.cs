@@ -67,14 +67,17 @@ namespace TVPredictionsViewer
                 case 0:
                     NewShow = (show.show.Season == 1) ? "Series Premiere" : "Season Premiere";
                     Prediction = show.Status == "" ? show.Category : show.Status;
-                    RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
+                    if (show.show.PredictedOdds == 0.5) 
+                        RenewalIndex = (show.show.ShowIndex > show.show._calculatedThreshold) ? 1 : -1;
+                    else
+                        RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;                    
                     Description = show.Season;
                     break;
                 case 1:
                     Prediction = show.Status;
                     RenewalIndex = show.show.Renewed ? 1 : -1;
                     {
-                        var correct = (show.show.Renewed && show.show.FinalPrediction > 0.5) || (show.show.Canceled && show.show.FinalPrediction < 0.5);
+                        var correct = (show.show.Renewed && show.show.FinalPrediction >= 0.5) || (show.show.Canceled && show.show.FinalPrediction <= 0.5);
 
                         var formats = new FormattedString();
                         var part1 = new Span { Text = correct ? "Prediction was correct " : "Prediction was incorrect "};
@@ -86,7 +89,10 @@ namespace TVPredictionsViewer
                     break;
                 case 2:
                     Prediction = show.Category;
-                    RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
+                    if (show.show.PredictedOdds == 0.5)
+                        RenewalIndex = (show.show.ShowIndex > show.show._calculatedThreshold) ? 1 : -1;
+                    else
+                        RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
                     {
                         string OldCategory;
                         if (show.show.OldOdds > 0.8)
@@ -95,6 +101,13 @@ namespace TVPredictionsViewer
                             OldCategory = "Likely Renewal";
                         else if (show.show.OldOdds > 0.5)
                             OldCategory = "Leaning Towards Renewal";
+                        else if (show.show.OldOdds == 0.5)
+                        {
+                            if (show.show.ShowIndex > show.show._calculatedThreshold)
+                                OldCategory = "Leaning Towards Renewal";
+                            else
+                                OldCategory = "Leaning Towards Cancellation";
+                        }
                         else if (show.show.OldOdds > 0.4)
                             OldCategory = "Leaning Towards Cancellation";
                         else if (show.show.OldOdds > 0.2)

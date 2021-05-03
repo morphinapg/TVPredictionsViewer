@@ -1,4 +1,6 @@
-﻿
+﻿Detect changes in Neural Network to prevent prediction breakdown calculation
+
+
 Main app:
 Finish adding viewer #s
 Modify neural network to make use of viewer #s

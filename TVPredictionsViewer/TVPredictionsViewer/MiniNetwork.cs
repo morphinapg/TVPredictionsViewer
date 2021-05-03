@@ -40,7 +40,7 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        public void Filter(bool UseFinal = false, bool UseYear = false, List<Year> years = null)
+        public void Filter(bool UseNetwork = true, bool UseFinal = false, bool UseYear = false, List<Year> years = null)
         {
             Predictions.Clear();
             FilteredShows.Clear();
@@ -53,7 +53,7 @@ namespace TV_Ratings_Predictions
 
             shows.Where(x => years.Select(y => y.year).Contains(x.year)).ToList().ForEach(x => FilteredShows.Add(x));
 
-            if (UseYear)
+            if (UseYear || !UseNetwork)
             {
                 var p = new ListOfPredictions { Category = "Predictions" };
 
@@ -75,19 +75,19 @@ namespace TV_Ratings_Predictions
                     {
                         case "Ratings":
                             {
-                                var TempList = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false)).OrderByDescending(x => x.show.AverageRating).ToList();
+                                var TempList = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderByDescending(x => x.show.AverageRating).ToList();
                                 MiniNetwork.AddPredictions_Ratings(TempList, ref Predictions);
                                 break;
                             }
                         case "Name":
                             {
-                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false)).OrderBy(x => x.Name).ToList();
+                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderBy(x => x.Name).ToList();
                                 MiniNetwork.AddPredictions_Name(TempList, ref Predictions);
                                 break;
                             }
                         default:
                             {
-                                Filter_Odds(average);
+                                Filter_Odds(average, UseFinal);
                                 break;
                             }
                     }
@@ -97,9 +97,9 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        void Filter_Odds(double average)
+        void Filter_Odds(double average, bool UseFinal = false)
         {
-            var tempPredictions = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false)).OrderByDescending(x => x.odds);
+            var tempPredictions = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderByDescending(x => x.odds);
             MiniNetwork.AddPredictions_Odds(tempPredictions, ref Predictions);
         }
 
@@ -125,6 +125,13 @@ namespace TV_Ratings_Predictions
                     LikelyRenewed.Add(p);
                 else if (odds > 0.5)
                     LeaningRenewed.Add(p);
+                else if (odds == 0.5)
+                {
+                    if (p.show.ShowIndex > p.show._calculatedThreshold)
+                        LeaningRenewed.Add(p);
+                    else
+                        LeaningCanceled.Add(p);
+                }
                 else if (odds > 0.4)
                     LeaningCanceled.Add(p);
                 else if (odds > 0.2)

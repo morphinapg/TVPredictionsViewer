@@ -132,6 +132,13 @@ namespace TV_Ratings_Predictions
                     return "Likely Renewal";
                 else if (odds > 0.5)
                     return "Leaning Towards Renewal";
+                else if (odds == 0.5)
+                {
+                    if (show.AverageRating > targetrating)
+                        return "Leaning Towards Renewal";
+                    else
+                        return "Leaning Towards Cancellation";
+                }
                 else if (odds > 0.4)
                     return "Leaning Towards Cancellation";
                 else if (odds > 0.2)
@@ -184,9 +191,9 @@ namespace TV_Ratings_Predictions
             get
             {
                 if (show.Renewed)
-                    return (odds > 0.5) ? 1 : -1;
+                    return (odds >= 0.5) ? 1 : -1;
                 else if (show.Canceled)
-                    return (odds < 0.5) ? 1 : -1;
+                    return (odds <= 0.5) ? 1 : -1;
                 else
                     return 0;
             }
@@ -198,9 +205,9 @@ namespace TV_Ratings_Predictions
                 var o = UseFinal ? finalodds : odds;
 
                 if (show.Renewed)
-                    return (o > 0.5) ? "✔" : "❌";
+                    return (o >= 0.5) ? "✔" : "❌";
                 else if (show.Canceled)
-                    return (o < 0.5) ? "✔" : "❌";
+                    return (o <= 0.5) ? "✔" : "❌";
                 else
                     return "";
             }

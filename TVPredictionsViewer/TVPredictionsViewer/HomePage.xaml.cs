@@ -334,9 +334,10 @@ namespace TVPredictionsViewer
                 
         }
 
-        public void RefreshYearlist()
+        public async void RefreshYearlist()
         {
             PredictionWeek.Text = CurrentWeek();
+            CurrentStatus.FormattedText = await FetchLabels();
             //YearList.ItemsSource = NetworkDatabase.YearList;
         }
 

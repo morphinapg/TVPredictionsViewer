@@ -86,7 +86,7 @@ namespace TVPredictionsViewer
                 PredictionList.Clear();
                 foreach (MiniNetwork n in NetworkDatabase.NetworkList)
                     if (n.pendingFilter)
-                        n.Filter();
+                        n.Filter(false);
 
                 if (Application.Current.Properties.ContainsKey("PredictionSort"))
                 {

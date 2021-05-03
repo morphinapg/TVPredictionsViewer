@@ -472,10 +472,10 @@ namespace TVPredictionsViewer
             Predictions.Clear();
 
             if (Filtered && SelectedNetwork > -1)
-                NetworkDatabase.NetworkList[SelectedNetwork].Filter(!CurrentModel, AllYears, FilteredYearList);
+                NetworkDatabase.NetworkList[SelectedNetwork].Filter(true, !CurrentModel, AllYears, FilteredYearList);
             else
                 foreach (MiniNetwork x in NetworkDatabase.NetworkList)
-                    x.Filter(!CurrentModel, AllYears, FilteredYearList);
+                    x.Filter(true, !CurrentModel, AllYears, FilteredYearList);
 
             var AllPredictions = (Filtered && SelectedNetwork > -1) ?
                 NetworkDatabase.NetworkList[SelectedNetwork].Predictions.AsParallel().SelectMany(x => x).Where(x => CurrentModel || (x.finalodds > 0 && (x.show.Renewed || x.show.Canceled || x.Status == ""))).OrderByDescending(x => CurrentModel ? x.odds : x.finalodds) :
@@ -488,8 +488,8 @@ namespace TVPredictionsViewer
             var WithStatus = Predictions.AsParallel().SelectMany(x => x).Where(x => x.show.Renewed || x.show.Canceled);
 
             var Accurate = CurrentModel ?
-                WithStatus.AsParallel().Where(x => (x.show.Renewed && x.odds > 0.5) || (!x.show.Renewed && x.odds < 0.5)) :
-                WithStatus.AsParallel().Where(x => (x.show.Renewed && x.finalodds > 0.5) || (!x.show.Renewed && x.finalodds < 0.5));
+                WithStatus.AsParallel().Where(x => (x.show.Renewed && x.odds >= 0.5) || (!x.show.Renewed && x.odds <= 0.5)) :
+                WithStatus.AsParallel().Where(x => (x.show.Renewed && x.finalodds >= 0.5) || (!x.show.Renewed && x.finalodds <= 0.5));
 
             var part = Accurate.Count();
             var whole = WithStatus.Count();
