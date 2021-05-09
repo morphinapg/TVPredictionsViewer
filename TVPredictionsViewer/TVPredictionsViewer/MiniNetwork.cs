@@ -117,7 +117,7 @@ namespace TV_Ratings_Predictions
 
             foreach (PredictionContainer p in tempPredictions)
             {
-                var odds = UseFinal ? p.finalodds : p.odds;
+                var odds = UseFinal? p.finalodds : p.odds;
 
                 if (odds > 0.8)
                     CertainRenewed.Add(p);

@@ -36,14 +36,7 @@
                                     <Frame WidthRequest="320" HeightRequest="180" CornerRadius="25" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                                         <Grid>
                                             <ActivityIndicator Margin="25" Opacity="0.25" IsRunning="{Binding ActivityVisibility}" Color="{DynamicResource ActivityColor}"/>
-                                            <Image Aspect="AspectFill" tvpredictionsviewer:ImageEffect.Text="{Binding ImageURL}" Source="{Binding ImageUri}" Opacity="0.25">
-                                                <!--<Image.Source>
-                                                    <OnPlatform x:TypeArguments="ImageSource">
-                                                        <On Platform="Android" Value="{Binding ImageUri}"/>
-                                                        <On Platform="iOS" Value="{Binding ImageUri}"/>
-                                                    </OnPlatform>
-                                                </Image.Source>-->
-                                            </Image>
+                                            <Image Aspect="AspectFill" tvpredictionsviewer:ImageEffect.Text="{Binding ImageURL}" Source="{Binding ImageUri}" Opacity="0.25"/>
                                             <Grid ColumnDefinitions="*, Auto" RowDefinitions="*, Auto, Auto">                                                
                                                 <Label Text="{Binding ShowName}" Grid.ColumnSpan="2" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" TextColor="Black" Margin="12,12,0,0"/>
                                                 <Label Text="{Binding ShowName}" Grid.ColumnSpan="2" HorizontalOptions="Start" VerticalOptions="Start" FontSize="Medium" Margin="10,10,10,0"/>

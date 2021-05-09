@@ -68,11 +68,10 @@
                             </Style>
                         </ResourceDictionary>
                     </Grid.Resources>
-                    <Button x:Name="Back" Text="&#129120;" FontFamily="Segoe UI" Clicked="Back_Clicked" FontSize="20" VerticalOptions="CenterAndExpand">
+                    <Button x:Name="Back" Text="&#129120;" FontFamily="Segoe UI" Clicked="Back_Clicked" FontSize="20" >
                         <Button.Padding>
                             <OnPlatform x:TypeArguments="Thickness">
                                 <On Platform="Android" Value="0" />
-                                <On Platform="UWP" Value="0"/>
                             </OnPlatform>
                         </Button.Padding>
                     </Button>

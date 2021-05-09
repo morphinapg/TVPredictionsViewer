@@ -85,7 +85,8 @@ namespace TV_Ratings_Predictions
                     return Math.Round(o * 100, 0) + "% Odds of Renewal";
                 }
                 else
-                {
+                {                   
+
                     var o = UseFinal ? finalodds : odds;
 
                     if (o > 0.5)
@@ -415,7 +416,7 @@ namespace TV_Ratings_Predictions
             IsShowPage = false;
             IsLoaded = false;
             _networkaverage = average;
-            finalodds = s.FinalPrediction;
+            finalodds = s.Renewed || s.Canceled ? s.FinalPrediction : s.PredictedOdds;
             NetworkDatabase.CurrentYearUpdated += NetworkDatabase_CurrentYearUpdated;
             DisplayYear = year;
             UseFinal = final;
