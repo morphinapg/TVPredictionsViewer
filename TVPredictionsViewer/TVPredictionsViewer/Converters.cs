@@ -72,6 +72,26 @@ namespace TVPredictionsViewer
         }
     }
 
+    public class NumberColorAlt : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return Color.Transparent;
+            else if ((double)value > 0)
+                return Color.MediumSeaGreen;
+            else if ((double)value < 0)
+                return Color.IndianRed;
+            else
+                return Color.Silver;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class StatusColorAlt : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

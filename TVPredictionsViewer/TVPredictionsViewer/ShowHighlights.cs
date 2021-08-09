@@ -67,10 +67,17 @@ namespace TVPredictionsViewer
                 case 0:
                     NewShow = (show.show.Season == 1) ? "Series Premiere" : "Season Premiere";
                     Prediction = show.Status == "" ? show.Category : show.Status;
-                    if (show.show.PredictedOdds == 0.5) 
-                        RenewalIndex = (show.show.ShowIndex > show.show._calculatedThreshold) ? 1 : -1;
+
+                    if (show.Status == "")
+                    {
+                        if (show.show.PredictedOdds == 0.5)
+                            RenewalIndex = (show.show.ShowIndex > show.show._calculatedThreshold) ? 1 : -1;
+                        else
+                            RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;
+                    }
                     else
-                        RenewalIndex = show.show.PredictedOdds > 0.5 ? 1 : -1;                    
+                        RenewalIndex = 0;
+                                   
                     Description = show.Season;
                     break;
                 case 1:

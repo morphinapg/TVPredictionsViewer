@@ -30,7 +30,7 @@ namespace TVPredictionsViewer
 
         public ObservableCollection<ListOfPredictions> Predictions = new ObservableCollection<ListOfPredictions>();
 
-        bool _filtered;
+        bool _filtered, FadingOut;
         public bool Filtered
         {
             get
@@ -280,13 +280,19 @@ namespace TVPredictionsViewer
 
         async void FadeOut(bool animation = true)
         {
-            if (animation)
-                await SidePanel.BreakdownView.FadeTo(0);
-            SideColumn.Children.Remove(SidePanel.BreakdownView);
-            SidePanel.BreakdownView = null;
+            if (!FadingOut)
+            {
+                FadingOut = true;
+                if (animation)
+                    await SidePanel.BreakdownView.FadeTo(0);
+                SideColumn.Children.Remove(SidePanel.BreakdownView);
+                SidePanel.BreakdownView = null;
 
-            if (animation)
-                SideColumn_SizeChanged(this, new EventArgs());
+                if (animation)
+                    SideColumn_SizeChanged(this, new EventArgs());
+                FadingOut = false;
+            }
+            
         }
 
         private void Year_Tapped(object sender, EventArgs e)
@@ -425,8 +431,7 @@ namespace TVPredictionsViewer
                                     Uri = await NetworkDatabase.GetImageURI(ID),
                                     CachingEnabled = true,
                                     CacheValidity = new TimeSpan(90, 0, 0, 0)
-                                };
-                                LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
+                                };                                
 
                                 if (ShowImage.Source != null)
                                 {
@@ -435,6 +440,8 @@ namespace TVPredictionsViewer
                                     ImageLoading.IsVisible = false;
                                 }
                             }
+
+                            LastItem.Overview = NetworkDatabase.ShowDescriptions[ID];
                         }
 
                         //if (reload)
@@ -586,8 +593,7 @@ namespace TVPredictionsViewer
                             CachingEnabled = true,
                             CacheValidity = new TimeSpan(90, 0, 0, 0)
                         };
-                        p.Overview = NetworkDatabase.ShowDescriptions[ID];
-
+                        
                         if (ShowImage.Source != null)
                         {
                             p.IsLoaded = true;
@@ -595,6 +601,8 @@ namespace TVPredictionsViewer
                             ImageLoading.IsVisible = false;
                         }
                     }
+
+                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
                 }
 
                 //if (reload)

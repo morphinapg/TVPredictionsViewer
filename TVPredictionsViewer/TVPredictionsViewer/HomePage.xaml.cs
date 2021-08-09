@@ -286,7 +286,7 @@ namespace TVPredictionsViewer
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
 
-                        var PredictionChanged = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.5) != (int)(x.PredictedOdds / 0.5))).OrderByDescending(x => x.PredictedOdds);
+                        var PredictionChanged = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.5) != (int)(x.PredictedOdds / 0.5)) && (x.OldOdds > 0 || x.OldRating > 0)).OrderByDescending(x => x.PredictedOdds);
 
                         foreach (Show s in PredictionChanged)
                         {
@@ -295,7 +295,7 @@ namespace TVPredictionsViewer
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
 
-                        var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2))).OrderByDescending(x => x.PredictedOdds);
+                        var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2)) && (x.OldOdds > 0 || x.OldRating > 0)).OrderByDescending(x => x.PredictedOdds);
 
                         foreach (Show s in UpgradedOrDownGradedShows)
                         {

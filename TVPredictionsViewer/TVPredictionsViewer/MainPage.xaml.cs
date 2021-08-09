@@ -215,8 +215,8 @@ namespace TVPredictionsViewer
                 {
                     if (!home.Completed)
                     {
-                        _ = DisplayAlert("TV Predictions", "Could not read predictions file. Please try again.", "Close");
                         home.IncompleteUpdate();
+                        _ = DisplayAlert("TV Predictions", "Could not read predictions file. Please try again.", "Close");                        
                     }
                     else
                         home.CompletedSettings();

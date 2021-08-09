@@ -20,6 +20,7 @@ namespace TVPredictionsViewer
         PredictionContainer show;
         Timer DelayedScroll = new Timer(1000), CheckVisible = new Timer(100);
         string _uri;
+        bool FadingOut;
         public string ShowImageUri
         {
             get { return _uri; }
@@ -192,7 +193,6 @@ namespace TVPredictionsViewer
                         CachingEnabled = true,
                         CacheValidity = new TimeSpan(90, 0, 0, 0)
                     };
-                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
 
                     if (ShowImage.Source != null)
                     {
@@ -201,6 +201,8 @@ namespace TVPredictionsViewer
                         ImageLoading.IsVisible = false;
                     }
                 }
+
+                p.Overview = NetworkDatabase.ShowDescriptions[ID];
             }
 
             //if (reload)
@@ -292,10 +294,15 @@ namespace TVPredictionsViewer
 
         async void FadeOut()
         {
-            await SidePanel.BreakdownView.FadeTo(0);
-            SideColumn.Children.Remove(SidePanel.BreakdownView);
-            SidePanel.BreakdownView = null;
-            SidePanel_PanelOpened(this, new EventArgs());
+            if (!FadingOut)
+            {
+                FadingOut = true;
+                await SidePanel.BreakdownView.FadeTo(0);
+                SideColumn.Children.Remove(SidePanel.BreakdownView);
+                SidePanel.BreakdownView = null;
+                SidePanel_PanelOpened(this, new EventArgs());
+                FadingOut = false;
+            }            
         }
 
         private void Back_Clicked(object sender, EventArgs e)

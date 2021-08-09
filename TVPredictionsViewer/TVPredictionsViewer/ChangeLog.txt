@@ -1,4 +1,16 @@
-﻿2.0.6
+﻿2.0.9
+[Windows] Fixed show descriptions not displaying
+[Windows] Improved formatting of Highlight cards on home page.
+[Android] Fixed a bug where tapping on a link in the blog post might open multiple pages at once.
+Fixed a bug when the back button was clicked too quickly
+
+2.0.8
+Fixed an issue in the way weekly highlights were displayed
+
+2.0.7
+Modification in color scheme for Weekly Highlight shows that premiered after their status was already decided.
+
+2.0.6
 Fixed a rare bug that could occur if the predictions didn't download correctly
 Improvement to the categorization of some predictions
 fixed a bug with prediction results

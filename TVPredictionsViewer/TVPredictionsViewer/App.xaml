@@ -37,7 +37,8 @@
             <local:InverseBool x:Key="InverseBool"/>
             <local:StatusColor x:Key="StatusColor"/>
             <local:StatusColorAlt x:Key="StatusColorAlt"/>
-            <local:NumberColor x:Key="NumberColor"/>            
+            <local:NumberColor x:Key="NumberColor"/>
+            <local:NumberColorAlt x:Key="NumberColorAlt"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

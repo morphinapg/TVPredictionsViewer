@@ -22,7 +22,7 @@ namespace TVPredictionsViewer
         public PredictionContainer PreviousItem;
         ResultsList SearchResults = new ResultsList();
         bool isDesktop = false;
-        bool isAllNetworks = false;
+        bool isAllNetworks = false, FadingOut = false;
         static object PredictionLock = new object();
         Timer DelayedScroll = new Timer(1000), CheckVisible = new Timer(100);
         //ObservableCollection<ListOfPredictions> Results = new ObservableCollection<ListOfPredictions>();
@@ -255,8 +255,7 @@ namespace TVPredictionsViewer
                                     CachingEnabled = true,
                                     CacheValidity = new TimeSpan(90, 0, 0, 0)
                                 };
-                                PreviousItem.Overview = NetworkDatabase.ShowDescriptions[ID];
-
+                                
                                 if (ShowImage.Source != null)
                                 {
                                     PreviousItem.IsLoaded = true;
@@ -264,6 +263,8 @@ namespace TVPredictionsViewer
                                     ImageLoading.IsVisible = false;
                                 }
                             }
+
+                            PreviousItem.Overview = NetworkDatabase.ShowDescriptions[ID];
                         }
                     }                     
 
@@ -376,15 +377,16 @@ namespace TVPredictionsViewer
                             CachingEnabled = true,
                             CacheValidity = new TimeSpan(90, 0, 0, 0)
                         };
-                        p.Overview = NetworkDatabase.ShowDescriptions[ID];
-
+                        
                         if (ShowImage.Source != null)
                         {
                             p.IsLoaded = true;
                             ShowImage.IsVisible = true;
                             ImageLoading.IsVisible = false;
                         }
-                    }                    
+                    }
+
+                    p.Overview = NetworkDatabase.ShowDescriptions[ID];
                 }
 
 
@@ -488,13 +490,19 @@ namespace TVPredictionsViewer
 
         async void FadeOut(bool animation = true)
         {
-            if (animation)
-                await SidePanel.BreakdownView.FadeTo(0);
-            SideColumn.Children.Remove(SidePanel.BreakdownView);
-            SidePanel.BreakdownView = null;
+            if (!FadingOut)
+            {
+                FadingOut = true;
+                if (animation)
+                    await SidePanel.BreakdownView.FadeTo(0);
+                SideColumn.Children.Remove(SidePanel.BreakdownView);
+                SidePanel.BreakdownView = null;
 
-            if (animation)
-                SidePanel_PanelOpened(this, new EventArgs());
+                if (animation)
+                    SidePanel_PanelOpened(this, new EventArgs());
+                FadingOut = false;
+            }
+            
         }
     }
 }
