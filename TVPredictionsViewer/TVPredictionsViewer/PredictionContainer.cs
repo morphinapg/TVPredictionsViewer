@@ -22,7 +22,9 @@ namespace TV_Ratings_Predictions
             {
                 bool year = DisplayYear is null ? show.year != NetworkDatabase.YearList[NetworkDatabase.CurrentYear] : (bool)DisplayYear;
 
-                return year ? show.Name + " (" + new Year(show.year).Season + ")" : show.Name;
+                if (show.NameWithSeason != show.Name) year = false;
+
+                return year ? show.NameWithSeason + " (Season " + show.Season + ")" : show.NameWithSeason;
             }
         }
 

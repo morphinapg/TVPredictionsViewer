@@ -161,7 +161,7 @@ namespace TVPredictionsViewer
 
             if (Shows.Count > 0)
             {
-                var SelectedShow = Shows.OrderByDescending(x => x.show.year).First();
+                var SelectedShow = Shows.OrderByDescending(x => x.show.year).ThenBy(x => x.Season).First();
 
                 await Param.Parent.Navigation.PushModalAsync(new ShowDetailPage(SelectedShow));
             }

@@ -81,7 +81,7 @@ namespace TV_Ratings_Predictions
                             }
                         case "Name":
                             {
-                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderBy(x => x.Name).ToList();
+                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderBy(x => x.Name).ThenBy(x => x.Season).ToList();
                                 MiniNetwork.AddPredictions_Name(TempList, ref Predictions);
                                 break;
                             }

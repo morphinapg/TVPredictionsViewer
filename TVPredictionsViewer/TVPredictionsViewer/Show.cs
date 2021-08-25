@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 
 namespace TV_Ratings_Predictions
@@ -28,6 +29,10 @@ namespace TV_Ratings_Predictions
                 _name = value;
             }
         }
+
+        public string NameWithSeason => network.shows.Where(x => x._name == Name && x.year == year).Count() > 1 ? Name + " (Season " + Season + ")" : Name;
+
+
         public ObservableCollection<bool> factorValues;
 
         [NonSerialized]

@@ -103,7 +103,7 @@ namespace TVPredictionsViewer
             NetworkDatabase.backup = true;
 
 
-            var NewestShow = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.shows).Where(x => x.Name == show).OrderByDescending(x => x.year).First();
+            var NewestShow = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.shows).Where(x => x.Name == show).OrderByDescending(x => x.year).ThenBy(x => x.Season).First();
             var Network = NetworkDatabase.NetworkList.Where(x => x.shows.Contains(NewestShow)).First();
             var Adjustments = Network.model.GetAdjustments(true);
             var Average = Network.model.GetAverageThreshold(true);

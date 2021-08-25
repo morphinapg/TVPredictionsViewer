@@ -1,4 +1,7 @@
-﻿2.0.9
+﻿2.1.0
+Modification that allows two shows with the same name to appear in the same year.
+
+2.0.9
 [Windows] Fixed show descriptions not displaying
 [Windows] Improved formatting of Highlight cards on home page.
 [Android] Fixed a bug where tapping on a link in the blog post might open multiple pages at once.

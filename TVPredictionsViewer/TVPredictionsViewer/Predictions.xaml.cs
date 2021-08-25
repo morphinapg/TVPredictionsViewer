@@ -353,7 +353,7 @@ namespace TVPredictionsViewer
                 //if (!NetworkDatabase.ShowIDs.ContainsKey(p.Name) && Application.Current.Properties.ContainsKey("SHOWID " + p.Name))
                 //    reload = true;
 
-                var ID = await NetworkDatabase.GetShowID(p.Name, p.network.name);
+                var ID = await NetworkDatabase.GetShowID(p.show.Name, p.network.name);
 
                 if (ID > 0)
                 {

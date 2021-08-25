@@ -408,7 +408,7 @@ namespace TVPredictionsViewer
                         //if (!NetworkDatabase.ShowIDs.ContainsKey(LastItem.Name) && Application.Current.Properties.ContainsKey("SHOWID " + LastItem.Name))
                         //    reload = true;
 
-                        var ID = await NetworkDatabase.GetShowID(LastItem.Name, LastItem.network.name);
+                        var ID = await NetworkDatabase.GetShowID(LastItem.show.Name, LastItem.network.name);
 
                         if (ID > 0)
                         {
