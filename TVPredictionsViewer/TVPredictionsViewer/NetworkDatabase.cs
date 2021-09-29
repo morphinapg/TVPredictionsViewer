@@ -52,7 +52,7 @@ namespace TV_Ratings_Predictions
                     foreach (MiniNetwork n in NetworkList)
                         n.pendingFilter = true;
 
-                    CurrentYearUpdated?.Invoke(_currentyear, new EventArgs());
+                    Device.BeginInvokeOnMainThread(() => CurrentYearUpdated?.Invoke(_currentyear, new EventArgs()));
                 }
             }
         }

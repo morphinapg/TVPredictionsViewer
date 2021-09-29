@@ -93,7 +93,7 @@ namespace TV_Ratings_Predictions
                     }
                 }
                 else
-                    Filter_Odds(average);
+                    Filter_Odds(average, UseFinal);
             }
         }
 

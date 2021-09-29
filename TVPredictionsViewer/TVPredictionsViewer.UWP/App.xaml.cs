@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Messaging;
+﻿using FFImageLoading.Forms.Platform;
+using Microsoft.WindowsAzure.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,6 +49,7 @@ namespace TVPredictionsViewer.UWP
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e);
+                FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
                 //CarouselViewRenderer.Init();
 
 

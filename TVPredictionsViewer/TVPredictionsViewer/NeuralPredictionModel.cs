@@ -74,7 +74,7 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            s._calculatedThreshold = Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment);
+            s._calculatedThreshold = Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
 
             return s._calculatedThreshold;
         }
@@ -194,7 +194,11 @@ namespace TV_Ratings_Predictions
                 deviation = s.network.deviations[0][s.Episodes - 1];
             }
 
-            deviation += s.network.TargetError;
+            //The more overlap there is, the less confidence you can have in the prediction
+            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError);
+
+            deviation = s.network.TargetError;
+
 
             var zscore = variance / deviation;
 
@@ -208,7 +212,8 @@ namespace TV_Ratings_Predictions
             if (raw)
                 return baseOdds;
 
-            var accuracy = _accuracy;
+            //var accuracy = _accuracy;
+            var accuracy = 1 - Overlap;
 
             if (baseOdds > 0.5)
             {
@@ -250,7 +255,10 @@ namespace TV_Ratings_Predictions
                 deviation = s.network.deviations[0][s.Episodes - 1];
             }
 
-            deviation += s.network.TargetError;
+            //The more overlap there is, the less confidence you can have in the prediction
+            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError);
+
+            deviation = s.network.TargetError;
 
             var zscore = variance / deviation;
 
@@ -264,7 +272,8 @@ namespace TV_Ratings_Predictions
             if (raw)
                 return baseOdds;
 
-            var accuracy = _accuracy;
+            //var accuracy = _accuracy;
+            var accuracy = 1 - Overlap;
 
             if (baseOdds > 0.5)
             {
@@ -292,7 +301,7 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            return Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment);
+            return Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
         }
 
         public double GetModifiedThreshold(Show s, double[] averages, double adjustment, int index, int index2 = -1, int index3 = -1)
@@ -329,7 +338,7 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            s._calculatedThreshold = Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment);
+            s._calculatedThreshold = Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
 
             return s._calculatedThreshold;
         }
@@ -719,6 +728,66 @@ namespace TV_Ratings_Predictions
                 }
                 else
                     return false;
+            }
+        }
+
+        /// <summary>
+        /// Finds the percentage of potential ratings that are above the potential renewal thresholds. Use Log values.
+        /// </summary>
+        /// <param name="Mean1">Projected Rating</param>
+        /// <param name="SD1">Standard Deviation for Projected Rating</param>
+        /// <param name="Mean2">Renewal Threshold Rating</param>
+        /// <param name="SD2">Standard Deviation for Renewal Thresholds</param>
+        /// <returns></returns>
+        double AreaOfOverlap(double Mean1, double SD1, double Mean2, double SD2)
+        {
+            //Find intersection points
+            double point1, point2;
+
+            var Distribution1 = new Normal(Mean1, SD1);
+            var Distribution2 = new Normal(Mean2, SD2);
+
+            if (SD1 * SD2 == 0)
+                return 0;
+
+            if (SD1 == SD2)
+            {
+                point1 = (Mean1 + Mean2) / 2;
+                point2 = point1;
+            }
+            else
+            {
+                //Find Square of each SD
+                double
+                    Squared1 = Math.Pow(SD1, 2),
+                    Squared2 = Math.Pow(SD2, 2);
+
+                //Then find part that will be positive and negative radical
+
+                var radical = Math.Sqrt(Math.Pow(Mean1 - Mean2, 2) + 2 * (Squared1 - Squared2) * Math.Log(SD1 / SD2));
+
+                point1 = (Mean2 * Squared1 - SD2 * (Mean1 * SD2 + SD1 * radical)) / (Squared1 - Squared2);
+                point2 = (Mean2 * Squared1 - SD2 * (Mean1 * SD2 + SD1 * -radical)) / (Squared1 - Squared2);
+            }
+
+            if (point1 == point2)
+                return (1 - Distribution1.CumulativeDistribution(point1)) * 2;
+            else
+            {
+                var min = Math.Min(point1, point2);
+                var max = Math.Max(point1, point2);
+
+                var beginning1 = Distribution1.CumulativeDistribution(min);
+                var beginning2 = Distribution2.CumulativeDistribution(min);
+
+
+                var middle1 = Distribution1.CumulativeDistribution(max) - Distribution1.CumulativeDistribution(min);
+                var middle2 = Distribution2.CumulativeDistribution(max) - Distribution2.CumulativeDistribution(min);
+
+                var end1 = 1 - Distribution1.CumulativeDistribution(max);
+                var end2 = 1 - Distribution2.CumulativeDistribution(max);
+
+                return Math.Min(beginning1, beginning2) + Math.Min(middle1, middle2) + Math.Min(end1, end2);
             }
         }
     }

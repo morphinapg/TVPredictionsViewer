@@ -1,4 +1,15 @@
-﻿2.1.0
+﻿2.2.1
+[Android] Should fix a bug related to missing notifications on older versions of Android
+
+2.2.0
+The predictions are now based on a more statistically accurate model than before.
+This update allows the prediction breakdown feature to use this new calculation.
+
+2.1.1
+Fixed a bug that prevented the prediction results screen from showing the final prediction
+Fixed a bug that occurred when predictions were manually refreshed after the year was changed
+
+2.1.0
 Modification that allows two shows with the same name to appear in the same year.
 
 2.0.9

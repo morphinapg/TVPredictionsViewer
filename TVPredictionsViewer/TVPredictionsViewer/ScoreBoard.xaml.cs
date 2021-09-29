@@ -488,6 +488,8 @@ namespace TVPredictionsViewer
                 NetworkDatabase.NetworkList[SelectedNetwork].Predictions.AsParallel().SelectMany(x => x).Where(x => CurrentModel || (x.finalodds > 0 && (x.show.Renewed || x.show.Canceled || x.Status == ""))).OrderByDescending(x => CurrentModel ? x.odds : x.finalodds) :
                 NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.Predictions).SelectMany(x => x).Where(x => CurrentModel || (x.finalodds > 0 && (x.show.Renewed || x.show.Canceled || x.Status == ""))).OrderByDescending(x => CurrentModel ? x.odds : x.finalodds);
 
+            
+
             MiniNetwork.AddPredictions_Odds(AllPredictions, ref Predictions, !CurrentModel);            
 
             ShowList.ItemsSource = Predictions;
