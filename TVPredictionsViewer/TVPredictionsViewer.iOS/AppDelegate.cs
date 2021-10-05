@@ -5,7 +5,6 @@ using System.Linq;
 using Foundation;
 using UIKit;
 using TV_Ratings_Predictions;
-using FFImageLoading.Forms.Platform;
 
 namespace TVPredictionsViewer.iOS
 {
@@ -26,8 +25,6 @@ namespace TVPredictionsViewer.iOS
         {
             Xamarin.Forms.Forms.SetFlags("IndicatorView_Experimental");
             global::Xamarin.Forms.Forms.Init();
-            FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
-            CachedImageRenderer.InitImageSourceHandler();
             NetworkDatabase.Folder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             LoadApplication(new App());
 

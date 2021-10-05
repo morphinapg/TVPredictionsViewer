@@ -15,7 +15,6 @@ using System.Linq;
 using Android.Content;
 using AndroidX.Core.App;
 using Firebase.Installations;
-using FFImageLoading.Forms.Platform;
 
 namespace TVPredictionsViewer.Droid
 {
@@ -33,8 +32,6 @@ namespace TVPredictionsViewer.Droid
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            FFImageLoading.Forms.Platform.CachedImageRenderer.Init(enableFastRenderer: true);
-            CachedImageRenderer.InitImageViewHandler();
             NetworkDatabase.Folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             LoadApplication(new App());
 

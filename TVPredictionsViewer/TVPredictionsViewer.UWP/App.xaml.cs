@@ -49,7 +49,6 @@ namespace TVPredictionsViewer.UWP
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e);
-                FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
                 //CarouselViewRenderer.Init();
 
 
