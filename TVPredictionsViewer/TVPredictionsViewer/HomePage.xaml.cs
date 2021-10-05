@@ -157,7 +157,7 @@ namespace TVPredictionsViewer
             //This will Navigate to the most recent show with this name
             var Shows = new ConcurrentBag<PredictionContainer>();
             foreach (MiniNetwork n in NetworkDatabase.NetworkList)
-                n.shows.AsParallel().Where(x => x.Name == Param.Text).ForAll(x => Shows.Add(new PredictionContainer(x, n, n.Adjustments[x.year], n.model.GetNetworkRatingsThreshold(x.year))));
+                n.shows.AsParallel().Where(x => x.Name == Param.Text).ForAll(x => Shows.Add(new PredictionContainer(x, n, n.model.GetNetworkRatingsThreshold(x.year))));
 
             if (Shows.Count > 0)
             {
@@ -272,7 +272,7 @@ namespace TVPredictionsViewer
 
                         foreach (Show s in NewShows)
                         {
-                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 0);
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
@@ -281,7 +281,7 @@ namespace TVPredictionsViewer
 
                         foreach (Show s in RenewedOrCanceledShows)
                         {
-                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 1);
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
@@ -290,7 +290,7 @@ namespace TVPredictionsViewer
 
                         foreach (Show s in PredictionChanged)
                         {
-                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 2);
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
@@ -299,7 +299,7 @@ namespace TVPredictionsViewer
 
                         foreach (Show s in UpgradedOrDownGradedShows)
                         {
-                            var prediction = new PredictionContainer(s, s.network, s.network.Adjustments[s.year], Thresholds[s.network.name]);
+                            var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 2);
                             await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }

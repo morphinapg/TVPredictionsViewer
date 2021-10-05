@@ -406,14 +406,14 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        public PredictionContainer(Show s, MiniNetwork n, double adjustment, double average, bool FromNetwork = false, bool? year = null, bool final = false)
+        public PredictionContainer(Show s, MiniNetwork n, double average, bool FromNetwork = false, bool? year = null, bool final = false)
         {
             network = n;
             UseNetwork = FromNetwork;
             var model = network.model;
             show = s;
             odds = s.PredictedOdds;
-            targetrating = model.GetTargetRating(s.year, model.GetThreshold(s, n.FactorAverages, adjustment));
+            targetrating = model.GetTargetRating(s.year, model.GetThreshold(s, n.FactorAverages));
             ShowDetails = false;
             IsShowPage = false;
             IsLoaded = false;

@@ -105,9 +105,9 @@ namespace TVPredictionsViewer
 
             var NewestShow = NetworkDatabase.NetworkList.AsParallel().SelectMany(x => x.shows).Where(x => x.Name == show).OrderByDescending(x => x.year).ThenBy(x => x.Season).First();
             var Network = NetworkDatabase.NetworkList.Where(x => x.shows.Contains(NewestShow)).First();
-            var Adjustments = Network.model.GetAdjustments(true);
+            //var Adjustments = Network.model.GetAdjustments(true);
             var Average = Network.model.GetAverageThreshold(true);
-            var Prediction = new PredictionContainer(NewestShow, Network, Adjustments[NewestShow.year], Average);
+            var Prediction = new PredictionContainer(NewestShow, Network, Average);
 
             await (Parent.Parent as ViewPage).Navigation.PushModalAsync(new ShowDetailPage(Prediction, true));
             await (Parent.Parent as ViewPage).Navigation.PopAsync();

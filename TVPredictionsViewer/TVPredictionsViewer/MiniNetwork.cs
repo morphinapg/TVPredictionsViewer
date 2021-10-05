@@ -14,7 +14,7 @@ namespace TV_Ratings_Predictions
         public ObservableCollection<string> factors;
         public List<Show> shows;
         public NeuralPredictionModel model;
-        public Dictionary<int, double> Adjustments;
+        //public Dictionary<int, double> Adjustments;
         public double[] RatingsAverages, FactorAverages;
         public DateTime PredictionTime;
 
@@ -45,7 +45,7 @@ namespace TV_Ratings_Predictions
             Predictions.Clear();
             FilteredShows.Clear();
             var year = NetworkDatabase.YearList[NetworkDatabase.CurrentYear];
-            var Adjustments = model.GetAdjustments(true);
+            //var Adjustments = model.GetAdjustments(true);
             var average = model.GetNetworkRatingsThreshold(year);
 
             if (!UseYear)
@@ -58,7 +58,7 @@ namespace TV_Ratings_Predictions
                 var p = new ListOfPredictions { Category = "Predictions" };
 
                 foreach (Show s in FilteredShows)
-                    p.Add(new PredictionContainer(s, this, Adjustments[year], average, false, UseYear, UseFinal));
+                    p.Add(new PredictionContainer(s, this, average, false, UseYear, UseFinal));
 
                 if (Predictions.Count > 0)
                     throw new Exception("Predictions were not empty!");
@@ -75,13 +75,13 @@ namespace TV_Ratings_Predictions
                     {
                         case "Ratings":
                             {
-                                var TempList = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderByDescending(x => x.show.AverageRating).ToList();
+                                var TempList = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, average, true, false, UseFinal)).OrderByDescending(x => x.show.AverageRating).ToList();
                                 MiniNetwork.AddPredictions_Ratings(TempList, ref Predictions);
                                 break;
                             }
                         case "Name":
                             {
-                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderBy(x => x.Name).ThenBy(x => x.Season).ToList();
+                                var TempList = shows.AsParallel().Where(x => x.year == year).Select(x => new PredictionContainer(x, this, average, true, false, UseFinal)).OrderBy(x => x.Name).ThenBy(x => x.Season).ToList();
                                 MiniNetwork.AddPredictions_Name(TempList, ref Predictions);
                                 break;
                             }
@@ -99,7 +99,7 @@ namespace TV_Ratings_Predictions
 
         void Filter_Odds(double average, bool UseFinal = false)
         {
-            var tempPredictions = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, Adjustments[x.year], average, true, false, UseFinal)).OrderByDescending(x => x.odds);
+            var tempPredictions = FilteredShows.AsParallel().Select(x => new PredictionContainer(x, this, average, true, false, UseFinal)).OrderByDescending(x => x.odds);
             MiniNetwork.AddPredictions_Odds(tempPredictions, ref Predictions);
         }
 

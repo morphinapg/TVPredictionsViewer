@@ -197,9 +197,9 @@ namespace TVPredictionsViewer
 
                     foreach (MiniNetwork n in NetworkDatabase.NetworkList)
                     {
-                        var Adjustments = n.model.GetAdjustments(true);
+                        //var Adjustments = n.model.GetAdjustments(true);
 
-                        n.shows.AsParallel().Where(x => x.Name.ToLower().Contains(Query.ToLower())).ForAll(s => tmpResults.Add(new PredictionContainer(s, n, Adjustments[s.year], n.model.GetNetworkRatingsThreshold(s.year), false, false)));
+                        n.shows.AsParallel().Where(x => x.Name.ToLower().Contains(Query.ToLower())).ForAll(s => tmpResults.Add(new PredictionContainer(s, n, n.model.GetNetworkRatingsThreshold(s.year), false, false)));
                     }
 
                     if (Fix)

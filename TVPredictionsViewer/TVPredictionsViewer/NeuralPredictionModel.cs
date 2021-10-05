@@ -51,7 +51,7 @@ namespace TV_Ratings_Predictions
             neuralintensity = r.NextDouble();
         }
 
-        public double GetThreshold(Show s, double[] averages, double adjustment)
+        public double GetThreshold(Show s, double[] averages)
         {
             if (averages is null) averages = new double[InputCount + 1];
 
@@ -74,7 +74,7 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            s._calculatedThreshold = Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
+            s._calculatedThreshold = Math.Min(Math.Max((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, 0.000001), 0.999999);
 
             return s._calculatedThreshold;
         }
@@ -97,7 +97,7 @@ namespace TV_Ratings_Predictions
                 {
                     var s = tempList[i];
                     double weight = 1.0 / (year - s.year + 1);
-                    totals[i] = GetThreshold(s, s.network.FactorAverages, 1) * weight;
+                    totals[i] = GetThreshold(s, s.network.FactorAverages) * weight;
                     counts[i] = weight;
                 });
 
@@ -108,28 +108,28 @@ namespace TV_Ratings_Predictions
                 foreach (Show s in tempList)
                 {
                     double weight = 1.0 / (year - s.year + 1);
-                    total += GetThreshold(s, s.network.FactorAverages, 1) * weight;
+                    total += GetThreshold(s, s.network.FactorAverages) * weight;
                     count += weight;
                 }
 
             return total / count;
         }
 
-        private double GetAdjustment(double NetworkAverage, double SeasonAverage)
-        {
-            return Math.Log(NetworkAverage) / Math.Log(SeasonAverage);
-        }
+        //private double GetAdjustment(double NetworkAverage, double SeasonAverage)
+        //{
+        //    return Math.Log(NetworkAverage) / Math.Log(SeasonAverage);
+        //}
 
-        public Dictionary<int, double> GetAdjustments(bool parallel = false)
-        {
-            double average = GetAverageThreshold(parallel);
-            var Adjustments = new Dictionary<int, double>();
-            var years = shows.Select(x => x.year).ToList().Distinct();
-            foreach (int y in years)
-                Adjustments[y] = (y == NetworkDatabase.MaxYear) ? GetAdjustment(average, GetSeasonAverageThreshold(y)) : 1;
+        //public Dictionary<int, double> GetAdjustments(bool parallel = false)
+        //{
+        //    double average = GetAverageThreshold(parallel);
+        //    var Adjustments = new Dictionary<int, double>();
+        //    var years = shows.Select(x => x.year).ToList().Distinct();
+        //    foreach (int y in years)
+        //        Adjustments[y] = (y == NetworkDatabase.MaxYear) ? GetAdjustment(average, GetSeasonAverageThreshold(y)) : 1;
 
-            return Adjustments;
-        }
+        //    return Adjustments;
+        //}
 
         public double GetSeasonAverageThreshold(int year)
         {
@@ -141,7 +141,7 @@ namespace TV_Ratings_Predictions
             var count = tempList.Count;
             var totals = new double[count];
 
-            Parallel.For(0, tempList.Count, i => totals[i] = GetThreshold(tempList[i], tempList[i].network.FactorAverages, 1));
+            Parallel.For(0, tempList.Count, i => totals[i] = GetThreshold(tempList[i], tempList[i].network.FactorAverages));
 
             total = totals.Sum();
 
@@ -168,9 +168,9 @@ namespace TV_Ratings_Predictions
             return year;
         }
 
-        public double GetOdds(Show s, double[] averages, double adjustment, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
+        public double GetOdds(Show s, double[] averages, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
         {
-            var threshold = modified ? GetModifiedThreshold(s, averages, adjustment, index, index2, index3) : GetThreshold(s, averages, adjustment);
+            var threshold = modified ? GetModifiedThreshold(s, averages, index, index2, index3) : GetThreshold(s, averages);
 
             var target = GetTargetRating(s.year, threshold);
             var variance = Math.Log(s.AverageRating) - Math.Log(target);
@@ -229,9 +229,9 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        public double GetModifiedOdds(Show s, double[] ModifiedFactors, double adjustment, bool raw = false)
+        public double GetModifiedOdds(Show s, double[] ModifiedFactors, bool raw = false)
         {
-            var threshold = GetModifiedThreshold(ModifiedFactors, adjustment);
+            var threshold = GetModifiedThreshold(ModifiedFactors);
 
             var target = GetTargetRating(s.year, threshold);
             var variance = Math.Log(s.AverageRating) - Math.Log(target);
@@ -289,7 +289,7 @@ namespace TV_Ratings_Predictions
             }
         }
 
-        public double GetModifiedThreshold(double[] inputs, double adjustment)
+        public double GetModifiedThreshold(double[] inputs)
         {
             double[]
                 FirstLayerOutputs = new double[NeuronCount],
@@ -301,10 +301,10 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            return Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
+            return Math.Min(Math.Max((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, 0.000001), 0.999999);
         }
 
-        public double GetModifiedThreshold(Show s, double[] averages, double adjustment, int index, int index2 = -1, int index3 = -1)
+        public double GetModifiedThreshold(Show s, double[] averages, int index, int index2 = -1, int index3 = -1)
         {
             if (averages is null) averages = new double[InputCount + 1];
 
@@ -338,7 +338,7 @@ namespace TV_Ratings_Predictions
             for (int i = 0; i < NeuronCount; i++)
                 SecondLayerOutputs[i] = SecondLayer[i].GetOutput(FirstLayerOutputs);
 
-            s._calculatedThreshold = Math.Min(Math.Max(Math.Pow((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, adjustment), 0.000001), 0.999999);
+            s._calculatedThreshold = Math.Min(Math.Max((Output.GetOutput(SecondLayerOutputs, true) + 1) / 2, 0.000001), 0.999999);
 
             return s._calculatedThreshold;
         }
@@ -355,7 +355,7 @@ namespace TV_Ratings_Predictions
             int year = NetworkDatabase.MaxYear;
 
 
-            var Adjustments = GetAdjustments(parallel);
+            //var Adjustments = GetAdjustments(parallel);
             var averages = shows.First().network.FactorAverages;
 
             var tempList = shows.Where(x => x.Renewed || x.Canceled).ToList();
@@ -370,7 +370,7 @@ namespace TV_Ratings_Predictions
                 Parallel.For(0, tempList.Count, i =>
                 {
                     Show s = tempList[i];
-                    double threshold = GetThreshold(s, averages, Adjustments[s.year]);
+                    double threshold = GetThreshold(s, averages);
                     int prediction = (s.ShowIndex > threshold) ? 1 : 0;
                     double distance = Math.Abs(s.ShowIndex - threshold);
 
@@ -388,7 +388,7 @@ namespace TV_Ratings_Predictions
 
                         if (s.Canceled)
                         {
-                            double odds = GetOdds(s, averages, Adjustments[s.year], true);
+                            double odds = GetOdds(s, averages, true);
                             var tempScore = (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
                             score[i] = tempScore;
@@ -436,7 +436,7 @@ namespace TV_Ratings_Predictions
             {
                 foreach (Show s in tempList)
                 {
-                    double threshold = GetThreshold(s, averages, Adjustments[s.year]);
+                    double threshold = GetThreshold(s, averages);
                     int prediction = (s.ShowIndex > threshold) ? 1 : 0;
                     double distance = Math.Abs(s.ShowIndex - threshold);
 
@@ -454,7 +454,7 @@ namespace TV_Ratings_Predictions
 
                         if (s.Canceled)
                         {
-                            double odds = GetOdds(s, averages, Adjustments[s.year], true);
+                            double odds = GetOdds(s, averages, true);
                             scores += (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
                             if (odds < 0.6 && odds > 0.4)
@@ -504,8 +504,8 @@ namespace TV_Ratings_Predictions
 
             year = CheckYear(year);
 
-            var Adjustment = GetAdjustments(true)[year];
-            _ratingstheshold = GetTargetRating(year, GetModifiedThreshold(s, s.network.FactorAverages, Adjustment, -1));
+            //var Adjustment = GetAdjustments(true)[year];
+            _ratingstheshold = GetTargetRating(year, GetModifiedThreshold(s, s.network.FactorAverages, -1));
             return _ratingstheshold;
         }
 

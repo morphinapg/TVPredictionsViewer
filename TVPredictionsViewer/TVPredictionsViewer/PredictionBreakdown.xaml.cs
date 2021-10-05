@@ -40,7 +40,7 @@ namespace TVPredictionsViewer
 
         void LoadBreakdown()
         {
-            var Adjustments = network.model.GetAdjustments(true);
+            //var Adjustments = network.model.GetAdjustments(true);
 
             var FactorCount = network.factors.Count + 3;
 
@@ -83,7 +83,7 @@ namespace TVPredictionsViewer
             Task.Run(async () =>
             {
                 
-                AllResults[0] = GenerateDetails(show, Adjustments, Numbers);
+                AllResults[0] = GenerateDetails(show, Numbers);
                 CompletedProgress[0] = 1;
 
                 Parallel.For(1, Iterations, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 }, i =>
@@ -91,7 +91,7 @@ namespace TVPredictionsViewer
                     if (!CancelCalculations)
                     {
                         var OrderedNumbers = Numbers.OrderBy(x => Random.NextDouble()).ToArray();
-                        AllResults[i] = GenerateDetails(show, Adjustments, OrderedNumbers);
+                        AllResults[i] = GenerateDetails(show, OrderedNumbers);
                         CompletedProgress[i] = 1;
                     }                    
                 });
@@ -142,7 +142,7 @@ namespace TVPredictionsViewer
 
         }
 
-        DetailsCombo GenerateDetails(Show s, Dictionary<int, double> Adjustments, int[] FactorOrder, bool AllFactors = false) //Generate Factor details, but change the order of the search
+        DetailsCombo GenerateDetails(Show s, int[] FactorOrder, bool AllFactors = false) //Generate Factor details, but change the order of the search
         {
             //Needed: Code needs to start with a blank slate of average factor values, and one by one, modify that to the actual values, following the order given by FactorOrder
 
@@ -156,10 +156,10 @@ namespace TVPredictionsViewer
             var tempList = network.shows.OrderBy(x => x.Episodes).ToList();
             int LowestEpisode = tempList.First().Episodes, HighestEpisode = tempList.Last().Episodes;
 
-            var BaseOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year], false, true, -1);
+            var BaseOdds = network.model.GetOdds(s, network.FactorAverages, false, true, -1);
             double CurrentOdds = BaseOdds, NewOdds, detailValue;
 
-            var RealOdds = network.model.GetOdds(s, network.FactorAverages, Adjustments[s.year]);
+            var RealOdds = network.model.GetOdds(s, network.FactorAverages);
 
             var FactorCount = network.factors.Count;
 
@@ -214,7 +214,7 @@ namespace TVPredictionsViewer
                         if (s.Season == 1 && !NewShow)
                             detailName += " (Re-aired from another network)";
 
-                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                         detailValue = NewOdds - CurrentOdds;
 
@@ -231,7 +231,7 @@ namespace TVPredictionsViewer
 
                     CurrentFactors[i] = s.Episodes / 26.0 * 2 - 1 - network.FactorAverages[i];
 
-                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                     detailValue = NewOdds - CurrentOdds;
 
@@ -245,7 +245,7 @@ namespace TVPredictionsViewer
 
                     CurrentFactors[i] = (s.Halfhour ? 1 : -1) - network.FactorAverages[i];
 
-                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                     detailValue = NewOdds - CurrentOdds;
 
@@ -280,7 +280,7 @@ namespace TVPredictionsViewer
                         else
                             detailName = "Not syndicated yet";
 
-                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                         detailValue = NewOdds - CurrentOdds;
 
@@ -325,7 +325,7 @@ namespace TVPredictionsViewer
 
                         PremiereFinished = true;
 
-                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                         detailValue = NewOdds - CurrentOdds;
 
@@ -344,7 +344,7 @@ namespace TVPredictionsViewer
                             detailName = "Did not air in the Summer";
 
 
-                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                        NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                         detailValue = NewOdds - CurrentOdds;
 
@@ -373,7 +373,7 @@ namespace TVPredictionsViewer
                             else
                                 detailName = "Show is owned by WB";
 
-                            NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                            NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
                         }
                         else
                         {
@@ -384,7 +384,7 @@ namespace TVPredictionsViewer
                             else
                                 detailName = "Show is owned by the network";
 
-                            NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                            NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
                         }
 
                         detailValue = NewOdds - CurrentOdds;
@@ -446,7 +446,7 @@ namespace TVPredictionsViewer
                             }
                     }
 
-                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors, Adjustments[s.year]);
+                    NewOdds = network.model.GetModifiedOdds(s, CurrentFactors);
 
                     detailValue = NewOdds - CurrentOdds;
 

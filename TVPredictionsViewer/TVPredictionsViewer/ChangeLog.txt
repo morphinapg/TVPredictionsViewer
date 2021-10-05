@@ -1,4 +1,7 @@
-﻿2.2.1
+﻿2.2.2
+Adjustment to target rating calculation
+
+2.2.1
 [Android] Should fix a bug related to missing notifications on older versions of Android
 
 2.2.0
