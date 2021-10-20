@@ -172,6 +172,13 @@ namespace TV_Ratings_Predictions
         {
             var threshold = modified ? GetModifiedThreshold(s, averages, index, index2, index3) : GetThreshold(s, averages);
 
+            var adjustment = s.network.Adjustment;
+            if (adjustment == 0)
+                adjustment = 1;
+
+            if (s.year == NetworkDatabase.MaxYear && !(s.Renewed || s.Canceled))
+                threshold = Math.Pow(threshold, adjustment);
+
             var target = GetTargetRating(s.year, threshold);
             var variance = Math.Log(s.AverageRating) - Math.Log(target);
             double deviation;
@@ -232,6 +239,13 @@ namespace TV_Ratings_Predictions
         public double GetModifiedOdds(Show s, double[] ModifiedFactors, bool raw = false)
         {
             var threshold = GetModifiedThreshold(ModifiedFactors);
+
+            var adjustment = s.network.Adjustment;
+            if (adjustment == 0)
+                adjustment = 1;
+
+            if (s.year == NetworkDatabase.MaxYear && !(s.Renewed || s.Canceled))
+                threshold = Math.Pow(threshold, adjustment);
 
             var target = GetTargetRating(s.year, threshold);
             var variance = Math.Log(s.AverageRating) - Math.Log(target);
@@ -504,8 +518,17 @@ namespace TV_Ratings_Predictions
 
             year = CheckYear(year);
 
+            var threshold = GetModifiedThreshold(s, s.network.FactorAverages, -1);
+
+            var adjustment = s.network.Adjustment;
+            if (adjustment == 0)
+                adjustment = 1;
+
+            if (year == NetworkDatabase.MaxYear)
+                threshold = Math.Pow(threshold, adjustment);
+
             //var Adjustment = GetAdjustments(true)[year];
-            _ratingstheshold = GetTargetRating(year, GetModifiedThreshold(s, s.network.FactorAverages, -1));
+            _ratingstheshold = GetTargetRating(year, threshold);
             return _ratingstheshold;
         }
 
