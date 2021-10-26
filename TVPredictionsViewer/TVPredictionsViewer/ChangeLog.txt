@@ -1,4 +1,7 @@
-﻿2.2.3
+﻿2.2.4
+Modified code that calculates target rating, based on new prediction adjustment for earlier in the season
+
+2.2.3
 Modification in prediction engine to allow for more reliable predictions earlier in the season
 
 2.2.2
