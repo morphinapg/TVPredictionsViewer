@@ -156,15 +156,16 @@ namespace TVPredictionsViewer
             var tempList = network.shows.OrderBy(x => x.Episodes).ToList();
             int LowestEpisode = tempList.First().Episodes, HighestEpisode = tempList.Last().Episodes;
 
-            var BaseOdds = network.model.GetOdds(s, network.FactorAverages, false, true, -1);
+            var BaseOdds = network.model.GetOdds(s, false, true, -1);
             double CurrentOdds = BaseOdds, NewOdds, detailValue;
 
-            var RealOdds = network.model.GetOdds(s, network.FactorAverages);
+            var RealOdds = network.model.GetOdds(s);
 
             var FactorCount = network.factors.Count;
 
 
-            var CurrentFactors = new double[FactorCount + 3];
+            var CurrentFactors = network.model.GetBaseInputs();
+
             //for (int i = 0; i < FactorCount + 3; i++)
             //    CurrentFactors[i] = network.FactorAverages[i];
 

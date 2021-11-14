@@ -1,4 +1,10 @@
-﻿2.2.4
+﻿2.2.6
+Fixed prediction breakdown and target rating for already decided shows in current year
+
+2.2.5
+Modified "Typical Renewal Threshold" calculation to account for the changes in the neural network
+
+2.2.4
 Modified code that calculates target rating, based on new prediction adjustment for earlier in the season
 
 2.2.3

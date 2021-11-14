@@ -413,8 +413,8 @@ namespace TV_Ratings_Predictions
             var model = network.model;
             show = s;
             odds = s.PredictedOdds;
-            var threshold = model.GetThreshold(s, n.FactorAverages);
-            if (s.year == NetworkDatabase.MaxYear && !(s.Renewed || s.Canceled))
+            var threshold = model.GetThreshold(s);
+            if (s.year == NetworkDatabase.MaxYear)
                 threshold = Math.Pow(threshold, s.network.Adjustment);
 
             targetrating = model.GetTargetRating(s.year, threshold);
