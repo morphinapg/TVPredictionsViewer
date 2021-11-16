@@ -9,7 +9,7 @@ using TV_Ratings_Predictions;
 namespace TV_Ratings_Predictions
 {
     [Serializable]
-    public class NeuralPredictionModel : IComparable<NeuralPredictionModel>
+    public class NeuralPredictionModel
     {
         [NonSerialized]
         public List<Show> shows;
@@ -171,6 +171,7 @@ namespace TV_Ratings_Predictions
         public double GetOdds(Show s, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
         {
             var threshold = modified ? GetModifiedThreshold(s, index, index2, index3) : GetThreshold(s);
+            var OriginalTarget = GetTargetRating(s.year, threshold);
 
             var adjustment = s.network.Adjustment;
             if (adjustment == 0)
@@ -201,10 +202,13 @@ namespace TV_Ratings_Predictions
                 deviation = s.network.deviations[0][s.Episodes - 1];
             }
 
-            //The more overlap there is, the less confidence you can have in the prediction
-            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError);
+            
+            double ErrorAdjustment = (s.year == NetworkDatabase.MaxYear) ? Math.Abs(Math.Log(target) - Math.Log(OriginalTarget)) : 0;
 
-            deviation = s.network.TargetError;
+            //The more overlap there is, the less confidence you can have in the prediction
+            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError + ErrorAdjustment);
+
+            deviation = s.network.TargetError + ErrorAdjustment;
 
 
             var zscore = variance / deviation;
@@ -239,6 +243,7 @@ namespace TV_Ratings_Predictions
         public double GetModifiedOdds(Show s, double[] ModifiedFactors, bool raw = false)
         {
             var threshold = GetModifiedThreshold(ModifiedFactors);
+            var OriginalTarget = GetTargetRating(s.year, threshold);
 
             var adjustment = s.network.Adjustment;
             if (adjustment == 0)
@@ -269,10 +274,12 @@ namespace TV_Ratings_Predictions
                 deviation = s.network.deviations[0][s.Episodes - 1];
             }
 
-            //The more overlap there is, the less confidence you can have in the prediction
-            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError);
+            double ErrorAdjustment = (s.year == NetworkDatabase.MaxYear) ? Math.Abs(Math.Log(target) - Math.Log(OriginalTarget)) : 0;
 
-            deviation = s.network.TargetError;
+            //The more overlap there is, the less confidence you can have in the prediction
+            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError + ErrorAdjustment);
+
+            deviation = s.network.TargetError + ErrorAdjustment;
 
             var zscore = variance / deviation;
 
@@ -360,160 +367,160 @@ namespace TV_Ratings_Predictions
             return s._calculatedThreshold;
         }
 
-        public double TestAccuracy(bool parallel = false)
-        {
-            double average = GetAverageThreshold(parallel);
+        //public double TestAccuracy(bool parallel = false)
+        //{
+        //    double average = GetAverageThreshold(parallel);
 
-            double weightAverage = Math.Max(average, 1 - average);
+        //    double weightAverage = Math.Max(average, 1 - average);
 
-            double scores = 0;
-            double totals = 0;
-            double weights = 0;
-            int year = NetworkDatabase.MaxYear;
+        //    double scores = 0;
+        //    double totals = 0;
+        //    double weights = 0;
+        //    int year = NetworkDatabase.MaxYear;
 
 
-            //var Adjustments = GetAdjustments(parallel);
-            var averages = shows.First().network.FactorAverages;
+        //    //var Adjustments = GetAdjustments(parallel);
+        //    var averages = shows.First().network.FactorAverages;
 
-            var tempList = shows.Where(x => x.Renewed || x.Canceled).ToList();
+        //    var tempList = shows.Where(x => x.Renewed || x.Canceled).ToList();
 
-            if (parallel)
-            {
-                double[]
-                    t = new double[tempList.Count],
-                    w = new double[tempList.Count],
-                    score = new double[tempList.Count];
+        //    if (parallel)
+        //    {
+        //        double[]
+        //            t = new double[tempList.Count],
+        //            w = new double[tempList.Count],
+        //            score = new double[tempList.Count];
 
-                Parallel.For(0, tempList.Count, i =>
-                {
-                    Show s = tempList[i];
-                    double threshold = GetThreshold(s);
-                    int prediction = (s.ShowIndex > threshold) ? 1 : 0;
-                    double distance = Math.Abs(s.ShowIndex - threshold);
+        //        Parallel.For(0, tempList.Count, i =>
+        //        {
+        //            Show s = tempList[i];
+        //            double threshold = GetThreshold(s);
+        //            int prediction = (s.ShowIndex > threshold) ? 1 : 0;
+        //            double distance = Math.Abs(s.ShowIndex - threshold);
 
-                    if (s.Renewed)
-                    {
-                        int accuracy = (prediction == 1) ? 1 : 0;
-                        double weight;
+        //            if (s.Renewed)
+        //            {
+        //                int accuracy = (prediction == 1) ? 1 : 0;
+        //                double weight;
 
-                        if (accuracy == 1)
-                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
-                        else
-                            weight = (distance + weightAverage) / weightAverage;
+        //                if (accuracy == 1)
+        //                    weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                else
+        //                    weight = (distance + weightAverage) / weightAverage;
 
-                        weight /= year - s.year + 1;
+        //                weight /= year - s.year + 1;
 
-                        if (s.Canceled)
-                        {
-                            double odds = GetOdds(s, true);
-                            var tempScore = (1 - Math.Abs(odds - 0.55)) * 4 / 3;
+        //                if (s.Canceled)
+        //                {
+        //                    double odds = GetOdds(s, true);
+        //                    var tempScore = (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                            score[i] = tempScore;
+        //                    score[i] = tempScore;
 
-                            if (odds < 0.6 && odds > 0.4)
-                            {
-                                accuracy = 1;
+        //                    if (odds < 0.6 && odds > 0.4)
+        //                    {
+        //                        accuracy = 1;
 
-                                weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                        weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
 
-                                weight *= tempScore;
+        //                        weight *= tempScore;
 
-                                if (prediction == 0)
-                                    weight /= 2;
-                            }
-                            else
-                                weight /= 2;
-                        }
+        //                        if (prediction == 0)
+        //                            weight /= 2;
+        //                    }
+        //                    else
+        //                        weight /= 2;
+        //                }
 
-                        t[i] = accuracy * weight;
-                        w[i] = weight;
-                    }
-                    else if (s.Canceled)
-                    {
-                        int accuracy = (prediction == 0) ? 1 : 0;
-                        double weight;
+        //                t[i] = accuracy * weight;
+        //                w[i] = weight;
+        //            }
+        //            else if (s.Canceled)
+        //            {
+        //                int accuracy = (prediction == 0) ? 1 : 0;
+        //                double weight;
 
-                        if (accuracy == 1)
-                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
-                        else
-                            weight = (distance + weightAverage) / weightAverage;
+        //                if (accuracy == 1)
+        //                    weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                else
+        //                    weight = (distance + weightAverage) / weightAverage;
 
-                        weight /= year - s.year + 1;
+        //                weight /= year - s.year + 1;
 
-                        t[i] = accuracy * weight;
-                        w[i] = weight;
-                    }
-                });
+        //                t[i] = accuracy * weight;
+        //                w[i] = weight;
+        //            }
+        //        });
 
-                scores = score.Sum();
-                totals = t.Sum();
-                weights = w.Sum();
-            }
-            else
-            {
-                foreach (Show s in tempList)
-                {
-                    double threshold = GetThreshold(s);
-                    int prediction = (s.ShowIndex > threshold) ? 1 : 0;
-                    double distance = Math.Abs(s.ShowIndex - threshold);
+        //        scores = score.Sum();
+        //        totals = t.Sum();
+        //        weights = w.Sum();
+        //    }
+        //    else
+        //    {
+        //        foreach (Show s in tempList)
+        //        {
+        //            double threshold = GetThreshold(s);
+        //            int prediction = (s.ShowIndex > threshold) ? 1 : 0;
+        //            double distance = Math.Abs(s.ShowIndex - threshold);
 
-                    if (s.Renewed)
-                    {
-                        int accuracy = (prediction == 1) ? 1 : 0;
-                        double weight;
+        //            if (s.Renewed)
+        //            {
+        //                int accuracy = (prediction == 1) ? 1 : 0;
+        //                double weight;
 
-                        if (accuracy == 1)
-                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
-                        else
-                            weight = (distance + weightAverage) / weightAverage;
+        //                if (accuracy == 1)
+        //                    weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                else
+        //                    weight = (distance + weightAverage) / weightAverage;
 
-                        weight /= year - s.year + 1;
+        //                weight /= year - s.year + 1;
 
-                        if (s.Canceled)
-                        {
-                            double odds = GetOdds(s, true);
-                            scores += (1 - Math.Abs(odds - 0.55)) * 4 / 3;
+        //                if (s.Canceled)
+        //                {
+        //                    double odds = GetOdds(s, true);
+        //                    scores += (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                            if (odds < 0.6 && odds > 0.4)
-                            {
-                                accuracy = 1;
-                                weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
-                                weight *= (1 - Math.Abs(odds - 0.55)) * 4 / 3;
+        //                    if (odds < 0.6 && odds > 0.4)
+        //                    {
+        //                        accuracy = 1;
+        //                        weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                        weight *= (1 - Math.Abs(odds - 0.55)) * 4 / 3;
 
-                                if (prediction == 0)
-                                    weight /= 2;
-                            }
-                            else
-                                weight /= 2;
+        //                        if (prediction == 0)
+        //                            weight /= 2;
+        //                    }
+        //                    else
+        //                        weight /= 2;
 
-                        }
+        //                }
 
-                        totals += accuracy * weight;
-                        weights += weight;
-                    }
-                    else if (s.Canceled)
-                    {
-                        int accuracy = (prediction == 0) ? 1 : 0;
-                        double weight;
+        //                totals += accuracy * weight;
+        //                weights += weight;
+        //            }
+        //            else if (s.Canceled)
+        //            {
+        //                int accuracy = (prediction == 0) ? 1 : 0;
+        //                double weight;
 
-                        if (accuracy == 1)
-                            weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
-                        else
-                            weight = (distance + weightAverage) / weightAverage;
+        //                if (accuracy == 1)
+        //                    weight = 1 - Math.Abs(average - s.ShowIndex) / weightAverage;
+        //                else
+        //                    weight = (distance + weightAverage) / weightAverage;
 
-                        weight /= year - s.year + 1;
+        //                weight /= year - s.year + 1;
 
-                        totals += accuracy * weight;
-                        weights += weight;
-                    }
-                }
-            }
+        //                totals += accuracy * weight;
+        //                weights += weight;
+        //            }
+        //        }
+        //    }
 
-            _accuracy = (weights == 0) ? 0.0 : (totals / weights);
-            _score = scores;
+        //    _accuracy = (weights == 0) ? 0.0 : (totals / weights);
+        //    _score = scores;
 
-            return _accuracy;
-        }
+        //    return _accuracy;
+        //}
 
         public double GetNetworkRatingsThreshold(int year)
         {
@@ -662,100 +669,100 @@ namespace TV_Ratings_Predictions
         }
 
 
-        public int CompareTo(NeuralPredictionModel other)
-        {
-            double otherAcc = other._accuracy;
-            double thisAcc = _accuracy;
-            double thisWeight = _score;
-            double otherWeight = other._score;
+        //public int CompareTo(NeuralPredictionModel other)
+        //{
+        //    double otherAcc = other._accuracy;
+        //    double thisAcc = _accuracy;
+        //    double thisWeight = _score;
+        //    double otherWeight = other._score;
 
-            if (thisAcc != otherAcc)
-                return otherAcc.CompareTo(thisAcc);
-            else
-                return otherWeight.CompareTo(thisWeight);
-        }
+        //    if (thisAcc != otherAcc)
+        //        return otherAcc.CompareTo(thisAcc);
+        //    else
+        //        return otherWeight.CompareTo(thisWeight);
+        //}
 
-        public override bool Equals(object obj)
-        {
-            var other = (NeuralPredictionModel)obj;
+        //public override bool Equals(object obj)
+        //{
+        //    var other = (NeuralPredictionModel)obj;
 
-            if (other._accuracy == _accuracy)
-            {
-                if (other._score == _score)
-                    return true;
-                else
-                    return false;
-            }
+        //    if (other._accuracy == _accuracy)
+        //    {
+        //        if (other._score == _score)
+        //            return true;
+        //        else
+        //            return false;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return base.GetHashCode();
+        //}
 
-        public static bool operator ==(NeuralPredictionModel x, NeuralPredictionModel y)
-        {
-            if (x._accuracy == y._accuracy)
-            {
-                if (x._score == y._score)
-                    return true;
-                else
-                    return false;
-            }
+        //public static bool operator ==(NeuralPredictionModel x, NeuralPredictionModel y)
+        //{
+        //    if (x._accuracy == y._accuracy)
+        //    {
+        //        if (x._score == y._score)
+        //            return true;
+        //        else
+        //            return false;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        public static bool operator !=(NeuralPredictionModel x, NeuralPredictionModel y)
-        {
-            if (x._accuracy == y._accuracy)
-            {
-                if (x._score == y._score)
-                    return false;
-                else
-                    return true;
-            }
+        //public static bool operator !=(NeuralPredictionModel x, NeuralPredictionModel y)
+        //{
+        //    if (x._accuracy == y._accuracy)
+        //    {
+        //        if (x._score == y._score)
+        //            return false;
+        //        else
+        //            return true;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        public static bool operator >(NeuralPredictionModel x, NeuralPredictionModel y)
-        {
-            if (x._accuracy > y._accuracy)
-                return true;
-            else
-            {
-                if (x._accuracy == y._accuracy)
-                {
-                    if (x._score > y._score)
-                        return true;
-                    else
-                        return false;
-                }
-                else
-                    return false;
-            }
-        }
+        //public static bool operator >(NeuralPredictionModel x, NeuralPredictionModel y)
+        //{
+        //    if (x._accuracy > y._accuracy)
+        //        return true;
+        //    else
+        //    {
+        //        if (x._accuracy == y._accuracy)
+        //        {
+        //            if (x._score > y._score)
+        //                return true;
+        //            else
+        //                return false;
+        //        }
+        //        else
+        //            return false;
+        //    }
+        //}
 
-        public static bool operator <(NeuralPredictionModel x, NeuralPredictionModel y)
-        {
-            if (x._accuracy < y._accuracy)
-                return true;
-            else
-            {
-                if (x._accuracy == y._accuracy)
-                {
-                    if (x._score < y._score)
-                        return true;
-                    else
-                        return false;
-                }
-                else
-                    return false;
-            }
-        }
+        //public static bool operator <(NeuralPredictionModel x, NeuralPredictionModel y)
+        //{
+        //    if (x._accuracy < y._accuracy)
+        //        return true;
+        //    else
+        //    {
+        //        if (x._accuracy == y._accuracy)
+        //        {
+        //            if (x._score < y._score)
+        //                return true;
+        //            else
+        //                return false;
+        //        }
+        //        else
+        //            return false;
+        //    }
+        //}
 
         /// <summary>
         /// Finds the percentage of potential ratings that are above the potential renewal thresholds. Use Log values.

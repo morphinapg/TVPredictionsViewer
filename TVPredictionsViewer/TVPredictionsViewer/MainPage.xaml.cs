@@ -201,7 +201,7 @@ namespace TVPredictionsViewer
                                 s.factorNames = n.factors;
                                 s.network = n;
                             });
-                            n.model.TestAccuracy(true);
+                            //n.model.TestAccuracy(true);
                         }
                     }
                     catch (Exception ex)

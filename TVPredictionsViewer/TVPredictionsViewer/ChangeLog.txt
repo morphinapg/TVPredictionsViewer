@@ -1,4 +1,7 @@
-﻿2.2.6
+﻿2.2.7
+Adjusted prediction breakdown odds to account for the adjustment made to renewal threshold early in the season.
+
+2.2.6
 Fixed prediction breakdown and target rating for already decided shows in current year
 
 2.2.5
