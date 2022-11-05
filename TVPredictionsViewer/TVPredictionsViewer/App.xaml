@@ -39,6 +39,7 @@
             <local:StatusColorAlt x:Key="StatusColorAlt"/>
             <local:NumberColor x:Key="NumberColor"/>
             <local:NumberColorAlt x:Key="NumberColorAlt"/>
+            <local:ImageSourceConverter x:Key="ImageSourceConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

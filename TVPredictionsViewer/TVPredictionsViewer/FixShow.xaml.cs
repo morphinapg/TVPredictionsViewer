@@ -132,11 +132,16 @@ namespace TVPredictionsViewer
             {
                 return new UriImageSource
                 {
-                    Uri = new Uri("https://www.themoviedb.org/t/p/original/" + img),
-                    CachingEnabled = true,
-                    CacheValidity = new TimeSpan(90, 0, 0, 0)
+                    Uri = new Uri("https://www.themoviedb.org/t/p/original/" + img)//,
+                    //CachingEnabled = true,
+                    //CacheValidity = new TimeSpan(90, 0, 0, 0)
                 };
             }
+        }
+
+        public string ImageURL
+        {
+            get => "https://www.themoviedb.org/t/p/original/" + img;
         }
 
         public string BaseImage

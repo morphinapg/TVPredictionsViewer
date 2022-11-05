@@ -23,7 +23,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm|arm64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>AF07BD48FF6A03423014AE0C37556FD99544FFAB</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>61C188A092CEFC34E01650130F6CCAF67975CEFF</PackageCertificateThumbprint>
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
@@ -135,10 +135,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>4.4.0</Version>
+      <Version>4.5.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>4.4.0</Version>
+      <Version>4.5.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
@@ -149,9 +149,9 @@
     <PackageReference Include="Xamarin.FFImageLoading.Forms">
       <Version>2.4.11.982</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2125" />
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.12" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.14" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TVPredictionsViewer\TVPredictionsViewer.csproj">

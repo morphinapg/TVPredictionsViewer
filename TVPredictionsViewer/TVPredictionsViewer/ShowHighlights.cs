@@ -31,9 +31,9 @@ namespace TVPredictionsViewer
 
                 return new UriImageSource
                 {
-                    Uri = imagesource,
-                    CachingEnabled = true,
-                    CacheValidity = new TimeSpan(90, 0, 0, 0)
+                    Uri = imagesource
+                    //CachingEnabled = true,
+                    //CacheValidity = new TimeSpan(90, 0, 0, 0)
                 };
             }
         }

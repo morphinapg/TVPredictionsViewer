@@ -1,4 +1,11 @@
-﻿2.2.7
+﻿2.3.0
+Modified AI to handle syndication and early season adjustments differently. 
+Database structure was changed, requiring a significant app update.
+
+2.2.8
+Fixed a rare bug with weekly highlights where a card would appear even if the prediction category had not changed.
+
+2.2.7
 Adjusted prediction breakdown odds to account for the adjustment made to renewal threshold early in the season.
 
 2.2.6

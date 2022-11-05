@@ -20,7 +20,7 @@ namespace TV_Ratings_Predictions
 
         public double[][] deviations;
         public double[] typicalDeviation;
-        public double TargetError, SeasonDeviation, Adjustment;
+        public double TargetError, SeasonDeviation, PreviousEpisodeDeviation, YearDeviation, Adjustment;
 
         [NonSerialized]
         public bool pendingFilter = false;

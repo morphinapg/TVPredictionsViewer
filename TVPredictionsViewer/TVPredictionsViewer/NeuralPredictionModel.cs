@@ -18,7 +18,7 @@ namespace TV_Ratings_Predictions
         Neuron[] FirstLayer, SecondLayer;
         Neuron Output;
 
-        public double mutationrate, mutationintensity, neuralintensity, SeasonDeviation;
+        public double mutationrate, mutationintensity, neuralintensity, SeasonDeviation, PreviousEpisodeDeviation, YearDeviation;
 
         [NonSerialized]
         public double _accuracy, _ratingstheshold, _score;
@@ -28,30 +28,30 @@ namespace TV_Ratings_Predictions
 
         public double[] FactorBias;
 
-        public NeuralPredictionModel(MiniNetwork n) //New Random Prediction Model
-        {
-            shows = n.shows;
-            isMutated = false;
+        //public NeuralPredictionModel(MiniNetwork n) //New Random Prediction Model
+        //{
+        //    shows = n.shows;
+        //    isMutated = false;
 
-            InputCount = n.factors.Count + 2;
-            NeuronCount = Convert.ToInt32(Math.Round(InputCount * 2.0 / 3.0 + 1, 0));
+        //    InputCount = n.factors.Count + 5;
+        //    NeuronCount = Convert.ToInt32(Math.Round(InputCount * 2.0 / 3.0 + 1, 0));
 
-            FirstLayer = new Neuron[NeuronCount];
-            SecondLayer = new Neuron[NeuronCount];
+        //    FirstLayer = new Neuron[NeuronCount];
+        //    SecondLayer = new Neuron[NeuronCount];
 
-            for (int i = 0; i < NeuronCount; i++)
-            {
-                FirstLayer[i] = new Neuron(InputCount);
-                SecondLayer[i] = new Neuron(NeuronCount);
-            }
+        //    for (int i = 0; i < NeuronCount; i++)
+        //    {
+        //        FirstLayer[i] = new Neuron(InputCount);
+        //        SecondLayer[i] = new Neuron(NeuronCount);
+        //    }
 
-            Output = new Neuron(NeuronCount);
+        //    Output = new Neuron(NeuronCount);
 
-            Random r = new Random();
-            mutationrate = r.NextDouble();
-            mutationintensity = r.NextDouble();
-            neuralintensity = r.NextDouble();
-        }
+        //    Random r = new Random();
+        //    mutationrate = r.NextDouble();
+        //    mutationintensity = r.NextDouble();
+        //    neuralintensity = r.NextDouble();
+        //}
 
         public double GetThreshold(Show s)
         {
@@ -168,77 +168,77 @@ namespace TV_Ratings_Predictions
             return year;
         }
 
-        public double GetOdds(Show s, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
-        {
-            var threshold = modified ? GetModifiedThreshold(s, index, index2, index3) : GetThreshold(s);
-            var OriginalTarget = GetTargetRating(s.year, threshold);
+        //public double GetOdds(Show s, bool raw = false, bool modified = false, int index = -1, int index2 = -1, int index3 = -1)
+        //{
+        //    var threshold = modified ? GetModifiedThreshold(s, index, index2, index3) : GetThreshold(s);
+        //    var OriginalTarget = GetTargetRating(s.year, threshold);
 
-            var adjustment = s.network.Adjustment;
-            if (adjustment == 0)
-                adjustment = 1;
+        //    var adjustment = s.network.Adjustment;
+        //    if (adjustment == 0)
+        //        adjustment = 1;
 
-            if (s.year == NetworkDatabase.MaxYear)
-                threshold = Math.Pow(threshold, adjustment);
+        //    if (s.year == NetworkDatabase.MaxYear)
+        //        threshold = Math.Pow(threshold, adjustment);
 
-            var target = GetTargetRating(s.year, threshold);
-            var variance = Math.Log(s.AverageRating) - Math.Log(target);
-            double deviation;
+        //    var target = GetTargetRating(s.year, threshold);
+        //    var variance = Math.Log(s.AverageRating) - Math.Log(target);
+        //    double deviation;
 
-            //calculate standard deviation
-            if (s.ratings.Count > 1)
-            {
-                var count = s.ratings.Count - 1;
-                double ProjectionVariance = 0;
-                for (int i = 0; i < count; i++)
-                {
-                    ProjectionVariance += Math.Pow(Math.Log(s.ratingsAverages[i] * s.network.AdjustAverage(i + 1, s.Episodes)) - Math.Log(s.AverageRating * s.network.AdjustAverage(count + 1, s.Episodes)), 2);
-                }
+        //    //calculate standard deviation
+        //    if (s.ratings.Count > 1)
+        //    {
+        //        var count = s.ratings.Count - 1;
+        //        double ProjectionVariance = 0;
+        //        for (int i = 0; i < count; i++)
+        //        {
+        //            ProjectionVariance += Math.Pow(Math.Log(s.ratingsAverages[i] * s.network.AdjustAverage(i + 1, s.Episodes)) - Math.Log(s.AverageRating * s.network.AdjustAverage(count + 1, s.Episodes)), 2);
+        //        }
 
-                deviation = s.network.deviations[s.ratings.Count - 1][s.Episodes - 1] * Math.Sqrt(ProjectionVariance / count) / s.network.typicalDeviation[s.ratings.Count - 1];
+        //        deviation = s.network.deviations[s.ratings.Count - 1][s.Episodes - 1] * Math.Sqrt(ProjectionVariance / count) / s.network.typicalDeviation[s.ratings.Count - 1];
 
-            }
-            else
-            {
-                deviation = s.network.deviations[0][s.Episodes - 1];
-            }
+        //    }
+        //    else
+        //    {
+        //        deviation = s.network.deviations[0][s.Episodes - 1];
+        //    }
 
             
-            double ErrorAdjustment = (s.year == NetworkDatabase.MaxYear) ? Math.Abs(Math.Log(target) - Math.Log(OriginalTarget)) : 0;
+        //    double ErrorAdjustment = (s.year == NetworkDatabase.MaxYear) ? Math.Abs(Math.Log(target) - Math.Log(OriginalTarget)) : 0;
 
-            //The more overlap there is, the less confidence you can have in the prediction
-            var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError + ErrorAdjustment);
+        //    //The more overlap there is, the less confidence you can have in the prediction
+        //    var Overlap = AreaOfOverlap(Math.Log(s.AverageRating), deviation, Math.Log(target), s.network.TargetError + ErrorAdjustment);
 
-            deviation = s.network.TargetError + ErrorAdjustment;
+        //    deviation = s.network.TargetError + ErrorAdjustment;
 
 
-            var zscore = variance / deviation;
+        //    var zscore = variance / deviation;
 
-            var normal = new Normal();
+        //    var normal = new Normal();
 
-            var baseOdds = normal.CumulativeDistribution(zscore);
+        //    var baseOdds = normal.CumulativeDistribution(zscore);
 
-            //var exponent = Math.Log(0.5) / Math.Log(threshold);
-            //var baseOdds = Math.Pow(s.ShowIndex, exponent);
+        //    //var exponent = Math.Log(0.5) / Math.Log(threshold);
+        //    //var baseOdds = Math.Pow(s.ShowIndex, exponent);
 
-            if (raw)
-                return baseOdds;
+        //    if (raw)
+        //        return baseOdds;
 
-            //var accuracy = _accuracy;
-            var accuracy = 1 - Overlap;
+        //    //var accuracy = _accuracy;
+        //    var accuracy = 1 - Overlap;
 
-            if (baseOdds > 0.5)
-            {
-                baseOdds -= 0.5;
-                baseOdds *= 2;
-                return (baseOdds * accuracy) / 2 + 0.5;
-            }
-            else
-            {
-                baseOdds *= 2;
-                baseOdds = 1 - baseOdds;
-                return (1 - (baseOdds * accuracy)) / 2;
-            }
-        }
+        //    if (baseOdds > 0.5)
+        //    {
+        //        baseOdds -= 0.5;
+        //        baseOdds *= 2;
+        //        return (baseOdds * accuracy) / 2 + 0.5;
+        //    }
+        //    else
+        //    {
+        //        baseOdds *= 2;
+        //        baseOdds = 1 - baseOdds;
+        //        return (1 - (baseOdds * accuracy)) / 2;
+        //    }
+        //}
 
         public double GetModifiedOdds(Show s, double[] ModifiedFactors, bool raw = false)
         {
@@ -329,6 +329,8 @@ namespace TV_Ratings_Predictions
         {
             //if (averages is null) averages = new double[InputCount + 1];
 
+            var FactorCount = s.factorNames.Count;
+
             var averages = FactorBias;
 
             var inputs = GetBaseInputs();
@@ -340,18 +342,31 @@ namespace TV_Ratings_Predictions
             if (index > -1)
             {
                 inputs = GetInputs(s);
-                //for (int i = 0; i < InputCount - 2; i++)
-                //    inputs[i] = (s.factorValues[i] ? 1 : -1) - averages[i];
 
-                //inputs[InputCount - 2] = (s.Episodes / 26.0 * 2 - 1) - averages[InputCount - 2];
-                //inputs[InputCount - 1] = (s.Halfhour ? 1 : -1) - averages[InputCount - 1];
-                //inputs[InputCount] = (s.Season - averages[InputCount]) / SeasonDeviation;
-
-                inputs[index] = 0;  //GetScaledAverage(s, index);
+                inputs[index] = 0;  
                 if (index2 > -1)
                 {
-                    inputs[index2] = (index2 == InputCount) ? (inputs[InputCount] - averages[InputCount]) / SeasonDeviation : s.network.RealAverages[index2] - averages[index2]; // GetScaledAverage(s, index2);
-                    if (index3 > -1) inputs[index3] = (index3 == InputCount) ? (inputs[InputCount] - averages[InputCount]) / SeasonDeviation : s.network.RealAverages[index3] - averages[index3]; // GetScaledAverage(s, index3);
+                    if (index2 == FactorCount + 2)
+                        inputs[index2] = (inputs[FactorCount + 2] - averages[FactorCount + 2]) / SeasonDeviation;
+                    else if (index2 == FactorCount + 3)
+                        inputs[index2] = (inputs[FactorCount + 3] - averages[FactorCount + 3]) / PreviousEpisodeDeviation;
+                    else if (index2 == FactorCount + 4)
+                        inputs[index2] = (inputs[FactorCount + 4] - averages[FactorCount + 4]) / YearDeviation;
+                    else
+                        inputs[index2] = s.network.RealAverages[index2] - averages[index2];
+
+
+                    if (index3 > -1)
+                    {
+                        if (index3 == FactorCount + 2)
+                            inputs[index3] = (inputs[FactorCount + 2] - averages[FactorCount + 2]) / SeasonDeviation;
+                        else if (index3 == FactorCount + 3)
+                            inputs[index3] = (inputs[FactorCount + 3] - averages[FactorCount + 3]) / PreviousEpisodeDeviation;
+                        else if (index3 == FactorCount + 4)
+                            inputs[index3] = (inputs[FactorCount + 4] - averages[FactorCount + 4]) / YearDeviation;
+                        else
+                            inputs[index3] = s.network.RealAverages[index3] - averages[index3];
+                    }
                 }
             }
 
@@ -528,7 +543,7 @@ namespace TV_Ratings_Predictions
 
             year = CheckYear(year);
 
-            var threshold = GetModifiedThreshold(s, -1);
+            var threshold = shows.AsParallel().Where(x => x.year == year).Select(x => GetThreshold(x)).Average();
 
             var adjustment = s.network.Adjustment;
             if (adjustment == 0)
@@ -548,19 +563,6 @@ namespace TV_Ratings_Predictions
             var tempShows = shows.Where(x => x.year == year && x.ratings.Count > 0).OrderByDescending(x => x.ShowIndex).ToList();
             if (tempShows.Count == 0)
             {
-                //var yearList = shows.Where(x => x.ratings.Count > 0).Select(x => x.year).ToList();
-                //yearList.Sort();
-                //if (yearList.Contains(year - 1))
-                //    year--;
-                //else if (yearList.Contains(year + 1))
-                //    year++;
-                //else if (yearList.Where(x => x < year).Count() > 0)
-                //    year = yearList.Where(x => x < year).Last();
-                //else
-                //    year = yearList.Where(x => x > year).First();
-
-                //year = yearList.Last();
-
                 year = CheckYear(year);
                 tempShows = shows.Where(x => x.year == year && x.ratings.Count > 0).OrderByDescending(x => x.ShowIndex).ToList();
             }
@@ -668,102 +670,6 @@ namespace TV_Ratings_Predictions
             return 0;
         }
 
-
-        //public int CompareTo(NeuralPredictionModel other)
-        //{
-        //    double otherAcc = other._accuracy;
-        //    double thisAcc = _accuracy;
-        //    double thisWeight = _score;
-        //    double otherWeight = other._score;
-
-        //    if (thisAcc != otherAcc)
-        //        return otherAcc.CompareTo(thisAcc);
-        //    else
-        //        return otherWeight.CompareTo(thisWeight);
-        //}
-
-        //public override bool Equals(object obj)
-        //{
-        //    var other = (NeuralPredictionModel)obj;
-
-        //    if (other._accuracy == _accuracy)
-        //    {
-        //        if (other._score == _score)
-        //            return true;
-        //        else
-        //            return false;
-        //    }
-
-        //    return false;
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    return base.GetHashCode();
-        //}
-
-        //public static bool operator ==(NeuralPredictionModel x, NeuralPredictionModel y)
-        //{
-        //    if (x._accuracy == y._accuracy)
-        //    {
-        //        if (x._score == y._score)
-        //            return true;
-        //        else
-        //            return false;
-        //    }
-
-        //    return false;
-        //}
-
-        //public static bool operator !=(NeuralPredictionModel x, NeuralPredictionModel y)
-        //{
-        //    if (x._accuracy == y._accuracy)
-        //    {
-        //        if (x._score == y._score)
-        //            return false;
-        //        else
-        //            return true;
-        //    }
-
-        //    return true;
-        //}
-
-        //public static bool operator >(NeuralPredictionModel x, NeuralPredictionModel y)
-        //{
-        //    if (x._accuracy > y._accuracy)
-        //        return true;
-        //    else
-        //    {
-        //        if (x._accuracy == y._accuracy)
-        //        {
-        //            if (x._score > y._score)
-        //                return true;
-        //            else
-        //                return false;
-        //        }
-        //        else
-        //            return false;
-        //    }
-        //}
-
-        //public static bool operator <(NeuralPredictionModel x, NeuralPredictionModel y)
-        //{
-        //    if (x._accuracy < y._accuracy)
-        //        return true;
-        //    else
-        //    {
-        //        if (x._accuracy == y._accuracy)
-        //        {
-        //            if (x._score < y._score)
-        //                return true;
-        //            else
-        //                return false;
-        //        }
-        //        else
-        //            return false;
-        //    }
-        //}
-
         /// <summary>
         /// Finds the percentage of potential ratings that are above the potential renewal thresholds. Use Log values.
         /// </summary>
@@ -827,15 +733,18 @@ namespace TV_Ratings_Predictions
         public double[] GetInputs(Show s)
         {
             var averages = FactorBias;
+            var FactorCount = s.factorNames.Count;
 
-            var inputs = new double[InputCount + 1];
+            var inputs = new double[InputCount];
 
-            for (int i = 0; i < InputCount - 2; i++)
+            for (int i = 0; i < FactorCount; i++)
                 inputs[i] = (s.factorValues[i] ? 1 : -1) - averages[i];
 
-            inputs[InputCount - 2] = (s.Episodes / 26.0 * 2 - 1) - averages[InputCount - 2];
-            inputs[InputCount - 1] = (s.Halfhour ? 1 : -1) - averages[InputCount - 1];
-            inputs[InputCount] = (s.Season - averages[InputCount]) / SeasonDeviation;
+            inputs[FactorCount] = (s.Episodes / 26.0 * 2 - 1) - averages[FactorCount];
+            inputs[FactorCount + 1] = (s.Halfhour ? 1 : -1) - averages[FactorCount + 1];
+            inputs[FactorCount + 2] = (s.Season - averages[FactorCount + 2]) / SeasonDeviation;
+            inputs[FactorCount + 3] = (s.PreviousEpisodes - averages[FactorCount + 3]) / PreviousEpisodeDeviation;
+            inputs[FactorCount + 4] = (s.year - averages[FactorCount + 4]) / YearDeviation;
 
             return inputs;
         }
@@ -846,10 +755,16 @@ namespace TV_Ratings_Predictions
             var inputs = (double[])shows[0].network.RealAverages.Clone();
             var averages = FactorBias;
 
-            for (int i = 0; i < InputCount; i++)
+            var FactorCount = shows[0].factorNames.Count;
+
+            for (int i = 0; i < FactorCount; i++)
                 inputs[i] -= averages[i];
 
-            inputs[InputCount] = (inputs[InputCount] - averages[InputCount]) / SeasonDeviation;
+            inputs[FactorCount] = (inputs[FactorCount] / 26.0 * 2 - 1) - averages[FactorCount];
+            inputs[FactorCount + 1] = inputs[FactorCount + 1] - averages[FactorCount + 1];
+            inputs[FactorCount + 2] = (inputs[FactorCount + 2] - averages[FactorCount + 2]) / SeasonDeviation;
+            inputs[FactorCount + 3] = (inputs[FactorCount + 3] - averages[FactorCount + 3]) / PreviousEpisodeDeviation;
+            inputs[FactorCount + 4] = (inputs[FactorCount + 4] - averages[FactorCount + 4]) / YearDeviation;
 
             return inputs;
         }

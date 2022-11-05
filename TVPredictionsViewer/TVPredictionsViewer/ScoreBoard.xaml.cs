@@ -426,12 +426,7 @@ namespace TVPredictionsViewer
                             }
                             else
                             {
-                                ShowImage.Source = new UriImageSource
-                                {
-                                    Uri = await NetworkDatabase.GetImageURI(ID),
-                                    CachingEnabled = true,
-                                    CacheValidity = new TimeSpan(90, 0, 0, 0)
-                                };                                
+                                ShowImage.Source = await NetworkDatabase.GetImageURI(ID);                                
 
                                 if (ShowImage.Source != null)
                                 {
@@ -589,12 +584,7 @@ namespace TVPredictionsViewer
                     }
                     else
                     {
-                        ShowImage.Source = new UriImageSource
-                        {
-                            Uri = await NetworkDatabase.GetImageURI(ID),
-                            CachingEnabled = true,
-                            CacheValidity = new TimeSpan(90, 0, 0, 0)
-                        };
+                        ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
                         
                         if (ShowImage.Source != null)
                         {

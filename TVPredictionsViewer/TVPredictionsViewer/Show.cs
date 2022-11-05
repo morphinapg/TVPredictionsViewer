@@ -37,7 +37,7 @@ namespace TV_Ratings_Predictions
 
         [NonSerialized]
         public ObservableCollection<string> factorNames;
-        public int year;
+        public int year, PreviousEpisodes;
         public List<double> ratings;
         public double AverageRating, ShowIndex, PredictedOdds;
         public double OldRating, OldOdds, FinalPrediction;

@@ -292,7 +292,9 @@ namespace TVPredictionsViewer
                         {
                             var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 2);
-                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+
+                            if (!highlight.Description.ToString().Contains(highlight.Prediction))
+                                await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
 
                         var UpgradedOrDownGradedShows = NetworkDatabase.NetworkList.SelectMany(x => x.shows).Where(x => !PredictionChanged.Contains(x) && x.year == year && x.RenewalStatus == "" && ((int)(x.OldOdds / 0.2) != (int)(x.PredictedOdds / 0.2)) && (x.OldOdds > 0 || x.OldRating > 0)).OrderByDescending(x => x.PredictedOdds);
@@ -301,7 +303,9 @@ namespace TVPredictionsViewer
                         {
                             var prediction = new PredictionContainer(s, s.network, Thresholds[s.network.name]);
                             var highlight = new ShowHighlights(prediction, 2);
-                            await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
+
+                            if (!highlight.Description.ToString().Contains(highlight.Prediction))
+                                await Device.InvokeOnMainThreadAsync(() => Highlights.Add(highlight));
                         }
                     }
                     catch (Exception ex)

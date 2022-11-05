@@ -249,13 +249,14 @@ namespace TVPredictionsViewer
                             }
                             else
                             {
-                                ShowImage.Source = new UriImageSource
-                                {
-                                    Uri = await NetworkDatabase.GetImageURI(ID),
-                                    CachingEnabled = true,
-                                    CacheValidity = new TimeSpan(90, 0, 0, 0)
-                                };
-                                
+                                ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
+                                //ShowImage.Source = new UriImageSource
+                                //{
+                                //    Uri = await NetworkDatabase.GetImageURI(ID)//,
+                                //    //CachingEnabled = true,
+                                //    //CacheValidity = new TimeSpan(90, 0, 0, 0)
+                                //};
+
                                 if (ShowImage.Source != null)
                                 {
                                     PreviousItem.IsLoaded = true;
@@ -371,13 +372,14 @@ namespace TVPredictionsViewer
                     }
                     else
                     {
-                        ShowImage.Source = new UriImageSource
-                        {
-                            Uri = await NetworkDatabase.GetImageURI(ID),
-                            CachingEnabled = true,
-                            CacheValidity = new TimeSpan(90, 0, 0, 0)
-                        };
-                        
+                        ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
+                        //ShowImage.Source = new UriImageSource
+                        //{
+                        //    Uri = await NetworkDatabase.GetImageURI(ID)//,
+                        //    //CachingEnabled = true,
+                        //    //CacheValidity = new TimeSpan(90, 0, 0, 0)
+                        //};
+
                         if (ShowImage.Source != null)
                         {
                             p.IsLoaded = true;

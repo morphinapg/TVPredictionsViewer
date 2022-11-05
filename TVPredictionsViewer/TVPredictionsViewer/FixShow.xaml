@@ -41,7 +41,7 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Image Source="{Binding ImageUri}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                                        <Image Source="{Binding ImageURL}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
 
                                         <StackLayout Grid.Row="1">
                                             <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>
