@@ -1,4 +1,10 @@
-﻿2.3.0
+﻿2.4.0
+Some improvements were made in the database for the way some shows are categorized,
+specifically relating to show ownership, and country of origin.
+So I updated the Prediction Breakdown code to make use of these new tags.
+Fixed an issue that was causing images to load slowly or not at all sometimes.
+
+2.3.0
 Modified AI to handle syndication and early season adjustments differently. 
 Database structure was changed, requiring a significant app update.
 

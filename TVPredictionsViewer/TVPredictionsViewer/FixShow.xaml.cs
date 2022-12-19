@@ -64,7 +64,7 @@ namespace TVPredictionsViewer
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
-            var img = sender as Xamarin.Forms.Image;
+            var img = sender as Xamarin.Forms.Element;
             var grid = img.Parent as Grid;
 
             if (grid.Width > 5)

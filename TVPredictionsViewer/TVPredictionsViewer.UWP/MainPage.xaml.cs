@@ -13,7 +13,8 @@ namespace TVPredictionsViewer.UWP
         {
             this.InitializeComponent();
             NetworkDatabase.Folder = ApplicationData.Current.LocalFolder.Path;
-            
+            FFImageLoading.Forms.Platform.CachedImageRenderer.Init();           
+
 
             LoadApplication(new TVPredictionsViewer.App());
 

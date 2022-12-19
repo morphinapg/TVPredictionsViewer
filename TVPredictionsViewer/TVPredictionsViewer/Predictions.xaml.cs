@@ -21,7 +21,7 @@ namespace TVPredictionsViewer
         ActivityIndicator Activity = new ActivityIndicator();
         public PredictionContainer PreviousItem;
         ResultsList SearchResults = new ResultsList();
-        bool isDesktop = false;
+        bool isDesktop = false, SizeChanged = false;
         bool isAllNetworks = false, FadingOut = false;
         static object PredictionLock = new object();
         Timer DelayedScroll = new Timer(1000), CheckVisible = new Timer(100);
@@ -235,20 +235,20 @@ namespace TVPredictionsViewer
 
                         if (ID > 0)
                         {
-                            if (Device.RuntimePlatform == Device.UWP)
-                            {
-                                var uri = await NetworkDatabase.GetImageURI(ID);
-                                ShowImageUri = uri.AbsoluteUri;
+                            //if (Device.RuntimePlatform == Device.UWP)
+                            //{
+                            //    var uri = await NetworkDatabase.GetImageURI(ID);
+                            //    ShowImageUri = uri.AbsoluteUri;
 
-                                ShowImage.BindingContext = this;
-                                ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
+                            //    ShowImage.BindingContext = this;
+                            //    ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
 
-                                PreviousItem.IsLoaded = true;
-                                ShowImage.IsVisible = true;
-                                //ImageLoading.IsVisible = false;
-                            }
-                            else
-                            {
+                            //    PreviousItem.IsLoaded = true;
+                            //    ShowImage.IsVisible = true;
+                            //    //ImageLoading.IsVisible = false;
+                            //}
+                            //else
+                            //{
                                 ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
                                 //ShowImage.Source = new UriImageSource
                                 //{
@@ -263,7 +263,7 @@ namespace TVPredictionsViewer
                                     ShowImage.IsVisible = true;
                                     ImageLoading.IsVisible = false;
                                 }
-                            }
+                            //}
 
                             PreviousItem.Overview = NetworkDatabase.ShowDescriptions[ID];
                         }
@@ -290,6 +290,8 @@ namespace TVPredictionsViewer
 
             if (SideColumn.Width > 5)
                 ImageRow.Height = width * 9 / 16;
+
+            SizeChanged = true;
 
             DelayedScroll.Stop();
             DelayedScroll.Start();
@@ -358,20 +360,20 @@ namespace TVPredictionsViewer
 
                 if (ID > 0)
                 {
-                    if (Device.RuntimePlatform == Device.UWP)
-                    {
-                        var uri = await NetworkDatabase.GetImageURI(ID);
-                        ShowImageUri = uri.AbsoluteUri;
+                    //if (Device.RuntimePlatform == Device.UWP)
+                    //{
+                    //    var uri = await NetworkDatabase.GetImageURI(ID);
+                    //    ShowImageUri = uri.AbsoluteUri;
 
-                        ShowImage.BindingContext = this;
-                        ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
+                    //    ShowImage.BindingContext = this;
+                    //    ShowImage.SetBinding(ImageEffect.TextProperty, new Binding("ShowImageUri"));
 
-                        p.IsLoaded = true;
-                        ShowImage.IsVisible = true;
-                        //ImageLoading.IsVisible = false;
-                    }
-                    else
-                    {
+                    //    p.IsLoaded = true;
+                    //    ShowImage.IsVisible = true;
+                    //    //ImageLoading.IsVisible = false;
+                    //}
+                    //else
+                    //{
                         ShowImage.Source = await NetworkDatabase.GetImageURI(ID);
                         //ShowImage.Source = new UriImageSource
                         //{
@@ -386,7 +388,7 @@ namespace TVPredictionsViewer
                             ShowImage.IsVisible = true;
                             ImageLoading.IsVisible = false;
                         }
-                    }
+                    //}
 
                     p.Overview = NetworkDatabase.ShowDescriptions[ID];
                 }
@@ -456,7 +458,16 @@ namespace TVPredictionsViewer
 
         private async void DelayedScroll_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Device.InvokeOnMainThreadAsync(async () => await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true));
+            await Device.InvokeOnMainThreadAsync(async () => 
+            
+            {
+                if (SizeChanged)
+                {
+                    ShowImage.ReloadImage();
+                    SizeChanged = false;
+                }
+                await DetailScroll.ScrollToAsync(SidePanel, ScrollToPosition.Start, true);                
+            });
 
             CheckVisible.Start();
         }

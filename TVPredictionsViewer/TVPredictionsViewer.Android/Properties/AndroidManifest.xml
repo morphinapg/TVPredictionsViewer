@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:versionCode="56" android:versionName="2.3.0" package="tvpredictions.TVPredictions" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:versionCode="57" android:versionName="2.4" package="tvpredictions.TVPredictions" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="26" android:targetSdkVersion="33" />
 	<application android:label="TV Predictions" android:icon="@mipmap/icon" android:largeHeap="true">
 		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
@@ -10,7 +10,7 @@
 				<category android:name="${applicationId}" />
 			</intent-filter>
 		</receiver>
-		<service android:name="crc646f5de9a7e8b1d087.MyFirebaseMessagingService" android:exported="true"/>
+		<service android:name="crc646f5de9a7e8b1d087.MyFirebaseMessagingService" android:exported="true" />
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />

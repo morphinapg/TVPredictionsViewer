@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tvpredictionsviewer="clr-namespace:TVPredictionsViewer"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              mc:Ignorable="d"
              x:Class="TVPredictionsViewer.HomePage" ControlTemplate="{StaticResource MainNavigationPage}"
              BackgroundColor="{DynamicResource PageBackground}" x:DataType="tvpredictionsviewer:HomePage">
@@ -36,7 +37,8 @@
                                     <Frame WidthRequest="320" HeightRequest="180" CornerRadius="25" Padding="0" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent">
                                         <Grid>
                                             <ActivityIndicator Margin="25" Opacity="0.25" IsRunning="{Binding ActivityVisibility}" Color="{DynamicResource ActivityColor}"/>
-                                            <Image Aspect="AspectFill" tvpredictionsviewer:ImageEffect.Text="{Binding ImageURL}" Source="{Binding ImageURL}" Opacity="0.25"/>
+                                            <!--<Image Aspect="AspectFill" tvpredictionsviewer:ImageEffect.Text="{Binding ImageURL}" Source="{Binding ImageURL}" Opacity="0.25"/>-->
+                                            <ffimageloading:CachedImage Aspect="AspectFill" Source="{Binding ImageURL}" Opacity="0.25" DownsampleToViewSize="True"/>
                                             <Grid RowDefinitions="Auto, *, Auto">                                                
                                                 <Label Text="{Binding ShowName}" HorizontalOptions="Start" VerticalOptions="Start" FontSize="17" TextColor="Black" Margin="12,12,0,0"/>
                                                 <Label Text="{Binding ShowName}" HorizontalOptions="Start" VerticalOptions="Start" FontSize="17" Margin="10,10,10,0"/>

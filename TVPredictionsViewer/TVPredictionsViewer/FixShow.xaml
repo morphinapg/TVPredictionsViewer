@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              mc:Ignorable="d"
              x:Class="TVPredictionsViewer.FixShow">
   <ContentView.Content>
@@ -41,7 +42,8 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Image Source="{Binding ImageURL}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                                        <!--<Image Source="{Binding ImageURL}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>-->
+                                        <ffimageloading:CachedImage Source="{Binding ImageURL}" SizeChanged="Image_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" DownsampleToViewSize="True"/>
 
                                         <StackLayout Grid.Row="1">
                                             <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>
@@ -86,7 +88,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Image Source="{Binding ImageUri}" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                        <!--<Image Source="{Binding ImageUri}" HorizontalOptions="Fill" VerticalOptions="Fill"/>-->
+                        <ffimageloading:CachedImage Source="{Binding ImageURL}" HorizontalOptions="Fill" VerticalOptions="Fill" DownsampleToViewSize="True"/>
 
                         <StackLayout Grid.Row="1">
                             <Label FontSize="Subtitle" FontAttributes="Bold" Text="{Binding Name}"/>
