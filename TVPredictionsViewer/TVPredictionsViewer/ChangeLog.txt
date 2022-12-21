@@ -1,4 +1,7 @@
-﻿2.4.0
+﻿2.4.1
+Fixed a bug with detecting the foreign/domestic tag on certain shows
+
+2.4.0
 Some improvements were made in the database for the way some shows are categorized,
 specifically relating to show ownership, and country of origin.
 So I updated the Prediction Breakdown code to make use of these new tags.

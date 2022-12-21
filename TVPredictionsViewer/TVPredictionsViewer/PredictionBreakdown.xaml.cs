@@ -552,6 +552,14 @@ namespace TVPredictionsViewer
 
                                 break;
                             }
+                        case "Foreign":
+                            {
+                                if (s.factorValues[i])
+                                    detailName = "Show is produced outside the United States";
+                                else
+                                    detailName = "Show is produced in the United States";
+                                break;
+                            }
                         default:
                             {
                                 if (s.factorValues[i])
