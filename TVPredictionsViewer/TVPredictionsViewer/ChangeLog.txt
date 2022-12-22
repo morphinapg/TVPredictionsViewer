@@ -1,4 +1,7 @@
-﻿2.4.2
+﻿2.4.3
+Slight change in syndication text
+
+2.4.2
 Adjusted calculation for Syndication status and updated the disclaimer to explain that calculation.
 
 2.4.1
