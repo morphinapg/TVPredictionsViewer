@@ -1,4 +1,7 @@
-﻿2.4.1
+﻿2.4.2
+Adjusted calculation for Syndication status and updated the disclaimer to explain that calculation.
+
+2.4.1
 Fixed a bug with detecting the foreign/domestic tag on certain shows
 
 2.4.0

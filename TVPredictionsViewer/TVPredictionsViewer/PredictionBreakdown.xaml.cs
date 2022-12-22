@@ -126,6 +126,11 @@ namespace TVPredictionsViewer
                     var s = show;
                     var SyndicationIndex = FactorNames.IndexOf("Syndication");
                     var inputs = network.model.GetInputs(s);
+                    var AvgInputs = network.model.FactorBias;
+                    var BaseInputs = inputs.ToArray();
+                    BaseInputs[FactorCount + 2] = AvgInputs[FactorCount + 2];
+                    BaseInputs[FactorCount] = AvgInputs[FactorCount];
+                    BaseInputs[FactorCount + 3] = AvgInputs[FactorCount + 3];
 
                     //Create new list representing odds for each season
                     var AllSeasonOdds = new List<double>();
@@ -144,7 +149,7 @@ namespace TVPredictionsViewer
                     {
                         EpisodesPerSeason = LowestSeason.PreviousEpisodes / (LowestSeason.Season - 1);
 
-                        for (int i = 0; i < LowestSeason.Season - 1 && PreviousEpisodes < 100; i++)
+                        for (int i = 0; i < LowestSeason.Season - 1; i++)
                         {
                             var ModifiedInputs = inputs.ToArray();
                             ModifiedInputs[FactorCount + 2] = (i + 1 - network.FactorAverages[FactorCount + 2]) / network.SeasonDeviation;
@@ -154,13 +159,15 @@ namespace TVPredictionsViewer
                             ModifiedInputs[FactorCount + 3] = (PreviousEpisodes - network.FactorAverages[FactorCount + 3]) / network.PreviousEpisodeDeviation;
                             PreviousEpisodes += EpisodesPerSeason;
 
-                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs));
+                            BaseInputs[FactorCount + 4] = (CurrentYear - network.FactorAverages[FactorCount + 4]) / network.YearDeviation;
+
+                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs) - network.model.GetModifiedOdds(s, BaseInputs));
                             CurrentYear++;
                         }
                     }
 
                     //Add any existing seasons to the list, interpolating when necessary
-                    for (int i = LowestSeason.Season; i < HighestSeason.Season && PreviousEpisodes < 100; i++)
+                    for (int i = LowestSeason.Season; i < HighestSeason.Season + 1; i++)
                     {
                         var ModifiedInputs = inputs.ToArray();
 
@@ -175,12 +182,18 @@ namespace TVPredictionsViewer
                             ModifiedInputs[FactorCount + 3] = (PreviousEpisodes - network.FactorAverages[FactorCount + 3]) / network.PreviousEpisodeDeviation;
                             PreviousEpisodes += EpisodesPerSeason;
 
-                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs));
+                            BaseInputs[FactorCount + 4] = (CurrentYear - network.FactorAverages[FactorCount + 4]) / network.YearDeviation;
+
+                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs) - network.model.GetModifiedOdds(s, BaseInputs));
                             CurrentYear++;
                         }
                         else if (i == s.Season)
                         {
-                            AllSeasonOdds.Add(Results.CurrentOdds);
+                            BaseInputs[FactorCount + 4] = (CurrentYear - network.FactorAverages[FactorCount + 4]) / network.YearDeviation;
+
+                            //AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs) - network.model.GetModifiedOdds(s, ModifiedInputs));
+
+                            AllSeasonOdds.Add(Results.CurrentOdds - network.model.GetModifiedOdds(s, BaseInputs));
                             PreviousEpisodes = s.PreviousEpisodes + s.Episodes;
                             EpisodesPerSeason = PreviousEpisodes / i;
                             CurrentYear = s.year + 1;
@@ -198,21 +211,26 @@ namespace TVPredictionsViewer
                             ModifiedInputs[FactorCount + 3] = (PreviousEpisodes - network.FactorAverages[FactorCount + 3]) / network.PreviousEpisodeDeviation;
                             PreviousEpisodes += EpisodesPerSeason;
 
-                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs));
+                            BaseInputs[FactorCount + 4] = (CurrentYear - network.FactorAverages[FactorCount + 4]) / network.YearDeviation;
+
+                            AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs) - network.model.GetModifiedOdds(s, BaseInputs));
                             EpisodesPerSeason = PreviousEpisodes / i;
 
                             CurrentYear++;
                         }
                     }
 
+                    var MaxEpisodes = network.shows.Select(x => x.PreviousEpisodes).Max();
+
                     //Check if additional seasons should be added
 
-                    if (PreviousEpisodes + EpisodesPerSeason < 100)
+                    if (PreviousEpisodes + EpisodesPerSeason < MaxEpisodes)
+                    //if (PreviousEpisodes + EpisodesPerSeason < 100)
                     {
-                        var MaximumSeason = (100 - PreviousEpisodes - EpisodesPerSeason) / EpisodesPerSeason + AllSeasonOdds.Count;
+                        var MaximumSeason = (MaxEpisodes - PreviousEpisodes) / EpisodesPerSeason + AllSeasonOdds.Count;
                         if (MaximumSeason > HighestSeason.Season)
                         {
-                            for (int i = HighestSeason.Season + 1; i < MaximumSeason + 1 && PreviousEpisodes < 100; i++)
+                            for (int i = HighestSeason.Season + 1; i < MaximumSeason + 1 && PreviousEpisodes < MaxEpisodes; i++)
                             {
                                 var ModifiedInputs = inputs.ToArray();
 
@@ -223,13 +241,26 @@ namespace TVPredictionsViewer
                                 ModifiedInputs[FactorCount + 3] = (PreviousEpisodes - network.FactorAverages[FactorCount + 3]) / network.PreviousEpisodeDeviation;
                                 PreviousEpisodes += EpisodesPerSeason;
 
-                                AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs));
+                                BaseInputs[FactorCount + 4] = (CurrentYear - network.FactorAverages[FactorCount + 4]) / network.YearDeviation;
+
+                                AllSeasonOdds.Add(network.model.GetModifiedOdds(s, ModifiedInputs) - network.model.GetModifiedOdds(s, BaseInputs));
                                 CurrentYear++;
                             }
                         }
                     }
 
-                    var SyndicationSeason = Math.Min(AllSeasonOdds.IndexOf(AllSeasonOdds.Max()) + 2, AllSeasonOdds.Count);
+                    var SyndicationSeason = 0;
+                    bool SeasonFound = false;
+                    for (int i = 0; i < AllSeasonOdds.Count - 1 && !SeasonFound; i++)
+                        if ((AllSeasonOdds[i] > AllSeasonOdds[i + 1] && AllSeasonOdds[i] > 0) || (i > 0 && AllSeasonOdds[i] > AllSeasonOdds[i - 1] && (AllSeasonOdds[i] > 0 || AllSeasonOdds[i] > AllSeasonOdds[i + 1])))
+                        {
+                            SeasonFound = true;
+                            SyndicationSeason = Math.Min(i + 2, AllSeasonOdds.Count);
+                        }
+
+                    if (!SeasonFound)
+                        SyndicationSeason = Math.Min(AllSeasonOdds.IndexOf(AllSeasonOdds.Max()) + 2, AllSeasonOdds.Count);
+
                     string SyndicationStatus;
 
                     if (s.Season == SyndicationSeason)
@@ -616,9 +647,9 @@ namespace TVPredictionsViewer
             var stack = NetworkDatabase.mainpage.Navigation.NavigationStack;
 
             if (stack.Count > 0)
-                await stack.Last().DisplayAlert("Prediction Breakdown Info", "The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate.", "OK");
+                await stack.Last().DisplayAlert("Prediction Breakdown Info", "The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate.\r\n\r\nSyndication status is estimated based on a simulation of how the odds of the show would change if various factors are changed, such as which season, which year, and how many episodes aired before the current season. Once again, this is simply an educated guess based on AI predictions, and is not guaranteed to be accurate.", "OK");
             else
-                await NetworkDatabase.mainpage.DisplayAlert("Prediction Breakdown Info", "The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate.", "OK");
+                await NetworkDatabase.mainpage.DisplayAlert("Prediction Breakdown Info", "The prediction model uses a neural network to generate a renewal threshold. It does not add each factor individually, but considers them all at the same time. This allows each factor to react differently to each unique set of circumstances for each show, rather than always applying the same effect every time. The values listed here are the approximate contribution of each factor in the neural network computation for this specific show, but changing one or more of the other factors can significantly alter how each factor contributes to the final odds. Even to the point that some factors may have the opposite effect under different circumstances. This is only an estimate.\r\n\r\nSyndication status is estimated based on a simulation of how the odds of the show would change if various factors are changed, such as which season, which year, and how many episodes aired before the current season. Once again, this is simply an educated guess based on AI predictions, and is not guaranteed to be accurate.", "OK");
 
         }
 
